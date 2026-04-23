@@ -17,7 +17,8 @@ public class Home {
 	    return "Home"; // looks for index.html / index.jsp
 	}
 	@GetMapping("/login")
-	public String login(Model model) {	   
+	public String login(Model model) {
+		System.out.print("Login");
 	    return "LoginBasic"; // looks for 
 	}
 	@GetMapping("/userLogin")
