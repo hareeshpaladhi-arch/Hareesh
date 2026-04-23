@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+	m --primary: #6366f1;
+	--primary-dark: #4f46e5;
+	--accent: #f43f5e;
+}
+
+body {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	background: radial-gradient(circle at top left, #f8fafc, #e2e8f0);
+	min-height: 100vh;
+}
+
+.glass-panel {
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.brand-gradient {
+	background: linear-gradient(165deg, #1e1b4b 0%, #312e81 100%);
+}
+
+.input-focus-effect:focus {
+	box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+	border-color: var(--primary);
+}
+
+.nav-tab.active {
+	color: var(--primary);
+	border-bottom: 2px solid var(--primary);
+}
+
+.subscription-card {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.subscription-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.subscription-radio:checked+.subscription-card {
+	border-color: var(--primary);
+	background-color: #f5f3ff;
+	ring: 1px;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in {
+	animation: fadeIn 0.4s ease-out forwards;
+}
+
+body input {
+	height: 30px !important;
+}

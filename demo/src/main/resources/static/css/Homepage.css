@@ -1,0 +1,120 @@
+body {
+	font-family: 'Inter', sans-serif;
+	background-color: #f8fafc;
+}
+ /* Custom transitions for a premium feel */
+        .transition-all { transition: all 0.3s ease; }
+        .active-menu { background-color: #3b82f6; color: white; }
+
+.record-row {
+	transition: all 0.2s ease;
+}
+
+.record-row:hover {
+	background-color: #f1f5f9;
+}
+
+.record-row.active {
+	background-color: #eff6ff;
+	box-shadow: inset 4px 0 0 0 #3b82f6;
+}
+
+.details-container {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	background-color: #ffffff;
+}
+
+.details-container.active {
+	max-height: 2500px;
+}
+
+.tab-btn {
+	position: relative;
+	transition: all 0.2s;
+	color: #64748b;
+}
+
+.tab-btn.active {
+	color: #3b82f6;
+}
+
+.tab-btn.active::after {
+	content: '';
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background-color: #3b82f6;
+}
+
+.tab-content {
+	display: none;
+}
+
+.tab-content.active {
+	display: block;
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(5px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.rotate-icon {
+	transition: transform 0.3s ease;
+}
+
+.active .rotate-icon {
+	transform: rotate(180deg);
+}
+
+.action-trigger {
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	transition: all 0.2s;
+	border: 1px solid transparent;
+}
+
+.action-trigger:hover {
+	background-color: #ffffff;
+	border-color: #cbd5e1;
+	color: #3b82f6;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ai-badge {
+	background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+	color: white;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.upload-zone {
+	border: 2px dashed #e2e8f0;
+	transition: all 0.3s ease;
+}
+
+.upload-zone.dragging {
+	border-color: #6366f1;
+	background-color: #f5f3ff;
+	transform: scale(1.01);
+}

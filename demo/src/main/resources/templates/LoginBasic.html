@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MDM | Enterprise Data Hub</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/Login.css}">
+	<script th:src="@{/js/login.js}"></script>
+</head>
+
+<body class="flex items-center justify-center p-6">
+
+	<div class=" flex flex-col sm:flex-row  overflow-hidden glass-panel " style="height: 530px;">
+
+		<!-- Sidebar Branding -->
+		<div class="md:w-[40%] brand-gradient p-4 text-white flex flex-col justify-between relative overflow-hidden">
+			<!-- Animated Background Elements -->
+			<div
+				class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse">
+			</div>
+			<div
+				class="absolute bottom-0 left-0 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20">
+			</div>
+
+			<div class="relative z-10">
+				<div class="flex items-center gap-3 mb-16">
+					<div
+						class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center rotate-3 shadow-indigo-500/50 shadow-lg">
+						<i class="fas fa-layer-group text-lg"></i>
+					</div>
+					<span class="text-xl font-bold tracking-tight italic"><span
+							class="text-indigo-400">MDM</span></span>
+				</div>
+
+				<div class="space-y-6">
+					<h6 class="text-5xl font-extrabold tracking-tight leading-[1.1]">
+						Data Integrity <br><span class="text-indigo-400">Redefined.</span>
+					</h6>
+					<p class="text-indigo-100/70 text-lg leading-relaxed max-w-sm">
+						Orchestrate your master data across the enterprise with AI-driven deduplication and real-time
+						governance.
+					</p>
+				</div>
+			</div>
+
+			<div class="relative z-10 space-y-8">
+				<div class="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+					<div class="flex items-center gap-4 mb-3">
+						<div
+							class="w-8 h-8 rounded-full bg-green-400/20 flex items-center justify-center text-green-400">
+							<i class="fas fa-shield-alt text-xs"></i>
+						</div>
+						<span class="font-semibold">Trust & Compliance</span>
+					</div>
+					<p class="text-sm text-indigo-100/50">Fully SOC2 Type II and GDPR compliant infrastructure for
+						global data handling.</p>
+				</div>
+
+				<div
+					class="flex items-center justify-between text-xs text-indigo-300/60 uppercase tracking-widest font-bold">
+					<span>Platform v4.2.0</span>
+					<div class="flex gap-4">
+						<i class="fab fa-twitter hover:text-white cursor-pointer transition-colors"></i>
+						<i class="fab fa-linkedin hover:text-white cursor-pointer transition-colors"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main Content Area -->
+		<div class="md:w-[60%] bg-white/50 p-4 md:p-8 flex flex-col relative overflow-y-auto">
+
+			<!-- Toast Notification -->
+			<div id="toast"
+				class="hidden absolute top-8 right-8 left-8 md:left-auto md:w-80 z-50 p-4 rounded-2xl shadow-xl animate-fade-in border">
+				<div class="flex items-center gap-3">
+					<i id="toast-icon" class="fas"></i>
+					<p id="toast-msg" class="text-sm font-medium"></p>
+				</div>
+			</div>
+
+			<!-- Header Tabs -->
+			<div class="flex gap-8 mb-12 border-b border-slate-100">
+				<button onclick="showSection('login')" id="tab-login"
+					class="nav-tab active pb-4 text-sm font-bold transition-all uppercase tracking-wider">Sign
+					In</button>
+				<button onclick="showSection('register')" id="tab-register"
+					class="nav-tab pb-4 text-sm font-bold text-slate-400 transition-all uppercase tracking-wider">Registration</button>
+			</div>
+
+			<!-- Sections Container -->
+			<div class="flex-grow flex flex-col justify-center max-w-lg mx-auto w-full">
+
+				<!-- LOGIN -->
+				<section id="login-section" class="animate-fade-in space-y-8">
+					<div>
+						<h2 class=" font-bold text-slate-900">Enterprise Login</h2>
+						<p class="text-slate-500 mt-2">Connect to your organization's secure data cluster.</p>
+					</div>
+
+					<form autocomplete="off" onsubmit="handleAuth(event, 'login')" class="space-y-5">
+						<div class="space-y-2">
+							<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">User
+								name</label>
+							<input type="text" required placeholder="name@company.com"
+								class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 focus:ring-0 input-focus-effect outline-none transition-all text-slate-700">
+						</div>
+
+						<div class="space-y-2">
+							<div class="flex justify-between">
+								<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pass
+									word</label>
+								<button type="button" onclick="showSection('forgot')"
+									class="text-xs font-bold text-indigo-600 hover:text-indigo-700">Lost Key?</button>
+							</div>
+							<input type="password" required placeholder="••••••••"
+								class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 focus:ring-0 input-focus-effect outline-none transition-all text-slate-700">
+						</div>
+
+						<button onclick="userLogin()"
+							class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl shadow-xl shadow-indigo-200 transition-all transform hover:-translate-y-1 active:scale-[0.98]">
+							Sign In
+						</button>
+					</form>
+				</section>
+
+				<!-- REGISTER -->
+				<section id="register-section" class="hidden animate-fade-in space-y-8">
+					<div>
+						<h2 class=" font-bold text-slate-900">Provision Domain</h2>
+						<p class="text-slate-500 mt-2">Set up a new master data management environment.</p>
+					</div>
+
+					<form onsubmit="handleAuth(event, 'register')" class="space-y-6">
+						<div class="grid grid-cols-2 gap-4">
+							<div class="space-y-2">
+								<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Org
+									Name</label>
+								<input type="text" required placeholder="Acme Inc."
+									class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 outline-none transition-all input-focus-effect">
+							</div>
+							<div class="space-y-2">
+								<label
+									class="text-xs font-bold text-slate-400 uppercase tracking-wider">Subdomain</label>
+								<input type="text" required placeholder="acme-hq"
+									class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 outline-none transition-all input-focus-effect">
+							</div>
+						</div>
+
+						<div class="space-y-4">
+							<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Service
+								Tier</label>
+							<div class="grid grid-cols-1 gap-3">
+								<label class="cursor-pointer">
+									<input type="radio" name="plan" class="subscription-radio hidden" checked>
+									<div
+										class="subscription-card p-5 border-2 border-slate-100 rounded-2xl flex items-center justify-between">
+										<div>
+											<p class="font-bold text-slate-800">Growth Plan</p>
+											<p class="text-xs text-slate-500">Up to 50k Golden Records</p>
+										</div>
+										<div class="text-right">
+											<p class="font-bold text-indigo-600">$49/mo</p>
+											<p class="text-[10px] text-slate-400">Billed yearly</p>
+										</div>
+									</div>
+								</label>
+								<label class="cursor-pointer">
+									<input type="radio" name="plan" class="subscription-radio hidden">
+									<div
+										class="subscription-card p-5 border-2 border-slate-100 rounded-2xl flex items-center justify-between">
+										<div>
+											<p class="font-bold text-slate-800">Business Elite</p>
+											<p class="text-xs text-slate-500">Unlimted Nodes & AI Audit</p>
+										</div>
+										<div class="text-right">
+											<p class="font-bold text-indigo-600">$199/mo</p>
+											<p class="text-[10px] text-slate-400">Enterprise support</p>
+										</div>
+									</div>
+								</label>
+							</div>
+						</div>
+
+						<button type="submit"
+							class="w-full bg-slate-900 hover:bg-black text-white font-bold py-5 rounded-2xl transition-all shadow-xl shadow-slate-200">
+							Initialize Cluster
+						</button>
+					</form>
+				</section>
+
+				<!-- FORGOT PASS -->
+				<section id="forgot-section" class="hidden animate-fade-in space-y-8 text-center">
+					<div
+						class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6">
+						<i class="fas fa-key text-2xl"></i>
+					</div>
+					<div>
+						<h2 class=" font-bold text-slate-900">Recovery</h2>
+						<p class="text-slate-500 mt-2">Enter your work email and we'll send a <br>one-time bypass code.
+						</p>
+					</div>
+
+					<form onsubmit="handleAuth(event, 'forgot')" class="space-y-6">
+						<input type="email" required placeholder="your.name@company.com"
+							class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 outline-none transition-all input-focus-effect text-center text-lg">
+						<button type="submit"
+							class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl transition-all">
+							Request Bypass Code
+						</button>
+						<button type="button" onclick="showSection('login')"
+							class="text-sm font-bold text-slate-400 hover:text-slate-600">
+							Back to Secure Login
+						</button>
+					</form>
+				</section>
+			</div>
+
+			<!-- Footer -->
+			<div class="mt-12 text-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+				Protected by Quantum Encryption
+			</div>
+		</div>
+	</div>
+
+	
+</body>
+
+</html>
