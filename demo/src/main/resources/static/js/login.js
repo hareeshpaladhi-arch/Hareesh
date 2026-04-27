@@ -34,5 +34,28 @@ function notify(msg, type = 'success') {
 	setTimeout(() => toast.classList.add('hidden'), 4000);
 }
 function userLogin() {
-	window.open("/userLogin", "_blank");
+
+    fetch("checkUserLogin", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        })
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data);
+
+        if (data === "Login successful") {
+            window.location.href = "/userLogin";
+        } else {
+            alert(data); // show error message
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
 }
