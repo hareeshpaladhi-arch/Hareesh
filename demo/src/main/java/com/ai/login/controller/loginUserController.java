@@ -14,7 +14,8 @@ public class loginUserController {
 
     @PostMapping("/checkUserLogin")
     public String checkUserLogin(@RequestBody LoginRequest request) {
-
+          System.out.println("request.getUsername()"+request.getUsername());
+          System.out.println("request.getPassword()"+request.getPassword());
         return UserService.checkUserLogin(
                 request.getUsername(),
                 request.getPassword()

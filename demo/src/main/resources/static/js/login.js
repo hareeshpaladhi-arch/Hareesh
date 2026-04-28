@@ -35,27 +35,27 @@ function notify(msg, type = 'success') {
 }
 function userLogin() {
 
-    fetch("checkUserLogin", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username: document.getElementById("username").value,
-            password: document.getElementById("password").value
-        })
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log(data);
+	fetch("checkUserLogin", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			username: document.getElementById("username").value,
+			password: document.getElementById("password").value
+		})
+	})
+		.then(response => response.text())
+		.then(data => {
+			console.log(data);
 
-        if (data === "Login successful") {
-            window.location.href = "/userLogin";
-        } else {
-            alert(data); // show error message
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
+			if (data === "Login successful") {
+				window.location.href = "/userLogin";
+			} else {
+				document.getElementById("loginError").innerText = data;
+			}
+		})
+		.catch(error => {
+			console.error("Error:", error);
+		});
 }
