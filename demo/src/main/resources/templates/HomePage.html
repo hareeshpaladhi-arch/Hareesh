@@ -261,6 +261,218 @@
         <span id="toast-message">Message here</span>
     </div>
 <script>
+	let records = [
+            {
+                id: "BRG-032-CH",
+                metadata: { class: "Bearing Ball" },
+                source: {
+                    short: "Ball, Chrome, 32mm",
+                    long: "Premium Grade 10 Chrome Steel Bearing Ball, 32mm Diameter for High Precision Load Bearing applications.",
+                    mfrName: "SKF Group",
+                    mfrPart: "SKF-32-G10",
+                    modelNo: "SERIES-X1",
+                    altMfr: "NSK Ltd",
+                    altMfrPart: "NSK-B32-CH",
+                    mfrUrl: "https://www.skf.com",
+                    supplierUrl: "https://www.industrial-supply.com"
+                },
+                aiOutput: {
+                    nounModifier: "BALL, BEARING",
+                    shortDesc: "BALL, BRG, CHRM, 32MM, G10",
+                    longDesc: "BALL, BEARING: CHROME STEEL; 32MM DIA; GRADE 10; HIGH PRECISION; AISI 52100",
+                    attributes: [
+                        { key: "Attribute 1: Material", val: "AISI 52100 Chrome Steel" },
+                        { key: "Attribute 2: Diameter", val: "32MM" },
+                        { key: "Attribute 3: Grade", val: "G10 (G)" }
+                    ],
+                    checks: {
+                        missing: "None",
+                        spelling: "Passed",
+                        duplicates: "Not Found",
+                        language: "English (EN-US)",
+                        abbreviations: "BRG, CHRM, G"
+                    }
+                }
+            },
+            {
+                id: "PMP-HYD-04",
+                metadata: { class: "Hydraulic Pump" },
+                source: {
+                    short: "Pump, Hyd, Axial Piston",
+                    long: "Axial Piston Hydraulic Pump with variable displacement, 45L/min flow capacity. Used in heavy machinery.",
+                    mfrName: "Bosch Rexroth",
+                    mfrPart: "A10VSO28",
+                    modelNo: "A10V",
+                    altMfr: "Parker Hannifin",
+                    altMfrPart: "PVP33",
+                    mfrUrl: "https://www.boschrexroth.com",
+                    supplierUrl: "https://www.hydraulics-direct.com"
+                },
+                aiOutput: {
+                    nounModifier: "PUMP, HYDRAULIC",
+                    shortDesc: "PUMP, HYD, AXIAL PISTON, 45LPM",
+                    longDesc: "PUMP, HYDRAULIC: AXIAL PISTON; VARIABLE DISPLACEMENT; 45L/MIN; 28CC; 350 BAR MAX",
+                    attributes: [
+                        { key: "Attribute 1: Type", val: "Axial Piston" },
+                        { key: "Attribute 2: Flow", val: "45 L/min (LPM)" },
+                        { key: "Attribute 3: Pressure", val: "350 Bar" }
+                    ],
+                    checks: {
+                        missing: "Seal Kit Part No",
+                        spelling: "Passed",
+                        duplicates: "Potential Match: PMP-HYD-02",
+                        language: "English (EN-US)",
+                        abbreviations: "HYD, LPM"
+                    }
+                }
+            }
+        ];
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.remove('translate-y-24');
+            setTimeout(() => toast.classList.add('translate-y-24'), 3000);
+        }
+
+        function handleDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('dragging'); }
+        function handleDragLeave(e) { document.getElementById('drop-zone').classList.remove('dragging'); }
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('dragging');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) processFile(files[0]);
+        }
+        function handleFileUpload(e) { const file = e.target.files[0]; if (file) processFile(file); }
+
+        function processFile(file) {
+            showToast(`Ingesting ${file.name}...`);
+            setTimeout(() => {
+                const newRecord = {
+                    id: "AI-" + Math.floor(Math.random() * 9999),
+                    metadata: { class: "System Generated" },
+                    source: {
+                        short: file.name.split('.')[0],
+                        long: `Full raw data imported from ${file.name}. Processing for attribute extraction.`,
+                        mfrName: "Extracted MFR",
+                        mfrPart: "PN-8822",
+                        modelNo: "M-99",
+                        mfrUrl: "#",
+                        supplierUrl: "#"
+                    },
+                    aiOutput: {
+                        nounModifier: "PENDING, CLASSIFICATION",
+                        shortDesc: "IMPORT_RESULT_40CH_MAX_LIMIT_ACTIVE",
+                        longDesc: "Standardized Long Description will be generated following attribute validation phase.",
+                        attributes: [{ key: "Attribute 1", val: "Extracting..." }],
+                        checks: { missing: "Check MFR", spelling: "Passed", duplicates: "Scanning...", language: "Auto-detect", abbreviations: "Pending" }
+                    }
+                };
+                records.unshift(newRecord);
+                renderTable();
+                showToast("AI Generation Complete.");
+            }, 1200);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('records-table-body');
+            tbody.innerHTML = records.map((rec, i) => `
+                <tr id="row-${i}" class="record-row border-b border-slate-100">
+                    <td class="px-6 py-5 font-mono text-sm font-bold text-blue-600">${rec.id}</td>
+                    <td class="px-6 py-5 text-slate-700 font-medium">${rec.source.mfrName}</td>
+                    <td class="px-6 py-5">
+                        <span class="text-purple-700 font-bold text-sm tracking-tight italic">${rec.aiOutput.nounModifier}</span>
+                    </td>
+                    <td class="px-6 py-5 text-right">
+                        <button class="action-trigger text-slate-400" onclick="handleActionClick(${i})">
+                            <svg class="rotate-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                <tr id="details-${i}" class="details-container">
+                    <td colspan="4" class="p-0">
+                        <div class="p-8 bg-slate-50 border-b border-slate-200 shadow-inner">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                
+                                <!-- INPUT DATA -->
+                                <div class="space-y-6">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-1.5 h-4 bg-slate-400 rounded"></div>
+                                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest">Source Input Data</h4>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-lg border border-slate-200 space-y-4">
+                                        <div><label class="text-[10px] uppercase text-slate-400 font-bold">Short & Long Description</label>
+                                        <p class="text-sm font-bold text-slate-800 mb-1">${rec.source.short}</p>
+                                        <p class="text-xs text-slate-600 leading-relaxed">${rec.source.long}</p></div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div><label class="text-[10px] uppercase text-slate-400 font-bold">MFR Name / Part No</label><p class="text-sm font-semibold text-slate-700">${rec.source.mfrName}</p><p class="text-xs text-slate-500">${rec.source.mfrPart}</p></div>
+                                            <div><label class="text-[10px] uppercase text-slate-400 font-bold">Model / Alt MFR</label><p class="text-sm font-semibold text-slate-700">${rec.source.modelNo}</p><p class="text-xs text-slate-500">${rec.source.altMfr || 'No Alternate'}</p></div>
+                                            <div class="col-span-2 flex gap-4 pt-1"><a href="${rec.source.mfrUrl}" class="text-[10px] text-blue-500 font-bold underline uppercase">MFR URL</a><a href="${rec.source.supplierUrl}" class="text-[10px] text-blue-500 font-bold underline uppercase">Supplier URL</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- AI OUTPUT -->
+                                <div class="space-y-6">
+                                    <div class="flex items-center space-x-2"><div class="w-1.5 h-4 bg-purple-500 rounded"></div><h4 class="text-xs font-black text-purple-600 uppercase tracking-widest">AI Generated Output</h4></div>
+                                    <div class="bg-white p-5 rounded-lg border-2 border-purple-100 space-y-4 relative">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="col-span-1"><label class="text-[10px] uppercase text-purple-400 font-bold">Noun, Modifier</label><p class="text-sm font-black text-purple-900">${rec.aiOutput.nounModifier}</p></div>
+                                            <div class="col-span-1"><label class="text-[10px] uppercase text-purple-400 font-bold">Short Desc (40 Char)</label><p class="text-[11px] font-mono bg-slate-50 px-2 py-1 rounded text-slate-700 border border-slate-100">${rec.aiOutput.shortDesc}</p></div>
+                                        </div>
+                                        <div><label class="text-[10px] uppercase text-purple-400 font-bold">Long Description (Attribute Capturing)</label><p class="text-xs text-slate-700 leading-relaxed font-medium">${rec.aiOutput.longDesc}</p></div>
+                                        
+                                        <div class="flex space-x-4 pt-2 border-b border-slate-100">
+                                            <button onclick="switchTab(event, 'attr-${i}')" class="tab-btn active pb-2 text-[10px] font-black uppercase">Attributes List</button>
+                                            <button onclick="switchTab(event, 'audit-${i}')" class="tab-btn pb-2 text-[10px] font-black uppercase">Audit & Checks</button>
+                                        </div>
+
+                                        <div id="attr-${i}" class="tab-content active pt-3">
+                                            <div class="grid grid-cols-1 gap-1.5">
+                                                ${rec.aiOutput.attributes.map(a => `<div class="flex justify-between text-[11px] py-1 border-b border-slate-50 last:border-0"><span class="text-slate-400 font-medium">${a.key}</span><span class="font-bold text-slate-700">${a.val}</span></div>`).join('')}
+                                            </div>
+                                        </div>
+
+                                        <div id="audit-${i}" class="tab-content pt-3">
+                                            <div class="grid grid-cols-2 gap-y-3 gap-x-6 text-[11px]">
+                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Missing Data</span><span class="${rec.aiOutput.checks.missing === 'None' ? 'text-green-600' : 'text-red-500 font-bold'}">${rec.aiOutput.checks.missing}</span></div>
+                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Spelling Check</span><span class="text-green-600">${rec.aiOutput.checks.spelling}</span></div>
+                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Duplicates Scan</span><span class="${rec.aiOutput.checks.duplicates === 'Not Found' ? 'text-slate-500' : 'text-orange-500 font-bold'}">${rec.aiOutput.checks.duplicates}</span></div>
+                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Language Change</span><span class="text-slate-500 italic">${rec.aiOutput.checks.language}</span></div>
+                                                <div class="col-span-2"><span class="text-slate-400 uppercase font-bold block mb-1">Abbreviations Captured</span><span class="bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-mono">${rec.aiOutput.checks.abbreviations}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleActionClick(index) {
+            const detailElement = document.getElementById(`details-${index}`);
+            const rowElement = document.getElementById(`row-${index}`);
+            const isActive = detailElement.classList.contains('active');
+            document.querySelectorAll('.details-container').forEach(el => { if (el.id !== `details-${index}`) el.classList.remove('active'); });
+            document.querySelectorAll('.record-row').forEach(el => { if (el.id !== `row-${index}`) el.classList.remove('active'); });
+            detailElement.classList.toggle('active');
+            rowElement.classList.toggle('active');
+        }
+
+        function switchTab(event, contentId) {
+            const container = event.target.closest('.bg-white');
+            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(contentId).classList.add('active');
+        }
+
+        window.onload = renderTable;
+    </script>
 	const dropZone = document.getElementById('drop-zone');
 dropZone.addEventListener('dragover', (e) => {
 	e.preventDefault();

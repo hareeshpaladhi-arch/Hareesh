@@ -35,27 +35,34 @@ function notify(msg, type = 'success') {
 }
 function userLogin() {
 
-	fetch("checkUserLogin", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			username: document.getElementById("username").value,
-			password: document.getElementById("password").value
-		})
-	})
-		.then(response => response.text())
-		.then(data => {
-			console.log(data);
+    fetch("/auth/checkUserLogin", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Invalid username or password");
+        }
+        return response.json();   // ✅ FIX
+    })
+    .then(data => {
 
-			if (data === "Login successful") {
-				window.location.href = "/userLogin";
-			} else {
-				document.getElementById("loginError").innerText = data;
-			}
-		})
-		.catch(error => {
-			console.error("Error:", error);
-		});
+        console.log(data);
+
+        // 🔐 Save JWT token
+        localStorage.setItem("token", data.token);
+
+        // 🔁 Redirect
+        window.location.href = "/userLogin";
+
+    })
+    .catch(error => {
+        document.getElementById("loginError").innerText = error.message;
+    });
 }
