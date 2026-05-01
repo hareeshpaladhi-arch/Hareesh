@@ -1,382 +1,587 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Automation Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" th:href="@{/css/Homepage.css}">
-     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Automation Dashboard</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" th:href="@{/css/Homepage.css}">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script th:src="@{/js/Homepage.js}"></script>
-	
+
 </head>
+
 <body class="bg-gray-50 font-sans text-gray-900 h-screen overflow-hidden">
 
-    <div class="flex h-full w-full">
-        <!-- Sidebar: 30% Width -->
-        <aside class="w-[20%] bg-white border-r border-gray-200 flex flex-col shadow-sm">
-            <div class="p-6 border-b border-gray-100">
-                <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    AI Nexus
-                </h1>
-            </div>
+	<div class="flex h-full w-full">
+		<!-- Sidebar: 30% Width -->
+		<aside class="w-[20%] bg-white border-r border-gray-200 flex flex-col shadow-sm">
+			<div class="p-6 border-b border-gray-100">
+				<h1
+					class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+					AI Nexus
+				</h1>
+			</div>
 
-            <nav class="flex-1 p-4 space-y-2">
-                <button 
-                    onclick="switchTab('dashboard')" 
-                    id="btn-dashboard"
-                    class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-100 active-menu">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span class="font-medium">Dashboard</span>
-                </button>
+			<nav class="flex-1 p-4 space-y-2">
+				<button onclick="switchTab('dashboard')" id="btn-dashboard"
+					class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-100 active-menu">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+						</path>
+					</svg>
+					<span class="font-medium">Dashboard</span>
+				</button>
 
-                <button 
-                    onclick="switchTab('ai-automation')" 
-                    id="btn-ai-automation"
-                    class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-100 text-gray-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    <span class="font-medium">AI Automation</span>
-                </button>
+				<button onclick="switchTab('ai-automation')" id="btn-ai-automation"
+					class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-100 text-gray-600">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+					</svg>
+					<span class="font-medium">AI Automation</span>
+				</button>
 
-                <div class="pt-4 mt-4 border-t border-gray-100">
-                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Help & Support</p>
-                    <button class="w-full flex items-center space-x-3 px-4 py-3 text-gray-500 hover:text-blue-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span class="font-medium text-sm">Settings</span>
-                    </button>
-                </div>
-            </nav>
+				<div class="pt-4 mt-4 border-t border-gray-100">
+					<p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Help & Support</p>
+					<button class="w-full flex items-center space-x-3 px-4 py-3 text-gray-500 hover:text-blue-600">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+							</path>
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+						</svg>
+						<span class="font-medium text-sm">Settings</span>
+					</button>
+				</div>
+			</nav>
 
-            <div class="p-6 bg-gray-50 border-t border-gray-200">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                        JD
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold">Hareesh Paladi</p>
-                        <p class="text-xs text-gray-500 italic">Premium Plan</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+			<div class="p-6 bg-gray-50 border-t border-gray-200">
+				<div class="flex items-center space-x-3">
+					<div
+						class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+						JD
+					</div>
+					<div>
+						<p class="text-sm font-semibold">Hareesh Paladi</p>
+						<p class="text-xs text-gray-500 italic">Premium Plan</p>
+					</div>
+				</div>
+			</div>
+		</aside>
 
-        <!-- Main Content Area: 70% Width -->
-        <main class="w-[80%] h-full overflow-y-auto bg-white">
-            
-            <!-- Dashboard View -->
-            <header>
+		<!-- Main Content Area: 70% Width -->
+		<main class="w-[80%] h-full overflow-y-auto bg-white">
+
+			<!-- Dashboard View -->
+			<header>
 				<div class="max-w-6xl mx-auto">
-        <!-- New Top Navigation / Notification Bar -->
-        <nav class="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-            <div class="flex items-center gap-4 flex-1 max-w-md">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </span>
-                    <input type="text" placeholder="Search records, classes or properties..." class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all">
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-4 ml-4">
-                <button class="relative p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
-                    <span class="absolute top-2 right-2.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                    </svg>
-                </button>
-                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border-2 border-white shadow-sm cursor-pointer"></div>
-            </div>
-        </nav>
+					<!-- New Top Navigation / Notification Bar -->
+					<nav
+						class="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+						<div class="flex items-center gap-4 flex-1 max-w-md">
+							<div class="relative w-full">
+								<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+									<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+									</svg>
+								</span>
+								<input type="text" placeholder="Search records, classes or properties..."
+									class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all">
+							</div>
+						</div>
+
+						<div class="flex items-center gap-4 ml-4">
+							<button
+								class="relative p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
+								<span
+									class="absolute top-2 right-2.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+								<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+									</path>
+								</svg>
+							</button>
+							<div
+								class="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border-2 border-white shadow-sm cursor-pointer">
+							</div>
+						</div>
+					</nav>
 			</header>
-            <section id="view-dashboard" class="p-8">
-                
+			<section id="view-dashboard" class="p-8">
 
-                <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            
-            <div class="flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
-                <span class="flex h-3 w-3 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-sm font-medium text-slate-600">System Live</span>
-                <span class="text-slate-300">|</span>
-                <span id="current-date" class="text-sm text-slate-500"></span>
-            </div>
-        </header>
 
-        <!-- Main Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            
-            <!-- Total Records -->
-            <div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                        </svg>
-                    </div>
-                    <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+12%</span>
-                </div>
-                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Records</h3>
-                <div class="text-3xl font-bold text-slate-800 mt-1" id="count-records">1,284,000</div>
-            </div>
+				<div class="max-w-6xl mx-auto">
+					<!-- Header -->
+					<header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
 
-            <!-- Total Classes -->
-            <div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                    </div>
-                    <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">Stable</span>
-                </div>
-                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Classes</h3>
-                <div class="text-3xl font-bold text-slate-800 mt-1" id="count-classes">42</div>
-            </div>
+						<div class="flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
+							<span class="flex h-3 w-3 rounded-full bg-green-500 animate-pulse"></span>
+							<span class="text-sm font-medium text-slate-600">System Live</span>
+							<span class="text-slate-300">|</span>
+							<span id="current-date" class="text-sm text-slate-500"></span>
+						</div>
+					</header>
 
-            <!-- Properties Extracted -->
-            <div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-2 bg-orange-50 rounded-lg text-orange-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
-                    </div>
-                    <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">+542</span>
-                </div>
-                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Properties</h3>
-                <div class="text-3xl font-bold text-slate-800 mt-1" id="count-properties">8,912</div>
-            </div>
+					<!-- Main Stats Grid -->
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-            <!-- Accuracy % -->
-            <div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center">
-                <div class="relative inline-flex items-center justify-center">
-                    <svg class="w-24 h-24">
-                        <circle class="text-slate-100" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
-                        <circle id="accuracy-ring" class="text-indigo-600 progress-ring-circle" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
-                    </svg>
-                    <span class="absolute text-xl font-bold text-slate-800" id="accuracy-text">0%</span>
-                </div>
-                <h3 class="text-slate-500 text-xs font-medium uppercase tracking-wider mt-2">Overall Accuracy</h3>
-            </div>
-        </div>
+						<!-- Total Records -->
+						<div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+							<div class="flex items-center justify-between mb-4">
+								<div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+										viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+									</svg>
+								</div>
+								<span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+12%</span>
+							</div>
+							<h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Records</h3>
+							<div class="text-3xl font-bold text-slate-800 mt-1" id="count-records">1,284,000</div>
+						</div>
 
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            <!-- Bar Chart: Records per Class -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="font-bold text-slate-800">Records per Top Class</h2>
-                    <select class="text-xs bg-slate-50 border-none rounded-md px-2 py-1 text-slate-500 outline-none">
-                        <option>Last 30 Days</option>
-                        <option>Last 7 Days</option>
-                    </select>
-                </div>
-                <div class="chart-container">
-                    <canvas id="barChart"></canvas>
-                </div>
-            </div>
+						<!-- Total Classes -->
+						<div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+							<div class="flex items-center justify-between mb-4">
+								<div class="p-2 bg-purple-50 rounded-lg text-purple-600">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+										viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+									</svg>
+								</div>
+								<span
+									class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">Stable</span>
+							</div>
+							<h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Classes</h3>
+							<div class="text-3xl font-bold text-slate-800 mt-1" id="count-classes">42</div>
+						</div>
 
-            <!-- Pie Chart: Distribution -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <h2 class="font-bold text-slate-800 mb-6">Property Distribution</h2>
-                <div class="chart-container">
-                    <canvas id="pieChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
+						<!-- Properties Extracted -->
+						<div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+							<div class="flex items-center justify-between mb-4">
+								<div class="p-2 bg-orange-50 rounded-lg text-orange-600">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+										viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+									</svg>
+								</div>
+								<span
+									class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">+542</span>
+							</div>
+							<h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Properties</h3>
+							<div class="text-3xl font-bold text-slate-800 mt-1" id="count-properties">8,912</div>
+						</div>
 
-            </section>
+						<!-- Accuracy % -->
+						<div
+							class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center">
+							<div class="relative inline-flex items-center justify-center">
+								<svg class="w-24 h-24">
+									<circle class="text-slate-100" stroke-width="8" stroke="currentColor"
+										fill="transparent" r="40" cx="48" cy="48" />
+									<circle id="accuracy-ring" class="text-indigo-600 progress-ring-circle"
+										stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="251.2"
+										stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48"
+										cy="48" />
+								</svg>
+								<span class="absolute text-xl font-bold text-slate-800" id="accuracy-text">0%</span>
+							</div>
+							<h3 class="text-slate-500 text-xs font-medium uppercase tracking-wider mt-2">Overall
+								Accuracy</h3>
+						</div>
+					</div>
 
-            <!-- AI Automation View -->
-            <section id="view-ai-automation" class="hidden p-8">
-                <header class="mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800">AI Automation</h2>
-                    <p class="text-gray-500 mt-2">Upload your data files to trigger intelligent processing.</p>
-                </header>
+					<!-- Charts Section -->
+					<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <!-- File Import Section -->
-                <div class="max-w-7xl mx-auto">
-        <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tight">Master Parts Registry</h1>
-                <p class="text-slate-500 mt-1">AI-Powered Cataloging: Standardizing Noun-Modifiers & Technical Attributes.</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <label for="file-upload" class="cursor-pointer bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50 transition flex items-center gap-2 shadow-sm">
-                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Upload Records
-                </label>
-                <input id="file-upload" type="file" class="hidden" accept=".csv,.json,.xlsx" onchange="handleFileUpload(event)">
-                <span class="ai-badge hidden md:block">AI Optimization Live</span>
-            </div>
-        </header>
+						<!-- Bar Chart: Records per Class -->
+						<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+							<div class="flex items-center justify-between mb-6">
+								<h2 class="font-bold text-slate-800">Records per Top Class</h2>
+								<select
+									class="text-xs bg-slate-50 border-none rounded-md px-2 py-1 text-slate-500 outline-none">
+									<option>Last 30 Days</option>
+									<option>Last 7 Days</option>
+								</select>
+							</div>
+							<div class="chart-container">
+								<canvas id="barChart"></canvas>
+							</div>
+						</div>
 
-        <!-- Drop Zone -->
-        <div id="drop-zone" class="upload-zone mb-8 bg-white rounded-xl p-8 text-center" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-            <div class="max-w-xs mx-auto">
-                <div class="bg-indigo-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                </div>
-                <p class="text-sm font-bold text-slate-700">Drag & Drop Batch Files</p>
-                <p class="text-xs text-slate-400 mt-1">Ingest source data for automated Noun/Modifier generation</p>
-            </div>
-        </div>
+						<!-- Pie Chart: Distribution -->
+						<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+							<h2 class="font-bold text-slate-800 mb-6">Property Distribution</h2>
+							<div class="chart-container">
+								<canvas id="pieChart"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-slate-50 border-b border-slate-200">
-                    <tr>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-32">Record No</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-48">MFR Name</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Noun, Modifier (AI)</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="records-table-body">
-                    <!-- Data injected via JS -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+			</section>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl transform translate-y-24 transition-transform duration-300 flex items-center gap-3">
-        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-        <span id="toast-msg" class="text-sm font-medium">Processing records...</span>
-    </div>
+			<!-- AI Automation View -->
+			<section id="view-ai-automation" class="hidden p-3">
+				<!-- File Import Section -->
+				<div class="max-w-7xl mx-auto">
 
-            </section>
+					<!-- Drop Zone -->
+					<div id="drop-zone" class="upload-zone mb-8 bg-white rounded-xl p-8 text-center"
+						ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+						ondrop="handleDrop(event)">
+						<div class="max-w-xs mx-auto">
+							<div class="bg-indigo-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+								onclick="document.getElementById('file-upload').click()">
+								<svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor"
+									viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+									</path>
+								</svg>
+							</div>
+							<p class="text-sm font-bold text-slate-700">
+								Drag & Drop files here or Click to Upload
+							</p>
+							<p class="text-xs text-slate-400 mt-1">Ingest source data for automated Noun/Modifier
+								generation</p>
+							<input id="file-upload" type="file" class="hidden" accept=".csv,.json,.xlsx"
+								onchange="handleFileUpload(event)">
+						</div>
+					</div>
+					<div>
+					<button id="openModal"
+						class="aiButtonClass group relative px-8 py-4 bg-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-200 active:scale-95 flex items-center gap-3">
+						<svg xmlns="http://www.w3.org/2000/svg"
+							class="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" fill="none"
+							viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+						</svg>
+						Execute Batch Action
+					</button>
+					</div>
+					<div id="modalOverlay"
+						class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 modal-overlay hidden-modal" style="display: none;">
 
-        </main>
-    </div>
+						<!-- Modal Card -->
+						<div
+							class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh]">
 
-    <!-- Feedback Message Component -->
-    <div id="toast" class="fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl transform translate-y-24 transition-transform duration-300 flex items-center space-x-3">
-        <span id="toast-message">Message here</span>
-    </div>
-<script>
-	let records = [
-            {
-                id: "BRG-032-CH",
-                metadata: { class: "Bearing Ball" },
-                source: {
-                    short: "Ball, Chrome, 32mm",
-                    long: "Premium Grade 10 Chrome Steel Bearing Ball, 32mm Diameter for High Precision Load Bearing applications.",
-                    mfrName: "SKF Group",
-                    mfrPart: "SKF-32-G10",
-                    modelNo: "SERIES-X1",
-                    altMfr: "NSK Ltd",
-                    altMfrPart: "NSK-B32-CH",
-                    mfrUrl: "https://www.skf.com",
-                    supplierUrl: "https://www.industrial-supply.com"
-                },
-                aiOutput: {
-                    nounModifier: "BALL, BEARING",
-                    shortDesc: "BALL, BRG, CHRM, 32MM, G10",
-                    longDesc: "BALL, BEARING: CHROME STEEL; 32MM DIA; GRADE 10; HIGH PRECISION; AISI 52100",
-                    attributes: [
-                        { key: "Attribute 1: Material", val: "AISI 52100 Chrome Steel" },
-                        { key: "Attribute 2: Diameter", val: "32MM" },
-                        { key: "Attribute 3: Grade", val: "G10 (G)" }
-                    ],
-                    checks: {
-                        missing: "None",
-                        spelling: "Passed",
-                        duplicates: "Not Found",
-                        language: "English (EN-US)",
-                        abbreviations: "BRG, CHRM, G"
-                    }
-                }
-            },
-            {
-                id: "PMP-HYD-04",
-                metadata: { class: "Hydraulic Pump" },
-                source: {
-                    short: "Pump, Hyd, Axial Piston",
-                    long: "Axial Piston Hydraulic Pump with variable displacement, 45L/min flow capacity. Used in heavy machinery.",
-                    mfrName: "Bosch Rexroth",
-                    mfrPart: "A10VSO28",
-                    modelNo: "A10V",
-                    altMfr: "Parker Hannifin",
-                    altMfrPart: "PVP33",
-                    mfrUrl: "https://www.boschrexroth.com",
-                    supplierUrl: "https://www.hydraulics-direct.com"
-                },
-                aiOutput: {
-                    nounModifier: "PUMP, HYDRAULIC",
-                    shortDesc: "PUMP, HYD, AXIAL PISTON, 45LPM",
-                    longDesc: "PUMP, HYDRAULIC: AXIAL PISTON; VARIABLE DISPLACEMENT; 45L/MIN; 28CC; 350 BAR MAX",
-                    attributes: [
-                        { key: "Attribute 1: Type", val: "Axial Piston" },
-                        { key: "Attribute 2: Flow", val: "45 L/min (LPM)" },
-                        { key: "Attribute 3: Pressure", val: "350 Bar" }
-                    ],
-                    checks: {
-                        missing: "Seal Kit Part No",
-                        spelling: "Passed",
-                        duplicates: "Potential Match: PMP-HYD-02",
-                        language: "English (EN-US)",
-                        abbreviations: "HYD, LPM"
-                    }
-                }
-            }
-        ];
+							<!-- Header -->
+							<div
+								class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+								<div>
+									<h3 class="text-xl font-bold text-gray-800">Batch Configuration</h3>
+									<p class="text-sm text-gray-500">Select parameters and operations to proceed</p>
+								</div>
+								<button id="closeModal"
+									class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+										viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M6 18L18 6M6 6l12 12" />
+									</svg>
+								</button>
+							</div>
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = message;
-            toast.classList.remove('translate-y-24');
-            setTimeout(() => toast.classList.add('translate-y-24'), 3000);
-        }
+							<!-- Body (Scrollable) -->
+							<div class="p-6 space-y-6 overflow-y-auto">
 
-        function handleDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('dragging'); }
-        function handleDragLeave(e) { document.getElementById('drop-zone').classList.remove('dragging'); }
-        function handleDrop(e) {
-            e.preventDefault();
-            document.getElementById('drop-zone').classList.remove('dragging');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) processFile(files[0]);
-        }
-        function handleFileUpload(e) { const file = e.target.files[0]; if (file) processFile(file); }
+								<!-- Batch ID Selection -->
+								<div class="space-y-2">
+									<label class="block text-sm font-medium text-gray-700">Batch Identifier</label>
+									<select id="batchId"
+										class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+										<option value="" disabled selected>Select an active Batch ID</option>
+										<option value="B-2024-001">B-2024-001 (Processing)</option>
+										<option value="B-2024-002">B-2024-002 (Queued)</option>
+										<option value="B-2024-003">B-2024-003 (New)</option>
+									</select>
+								</div>
 
-        function processFile(file) {
-            showToast(`Ingesting ${file.name}...`);
-            setTimeout(() => {
-                const newRecord = {
-                    id: "AI-" + Math.floor(Math.random() * 9999),
-                    metadata: { class: "System Generated" },
-                    source: {
-                        short: file.name.split('.')[0],
-                        long: `Full raw data imported from ${file.name}. Processing for attribute extraction.`,
-                        mfrName: "Extracted MFR",
-                        mfrPart: "PN-8822",
-                        modelNo: "M-99",
-                        mfrUrl: "#",
-                        supplierUrl: "#"
-                    },
-                    aiOutput: {
-                        nounModifier: "PENDING, CLASSIFICATION",
-                        shortDesc: "IMPORT_RESULT_40CH_MAX_LIMIT_ACTIVE",
-                        longDesc: "Standardized Long Description will be generated following attribute validation phase.",
-                        attributes: [{ key: "Attribute 1", val: "Extracting..." }],
-                        checks: { missing: "Check MFR", spelling: "Passed", duplicates: "Scanning...", language: "Auto-detect", abbreviations: "Pending" }
-                    }
-                };
-                records.unshift(newRecord);
-                renderTable();
-                showToast("AI Generation Complete.");
-            }, 1200);
-        }
+								<!-- Select All Toggle -->
+								<div class="flex items-center justify-between py-2 px-1">
+									<label
+										class="text-sm font-semibold text-gray-600 uppercase tracking-wider">Operations</label>
+									<button id="selectAllBtn"
+										class="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+											viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+												d="M5 13l4 4L19 7" />
+										</svg>
+										<span>Select All</span>
+									</button>
+								</div>
 
-        function renderTable() {
-            const tbody = document.getElementById('records-table-body');
-            tbody.innerHTML = records.map((rec, i) => `
+								<!-- Operations Grid -->
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+									<!-- Class Operation -->
+									<div
+										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
+										<label class="flex items-center gap-3 cursor-pointer">
+											<input type="checkbox" name="operation" value="class"
+												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
+											<span class="font-semibold text-gray-700">Class Operation</span>
+										</label>
+										<p class="mt-1 ml-8 text-xs text-gray-500">Categorize entities based on defined
+											schemas.</p>
+									</div>
+
+									<!-- Char Operation -->
+									<div
+										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
+										<label class="flex items-center gap-3 cursor-pointer">
+											<input type="checkbox" name="operation" value="char"
+												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
+											<span class="font-semibold text-gray-700">Char Analysis</span>
+										</label>
+										<p class="mt-1 ml-8 text-xs text-gray-500">Extract and validate character-level
+											traits.</p>
+									</div>
+
+									<!-- Reference Operation -->
+									<div
+										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
+										<label class="flex items-center gap-3 cursor-pointer">
+											<input type="checkbox" name="operation" value="reference"
+												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
+											<span class="font-semibold text-gray-700">Reference Link</span>
+										</label>
+										<p class="mt-1 ml-8 text-xs text-gray-500">Cross-reference with master data
+											records.</p>
+									</div>
+
+									<!-- Doc Operation -->
+									<div
+										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
+										<label class="flex items-center gap-3 cursor-pointer">
+											<input type="checkbox" name="operation" value="doc"
+												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
+											<span class="font-semibold text-gray-700">Doc Generation</span>
+										</label>
+										<p class="mt-1 ml-8 text-xs text-gray-500">Compile results into structured
+											documents.</p>
+									</div>
+								</div>
+
+								<!-- Enrichment Choice -->
+								<div class="pt-4 border-t border-gray-100">
+									<label class="block text-sm font-medium text-gray-700 mb-3">Enrichment
+										Choice</label>
+									<div class="flex flex-wrap gap-3">
+										<label class="flex-1 min-w-[120px]">
+											<input type="radio" name="enrichment" value="standard" class="hidden peer"
+												checked>
+											<div
+												class="p-3 text-center border-2 border-gray-100 rounded-lg cursor-pointer peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:bg-gray-50 transition-all">
+												<span class="block text-sm font-semibold text-gray-700">Standard</span>
+											</div>
+										</label>
+										<label class="flex-1 min-w-[120px]">
+											<input type="radio" name="enrichment" value="premium" class="hidden peer">
+											<div
+												class="p-3 text-center border-2 border-gray-100 rounded-lg cursor-pointer peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:bg-gray-50 transition-all">
+												<span class="block text-sm font-semibold text-gray-700">Premium</span>
+											</div>
+										</label>
+										<label class="flex-1 min-w-[120px]">
+											<input type="radio" name="enrichment" value="custom" class="hidden peer">
+											<div
+												class="p-3 text-center border-2 border-gray-100 rounded-lg cursor-pointer peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:bg-gray-50 transition-all">
+												<span class="block text-sm font-semibold text-gray-700">Custom</span>
+											</div>
+										</label>
+									</div>
+								</div>
+							</div>
+
+							<!-- Footer -->
+							<div
+								class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-3 justify-end sticky bottom-0">
+								<button id="cancelAction"
+									class="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">
+									Cancel
+								</button>
+								<button id="submitAction"
+									class="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all active:scale-95">
+									Start Process
+								</button>
+							</div>
+						</div>
+					</div>
+					
+
+					<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+						<table class="w-full text-left border-collapse">
+							<thead class="bg-slate-50 border-b border-slate-200">
+								<tr>
+									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest w-32">
+										Stg No</th>
+									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest w-32">
+										Record No</th>
+									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest w-48">
+										Class </th>
+									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest">
+										Short Description</th>
+									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest text-right">
+										Long Description</th>
+
+									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest text-right">
+										Batch No</th>
+								</tr>
+							</thead>
+							<tbody id="records-table-body">
+								<!-- Data injected via JS -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Notification Toast -->
+				<div id="toast"
+					class="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl transform translate-y-24 transition-transform duration-300 flex items-center gap-3">
+					<div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+					<span id="toast-msg" class="text-sm font-medium">Processing records...</span>
+				</div>
+
+			</section>
+
+		</main>
+	</div>
+
+	<!-- Feedback Message Component -->
+	<div id="toast"
+		class="fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl transform translate-y-24 transition-transform duration-300 flex items-center space-x-3">
+		<span id="toast-message">Message here</span>
+	</div>
+	<script>
+		let records = [
+			{
+				id: "BRG-032-CH",
+				metadata: {class: "Bearing Ball"},
+				source: {
+					short: "Ball, Chrome, 32mm",
+					long: "Premium Grade 10 Chrome Steel Bearing Ball, 32mm Diameter for High Precision Load Bearing applications.",
+					mfrName: "SKF Group",
+					mfrPart: "SKF-32-G10",
+					modelNo: "SERIES-X1",
+					altMfr: "NSK Ltd",
+					altMfrPart: "NSK-B32-CH",
+					mfrUrl: "https://www.skf.com",
+					supplierUrl: "https://www.industrial-supply.com"
+				},
+				aiOutput: {
+					nounModifier: "BALL, BEARING",
+					shortDesc: "BALL, BRG, CHRM, 32MM, G10",
+					longDesc: "BALL, BEARING: CHROME STEEL; 32MM DIA; GRADE 10; HIGH PRECISION; AISI 52100",
+					attributes: [
+						{key: "Attribute 1: Material", val: "AISI 52100 Chrome Steel"},
+						{key: "Attribute 2: Diameter", val: "32MM"},
+						{key: "Attribute 3: Grade", val: "G10 (G)"}
+					],
+					checks: {
+						missing: "None",
+						spelling: "Passed",
+						duplicates: "Not Found",
+						language: "English (EN-US)",
+						abbreviations: "BRG, CHRM, G"
+					}
+				}
+			},
+			{
+				id: "PMP-HYD-04",
+				metadata: {class: "Hydraulic Pump"},
+				source: {
+					short: "Pump, Hyd, Axial Piston",
+					long: "Axial Piston Hydraulic Pump with variable displacement, 45L/min flow capacity. Used in heavy machinery.",
+					mfrName: "Bosch Rexroth",
+					mfrPart: "A10VSO28",
+					modelNo: "A10V",
+					altMfr: "Parker Hannifin",
+					altMfrPart: "PVP33",
+					mfrUrl: "https://www.boschrexroth.com",
+					supplierUrl: "https://www.hydraulics-direct.com"
+				},
+				aiOutput: {
+					nounModifier: "PUMP, HYDRAULIC",
+					shortDesc: "PUMP, HYD, AXIAL PISTON, 45LPM",
+					longDesc: "PUMP, HYDRAULIC: AXIAL PISTON; VARIABLE DISPLACEMENT; 45L/MIN; 28CC; 350 BAR MAX",
+					attributes: [
+						{key: "Attribute 1: Type", val: "Axial Piston"},
+						{key: "Attribute 2: Flow", val: "45 L/min (LPM)"},
+						{key: "Attribute 3: Pressure", val: "350 Bar"}
+					],
+					checks: {
+						missing: "Seal Kit Part No",
+						spelling: "Passed",
+						duplicates: "Potential Match: PMP-HYD-02",
+						language: "English (EN-US)",
+						abbreviations: "HYD, LPM"
+					}
+				}
+			}
+		];
+
+		function showToast(message) {
+			const toast = document.getElementById('toast');
+			document.getElementById('toast-msg').innerText = message;
+			toast.classList.remove('translate-y-24');
+			setTimeout(() => toast.classList.add('translate-y-24'), 3000);
+		}
+
+		function handleDragOver(e) {e.preventDefault(); document.getElementById('drop-zone').classList.add('dragging');}
+		function handleDragLeave(e) {document.getElementById('drop-zone').classList.remove('dragging');}
+		function handleDrop(e) {
+			e.preventDefault();
+			document.getElementById('drop-zone').classList.remove('dragging');
+			const files = e.dataTransfer.files;
+			if (files.length > 0) processFile(files[0]);
+		}
+		function handleFileUpload(e) {const file = e.target.files[0]; if (file) processFile(file);}
+
+		function processFile(file) {
+			showToast(`Ingesting ${file.name}...`);
+			setTimeout(() => {
+				const newRecord = {
+					id: "AI-" + Math.floor(Math.random() * 9999),
+					metadata: {class: "System Generated"},
+					source: {
+						short: file.name.split('.')[0],
+						long: `Full raw data imported from ${file.name}. Processing for attribute extraction.`,
+						mfrName: "Extracted MFR",
+						mfrPart: "PN-8822",
+						modelNo: "M-99",
+						mfrUrl: "#",
+						supplierUrl: "#"
+					},
+					aiOutput: {
+						nounModifier: "PENDING, CLASSIFICATION",
+						shortDesc: "IMPORT_RESULT_40CH_MAX_LIMIT_ACTIVE",
+						longDesc: "Standardized Long Description will be generated following attribute validation phase.",
+						attributes: [{key: "Attribute 1", val: "Extracting..."}],
+						checks: {missing: "Check MFR", spelling: "Passed", duplicates: "Scanning...", language: "Auto-detect", abbreviations: "Pending"}
+					}
+				};
+				records.unshift(newRecord);
+				renderTable();
+				showToast("AI Generation Complete.");
+			}, 1200);
+		}
+
+		function renderTable() {
+			const tbody = document.getElementById('records-table-body');
+			tbody.innerHTML = records.map((rec, i) => `
                 <tr id="row-${i}" class="record-row border-b border-slate-100">
                     <td class="px-6 py-5 font-mono text-sm font-bold text-blue-600">${rec.id}</td>
                     <td class="px-6 py-5 text-slate-700 font-medium">${rec.source.mfrName}</td>
@@ -451,137 +656,212 @@
                     </td>
                 </tr>
             `).join('');
+		}
+
+
+
+		window.onload = renderTable;
+	</script>
+	<script>
+		const openBtn = document.getElementById('openModal');
+        const closeBtn = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelAction');
+        const submitBtn = document.getElementById('submitAction');
+        const overlay = document.getElementById('modalOverlay');
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const toast = document.getElementById('toast');
+        const opCheckboxes = document.querySelectorAll('.op-checkbox');
+
+        function toggleModal(show) {
+            if (show) {
+                overlay.classList.remove('hidden-modal');
+                overlay.style.display="";
+                
+            } else {
+                overlay.classList.add('hidden-modal');
+                overlay.style.display="none"
+            }
         }
 
-        function handleActionClick(index) {
-            const detailElement = document.getElementById(`details-${index}`);
-            const rowElement = document.getElementById(`row-${index}`);
-            const isActive = detailElement.classList.contains('active');
-            document.querySelectorAll('.details-container').forEach(el => { if (el.id !== `details-${index}`) el.classList.remove('active'); });
-            document.querySelectorAll('.record-row').forEach(el => { if (el.id !== `row-${index}`) el.classList.remove('active'); });
-            detailElement.classList.toggle('active');
-            rowElement.classList.toggle('active');
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 3000);
         }
 
-        function switchTab(event, contentId) {
-            const container = event.target.closest('.bg-white');
-            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(contentId).classList.add('active');
-        }
-
-        window.onload = renderTable;
-    </script>
-	const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', (e) => {
-	e.preventDefault();
-	dropZone.classList.add('bg-blue-50', 'border-blue-400');
-});
-dropZone.addEventListener('dragleave', () => {
-	dropZone.classList.remove('bg-blue-50', 'border-blue-400');
-});
-
-
- document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric'
+        // Select All Logic
+        let allSelected = false;
+        selectAllBtn.addEventListener('click', () => {
+            allSelected = !allSelected;
+            opCheckboxes.forEach(cb => cb.checked = allSelected);
+            
+            // Update button text/ui
+            const label = selectAllBtn.querySelector('span');
+            label.textContent = allSelected ? 'Deselect All' : 'Select All';
         });
 
-        // Accuracy Circle Animation
-        const setAccuracy = (percent) => {
-            const circle = document.getElementById('accuracy-ring');
-            const text = document.getElementById('accuracy-text');
-            const radius = circle.r.baseVal.value;
-            const circumference = radius * 2 * Math.PI;
-            
-            const offset = circumference - (percent / 100 * circumference);
-            circle.style.strokeDashoffset = offset;
-            
-            let current = 0;
-            const timer = setInterval(() => {
-                if (current >= percent) {
-                    clearInterval(timer);
-                } else {
-                    current++;
-                    text.textContent = current + '%';
-                }
-            }, 10);
-        };
-
-        // Initialize Charts
-        const initCharts = () => {
-            // Bar Chart Configuration
-            const ctxBar = document.getElementById('barChart').getContext('2d');
-            new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: ['Finance', 'Legal', 'Identity', 'Orders', 'Logistics'],
-                    datasets: [{
-                        label: 'Records Extracted',
-                        data: [452000, 210000, 185000, 92000, 145000],
-                        backgroundColor: '#6366f1',
-                        borderRadius: 8,
-                        barThickness: 30
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { size: 11 }, color: '#94a3b8' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 11 }, color: '#94a3b8' }
-                        }
-                    }
-                }
+        // Individual Checkbox Logic (uncheck select all if one is unchecked)
+        opCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checkedCount = document.querySelectorAll('.op-checkbox:checked').length;
+                allSelected = checkedCount === opCheckboxes.length;
+                selectAllBtn.querySelector('span').textContent = allSelected ? 'Deselect All' : 'Select All';
             });
+        });
 
-            // Pie Chart Configuration
-            const ctxPie = document.getElementById('pieChart').getContext('2d');
-            new Chart(ctxPie, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Verified', 'Pending', 'Flagged'],
-                    datasets: [{
-                        data: [75, 15, 10],
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20,
-                                font: { size: 12, family: 'Inter' }
-                            }
-                        }
-                    }
-                }
-            });
-        };
+        openBtn.addEventListener('click', () => toggleModal(true));
+        closeBtn.addEventListener('click', () => toggleModal(false));
+        cancelBtn.addEventListener('click', () => toggleModal(false));
 
-        window.onload = () => {
-            initCharts();
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) toggleModal(false);
+        });
+
+        submitBtn.addEventListener('click', () => {
+            const batchId = document.getElementById('batchId').value;
+            const operations = Array.from(document.querySelectorAll('.op-checkbox:checked')).map(cb => cb.value);
+            const enrichment = document.querySelector('input[name="enrichment"]:checked').value;
+
+            if (!batchId) {
+                showToast("Please select a Batch ID first");
+                return;
+            }
+
+            if (operations.length === 0) {
+                showToast("Select at least one operation");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Starting...';
+            
             setTimeout(() => {
-                setAccuracy(94);
-            }, 300);
-        };
-</script>
-    
+                toggleModal(false);
+                showToast(`Started ${operations.length} operations for ${batchId}`);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Start Process';
+                
+                // Reset form optionally
+                allSelected = false;
+                opCheckboxes.forEach(cb => cb.checked = false);
+                selectAllBtn.querySelector('span').textContent = 'Select All';
+                document.getElementById('batchId').value = "";
+            }, 800);
+        });
+		const dropZone = document.getElementById('drop-zone');
+		dropZone.addEventListener('dragover', (e) => {
+			e.preventDefault();
+			dropZone.classList.add('bg-blue-50', 'border-blue-400');
+		});
+		dropZone.addEventListener('dragleave', () => {
+			dropZone.classList.remove('bg-blue-50', 'border-blue-400');
+		});
+
+
+		document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+			month: 'short', day: 'numeric', year: 'numeric'
+		});
+
+		// Accuracy Circle Animation
+		const setAccuracy = (percent) => {
+			const circle = document.getElementById('accuracy-ring');
+			const text = document.getElementById('accuracy-text');
+			const radius = circle.r.baseVal.value;
+			const circumference = radius * 2 * Math.PI;
+
+			const offset = circumference - (percent / 100 * circumference);
+			circle.style.strokeDashoffset = offset;
+
+			let current = 0;
+			const timer = setInterval(() => {
+				if (current >= percent) {
+					clearInterval(timer);
+				} else {
+					current++;
+					text.textContent = current + '%';
+				}
+			}, 10);
+		};
+
+		// Initialize Charts
+		const initCharts = () => {
+			// Bar Chart Configuration
+			const ctxBar = document.getElementById('barChart').getContext('2d');
+			new Chart(ctxBar, {
+				type: 'bar',
+				data: {
+					labels: ['Finance', 'Legal', 'Identity', 'Orders', 'Logistics'],
+					datasets: [{
+						label: 'Records Extracted',
+						data: [452000, 210000, 185000, 92000, 145000],
+						backgroundColor: '#6366f1',
+						borderRadius: 8,
+						barThickness: 30
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {display: false}
+					},
+					scales: {
+						y: {
+							beginAtZero: true,
+							grid: {color: '#f1f5f9'},
+							ticks: {font: {size: 11}, color: '#94a3b8'}
+						},
+						x: {
+							grid: {display: false},
+							ticks: {font: {size: 11}, color: '#94a3b8'}
+						}
+					}
+				}
+			});
+
+			// Pie Chart Configuration
+			const ctxPie = document.getElementById('pieChart').getContext('2d');
+			new Chart(ctxPie, {
+				type: 'doughnut',
+				data: {
+					labels: ['Verified', 'Pending', 'Flagged'],
+					datasets: [{
+						data: [75, 15, 10],
+						backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+						borderWidth: 0,
+						hoverOffset: 10
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					cutout: '70%',
+					plugins: {
+						legend: {
+							position: 'bottom',
+							labels: {
+								usePointStyle: true,
+								padding: 20,
+								font: {size: 12, family: 'Inter'}
+							}
+						}
+					}
+				}
+			});
+		};
+
+		window.onload = () => {
+			initCharts();
+			setTimeout(() => {
+				setAccuracy(94);
+			}, 300);
+		};
+		
+
+	</script>
+
 </body>
+
 </html>

@@ -1,6 +1,7 @@
 package com.ai.login.controller;
 
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import com.ai.login.util.JwtUtil;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin
 public class loginUserController {
 
     @Autowired
@@ -25,43 +25,56 @@ public class loginUserController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // 🔐 LOGIN API
     @PostMapping("/checkUserLogin")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request,
+                                  HttpServletResponse response) {
 
         try {
             authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
+                    request.getUsername(),
+                    request.getPassword()
                 )
             );
 
-            // ✅ Generate JWT
             String token = jwtUtil.generateToken(request.getUsername());
 
+            // 🔥 FIX: Proper cookie with SameSite
+            String cookie = "token=" + token +
+                    "; Path=/" +
+                    "; Max-Age=3600" +
+                    "; HttpOnly" +
+                    "; SameSite=Lax";   // ✅ important
+
+            response.setHeader("Set-Cookie", cookie);
+
             return ResponseEntity.ok(Map.of(
-                    "message", "Login successful",
-                    "token", token
+                "message", "Login successful"
             ));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body(
-                    new ApiResponse("Invalid username or password", false)
+                new ApiResponse("Invalid username or password", false)
             );
         }
     }
 
-    // 🔐 REGISTER API
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody User user) {
 
         ApiResponse response = userService.register(user);
 
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return response.isSuccess()
+                ? ResponseEntity.ok(response)
+                : ResponseEntity.badRequest().body(response);
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+        // 🔥 delete cookie
+        String cookie = "token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax";
+        response.setHeader("Set-Cookie", cookie);
+
+        return ResponseEntity.ok().build();
     }
 }

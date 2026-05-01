@@ -2,9 +2,16 @@ body {
 	font-family: 'Inter', sans-serif;
 	background-color: #f8fafc;
 }
- /* Custom transitions for a premium feel */
-        .transition-all { transition: all 0.3s ease; }
-        .active-menu { background-color: #3b82f6; color: white; }
+
+/* Custom transitions for a premium feel */
+.transition-all {
+	transition: all 0.3s ease;
+}
+
+.active-menu {
+	background-color: #3b82f6;
+	color: white;
+}
 
 .record-row {
 	transition: all 0.2s ease;
@@ -118,3 +125,10 @@ body {
 	background-color: #f5f3ff;
 	transform: scale(1.01);
 }
+
+.aiButtonClass {
+	position: relative;
+	left: 74%;
+	margin-bottom: 25px;
+}
+

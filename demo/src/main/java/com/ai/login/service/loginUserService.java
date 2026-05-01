@@ -42,6 +42,7 @@ public class loginUserService {
 
             // 🔐 Encrypt password
             user.setPassword(encoder.encode(user.getPassword()));
+            user.setEmail(user.getEmail());
             String randomId = UUID.randomUUID().toString();
             user.setId(randomId);
 

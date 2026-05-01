@@ -19,7 +19,6 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
-    // 🔐 Main Security Config
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -27,35 +26,40 @@ public class SecurityConfig {
             .csrf().disable()
             .authorizeRequests()
             .antMatchers(
-                "/", "/login", "/userLogin",
+                "/", "/login",
                 "/auth/**",
-
-                // 🔥 ADD THESE (IMPORTANT)
                 "/js/**",
                 "/css/**",
                 "/images/**",
                 "/webjars/**"
             ).permitAll()
             .anyRequest().authenticated()
+
+            .and()
+            .exceptionHandling()
+            .authenticationEntryPoint((req, res, ex) -> {
+                res.sendRedirect("/login"); // 🔁 backend redirect
+            })
+
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
             .and()
             .formLogin().disable()
-            .httpBasic().disable()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .httpBasic().disable();
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // 🔐 AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // 🔐 Password Encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

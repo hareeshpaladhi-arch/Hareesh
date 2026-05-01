@@ -33,36 +33,89 @@ function notify(msg, type = 'success') {
 	toast.classList.remove('hidden');
 	setTimeout(() => toast.classList.add('hidden'), 4000);
 }
-function userLogin() {
+async function userLogin(event) {
+	event.preventDefault();
+	document.getElementById("loaderDiv").style.display = "";
 
-    fetch("/auth/checkUserLogin", {
+	try {
+		const response = await fetch("/auth/checkUserLogin", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			credentials: "include",
+			body: JSON.stringify({
+				username: document.getElementById("username").value,
+				password: document.getElementById("password").value
+			})
+		});
+
+
+		const data = await response.json();
+		document.getElementById("loaderDiv").style.display = "none";
+
+		if (!response.ok) {
+			throw new Error(data.message || "Login failed");
+		}
+
+		// 🔐 store JWT token
+		localStorage.setItem("token", data.token);
+
+		console.log("Login Success:", data);
+
+		// 🔁 redirect after login
+		window.location.href = "/userLogin";
+
+	} catch (error) {
+		console.error("Login Error:", error);
+		document.getElementById("loginError").innerText = error.message;
+		document.getElementById("loaderDiv").style.display = "none";
+	}
+}
+async function logout() {
+    await fetch("/auth/logout", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username: document.getElementById("username").value,
-            password: document.getElementById("password").value
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Invalid username or password");
-        }
-        return response.json();   // ✅ FIX
-    })
-    .then(data => {
-
-        console.log(data);
-
-        // 🔐 Save JWT token
-        localStorage.setItem("token", data.token);
-
-        // 🔁 Redirect
-        window.location.href = "/userLogin";
-
-    })
-    .catch(error => {
-        document.getElementById("loginError").innerText = error.message;
+        credentials: "include"
     });
+
+    // 🔁 redirect to login
+    window.location.href = "/login";
+}
+async function register(event) {
+	event.preventDefault();
+	document.getElementById("loaderDiv").style.display = "";
+
+	try {
+		const response = await fetch("/auth/register", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				username: document.getElementById("rgusername").value,
+				password: document.getElementById("rgpassword").value,
+				email: document.getElementById("rgemail").value
+			})
+		});
+
+
+		const data = await response.json();
+		document.getElementById("loaderDiv").style.display = "none";
+		if (data.success) {
+			document.getElementById("loginRegisterError").style.color = "green";
+		}
+		document.getElementById("loginRegisterError").innerText = data.message;
+
+		if (!response.ok) {
+			throw new Error(data.message || "Register failed");
+
+		}
+
+
+
+	} catch (error) {
+		console.error("Login Error:", error);
+		document.getElementById("loginRegisterError").innerText = error.message;
+		document.getElementById("loaderDiv").style.display = "none";
+	}
 }

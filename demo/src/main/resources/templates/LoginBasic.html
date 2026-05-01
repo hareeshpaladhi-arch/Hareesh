@@ -12,6 +12,9 @@
 </head>
 
 <body class="flex items-center justify-center p-6">
+	<div id="loaderDiv" class="loaderDivClass" style="display: none;">
+		<img src="images/loader.gif" width="125px;" /></div>
+	
 
 	<div class=" flex flex-col sm:flex-row  overflow-hidden glass-panel " style="height: 530px;">
 
@@ -101,95 +104,80 @@
 						<p class="text-slate-500 mt-2">Connect to your organization's secure data cluster.</p>
 					</div>
 
-					<form autocomplete="off" onsubmit="handleAuth(event, 'login')" class="space-y-5">
+					<form autocomplete="off" class="space-y-5" onsubmit="userLogin(event)">
+
 						<div class="space-y-2">
-							<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">User
-								name</label>
+							<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+								User name
+							</label>
 							<input type="text" id="username" required placeholder="name@company.com"
 								class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 focus:ring-0 input-focus-effect outline-none transition-all text-slate-700">
 						</div>
 
 						<div class="space-y-2">
 							<div class="flex justify-between">
-								<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pass
-									word</label>
+								<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+									Password
+								</label>
 								<button type="button" onclick="showSection('forgot')"
-									class="text-xs font-bold text-indigo-600 hover:text-indigo-700">Lost Key?</button>
+									class="text-xs font-bold text-indigo-600 hover:text-indigo-700">
+									Lost Key?
+								</button>
 							</div>
+
 							<input type="password" id="password" required placeholder="••••••••"
 								class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 focus:ring-0 input-focus-effect outline-none transition-all text-slate-700">
 						</div>
-						<div id="loginError" Style="color: red;"></div>
 
-						<button onclick="userLogin()"
+						<div id="loginError" style="color:red;"></div>
+
+						<button type="submit"
 							class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl shadow-xl shadow-indigo-200 transition-all transform hover:-translate-y-1 active:scale-[0.98]">
 							Sign In
 						</button>
+
 					</form>
 				</section>
 
 				<!-- REGISTER -->
 				<section id="register-section" class="hidden animate-fade-in space-y-8">
-					<div>
-						<h2 class=" font-bold text-slate-900">Provision Domain</h2>
-						<p class="text-slate-500 mt-2">Set up a new master data management environment.</p>
-					</div>
 
-					<form onsubmit="handleAuth(event, 'register')" class="space-y-6">
-						<div class="grid grid-cols-2 gap-4">
-							<div class="space-y-2">
-								<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Org
-									Name</label>
-								<input type="text" required placeholder="Acme Inc."
-									class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 outline-none transition-all input-focus-effect">
-							</div>
-							<div class="space-y-2">
-								<label
-									class="text-xs font-bold text-slate-400 uppercase tracking-wider">Subdomain</label>
-								<input type="text" required placeholder="acme-hq"
-									class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 outline-none transition-all input-focus-effect">
-							</div>
+					<form autocomplete="off" class="space-y-5" onsubmit="register(event)">
+						<div class="space-y-2">
+							<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+								Email
+							</label>
+							<input type="text" id="rgemail" required placeholder="name@company.com"
+								class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 focus:ring-0 input-focus-effect outline-none transition-all text-slate-700">
 						</div>
 
-						<div class="space-y-4">
-							<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Service
-								Tier</label>
-							<div class="grid grid-cols-1 gap-3">
-								<label class="cursor-pointer">
-									<input type="radio" name="plan" class="subscription-radio hidden" checked>
-									<div
-										class="subscription-card p-5 border-2 border-slate-100 rounded-2xl flex items-center justify-between">
-										<div>
-											<p class="font-bold text-slate-800">Growth Plan</p>
-											<p class="text-xs text-slate-500">Up to 50k Golden Records</p>
-										</div>
-										<div class="text-right">
-											<p class="font-bold text-indigo-600">$49/mo</p>
-											<p class="text-[10px] text-slate-400">Billed yearly</p>
-										</div>
-									</div>
-								</label>
-								<label class="cursor-pointer">
-									<input type="radio" name="plan" class="subscription-radio hidden">
-									<div
-										class="subscription-card p-5 border-2 border-slate-100 rounded-2xl flex items-center justify-between">
-										<div>
-											<p class="font-bold text-slate-800">Business Elite</p>
-											<p class="text-xs text-slate-500">Unlimted Nodes & AI Audit</p>
-										</div>
-										<div class="text-right">
-											<p class="font-bold text-indigo-600">$199/mo</p>
-											<p class="text-[10px] text-slate-400">Enterprise support</p>
-										</div>
-									</div>
-								</label>
-							</div>
+						<div class="space-y-2">
+							<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+								User name
+							</label>
+							<input type="text" id="rgusername" required placeholder="name@company.com"
+								class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 focus:ring-0 input-focus-effect outline-none transition-all text-slate-700">
 						</div>
+
+						<div class="space-y-2">
+							<div class="flex justify-between">
+								<label class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+									Password
+								</label>
+								
+							</div>
+
+							<input type="password" id="rgpassword" required placeholder="••••••••"
+								class="w-full px-5 py-4 rounded-2xl bg-slate-100 border-transparent focus:bg-white border-2 focus:ring-0 input-focus-effect outline-none transition-all text-slate-700">
+						</div>
+
+						<div id="loginRegisterError" style="color:red;"></div>
 
 						<button type="submit"
-							class="w-full bg-slate-900 hover:bg-black text-white font-bold py-5 rounded-2xl transition-all shadow-xl shadow-slate-200">
-							Initialize Cluster
+							class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl shadow-xl shadow-indigo-200 transition-all transform hover:-translate-y-1 active:scale-[0.98]">
+							Sign Up
 						</button>
+
 					</form>
 				</section>
 
@@ -227,7 +215,7 @@
 		</div>
 	</div>
 
-	
+
 </body>
 
 </html>
