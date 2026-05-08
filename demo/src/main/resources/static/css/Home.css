@@ -745,7 +745,7 @@
 
 		.bg-blue-600 {
 			--tw-bg-opacity: 1;
-			background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1))
+			background-color: rgb(234 88 12 / var(--tw-bg-opacity, 1))
 		}
 
 		.bg-emerald-500 {
@@ -949,7 +949,7 @@
 
 		.text-blue-600 {
 			--tw-text-opacity: 1;
-			color: rgb(37 99 235 / var(--tw-text-opacity, 1))
+			color: rgb(234 88 12 / var(--tw-text-opacity, 1));
 		}
 
 		.text-blue-700 {

@@ -132,3 +132,89 @@ body {
 	margin-bottom: 25px;
 }
 
+.active-menu {
+	background-color: #fff7ed;
+	color: #ea580c;
+	border-right: 4px solid #ea580c;
+}
+
+.mapping-line {
+	stroke: #ea580c;
+	stroke-width: 2;
+	fill: none;
+	stroke-dasharray: 4;
+	animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+	to {
+		stroke-dashoffset: -8;
+	}
+}
+
+.node-item {
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.node-item:hover {
+	border-color: #ea580c;
+	background-color: #fff7ed;
+}
+
+.node-item.selected {
+	border-color: #ea580c;
+	background-color: #ea580c;
+	color: white;
+}
+
+.node-item.mapped {
+	border-color: #10b981;
+	background-color: #f0fdf4;
+}
+
+.upload-zone:hover {
+	border-color: #f97316;
+	background-color: #fffaf5;
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #fdba74;
+	border-radius: 10px;
+}
+
+#profileDropdown {
+	transform-origin: top right;
+	transition: all 0.2s ease-out;
+}
+
+#profileDropdown.hidden {
+	opacity: 0;
+	transform: scale(0.95);
+	pointer-events: none;
+	display: block !important;
+}
+
+.modal-animate-in {
+	animation: modalIn 0.3s ease-out forwards;
+}
+
+@keyframes modalIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95) translateY(10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}

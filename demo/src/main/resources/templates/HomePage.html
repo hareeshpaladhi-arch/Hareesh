@@ -2,866 +2,764 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>AI Automation Dashboard</title>
-	<script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" th:href="@{/css/Homepage.css}">
-	<script src="https://cdn.tailwindcss.com"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	<script th:src="@{/js/Homepage.js}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Nexus | Smart Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"/>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/Homepage.css}">
+	<script th:src="@{/js/Homepage.js}"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --brand-orange: #FF5C00;
+            --brand-black: #0F172A;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+        }
+
+        .active-menu {
+            background-color: var(--brand-orange) !important;
+            color: white !important;
+            box-shadow: 0 10px 15px -3px rgba(255, 92, 0, 0.3);
+        }
+
+        .sidebar-dark {
+            background-color: #020617;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(241, 245, 249, 1);
+        }
+
+        .mapping-line {
+            fill: none;
+            stroke: var(--brand-orange);
+            stroke-width: 2.5;
+            stroke-dasharray: 6;
+            animation: dash 30s linear infinite;
+            filter: drop-shadow(0 0 3px rgba(255, 92, 0, 0.4));
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+
+        .node-item {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .node-item:hover {
+            transform: translateX(4px);
+            border-color: var(--brand-orange);
+        }
+
+        .node-item.selected {
+            border-color: var(--brand-orange);
+            background-color: #FFF7ED;
+            box-shadow: 0 0 0 2px rgba(255, 92, 0, 0.1);
+        }
+
+        .node-item.mapped {
+            background-color: #F0FDF4;
+            border-color: #22C55E;
+            color: #166534;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #E2E8F0;
+            border-radius: 20px;
+        }
+
+        .modal-animate-in {
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
 </head>
 
-<body class="bg-gray-50 font-sans text-gray-900 h-screen overflow-hidden">
+<body class="h-screen overflow-hidden text-slate-900">
 
-	<div class="flex h-full w-full">
-		<!-- Sidebar: 30% Width -->
-		<aside class="w-[20%] bg-white border-r border-gray-200 flex flex-col shadow-sm">
-			<div class="p-6 border-b border-gray-100">
-				<h1
-					class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-					AI Nexus
-				</h1>
-			</div>
+    <div class="flex h-full w-full">
+        <!-- Sidebar -->
+        <aside class="w-72 sidebar-dark flex flex-col shadow-2xl z-50">
+            <div class="p-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#FF5C00] rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-900/20">
+                        <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
+                    </div>
+                    <span class="text-white font-extrabold text-xl tracking-tight">AI NEXUS</span>
+                </div>
+            </div>
 
-			<nav class="flex-1 p-4 space-y-2">
-				<button onclick="switchTab('dashboard')" id="btn-dashboard"
-					class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-100 active-menu">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-						</path>
-					</svg>
-					<span class="font-medium">Dashboard</span>
-				</button>
+            <nav class="flex-1 px-4 space-y-2 mt-4">
+                <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] px-4 mb-4">Main Menu</p>
+                <button onclick="switchTab('dashboard')" id="btn-dashboard"
+                    class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all text-slate-400 hover:text-white active-menu">
+                    <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                    <span class="font-bold">Insights</span>
+                </button>
+                <button onclick="switchTab('ai-automation')" id="btn-ai-automation"
+                    class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="cpu" class="w-5 h-5"></i>
+                    <span class="font-bold">Automation</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                    <span class="font-bold">Datasets</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="settings-2" class="w-5 h-5"></i>
+                    <span class="font-bold">Models</span>
+                </button>
+            </nav>
 
-				<button onclick="switchTab('ai-automation')" id="btn-ai-automation"
-					class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-100 text-gray-600">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-					</svg>
-					<span class="font-medium">AI Automation</span>
-				</button>
+            <div class="p-6">
+                <div class="bg-slate-900/50 rounded-2xl p-4 border border-slate-800">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-600 to-amber-400 flex items-center justify-center text-white font-bold border-2 border-slate-800">
+                            HP
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="text-xs font-bold text-white truncate">Hareesh Paladi</p>
+                            <p class="text-[10px] text-orange-500 font-bold">PREMIUM PLAN</p>
+                        </div>
+                    </div>
+                    <button class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold rounded-lg transition-colors">
+                        UPGRADE
+                    </button>
+                </div>
+            </div>
+        </aside>
 
-				<div class="pt-4 mt-4 border-t border-gray-100">
-					<p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Help & Support</p>
-					<button class="w-full flex items-center space-x-3 px-4 py-3 text-gray-500 hover:text-blue-600">
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-							</path>
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-						</svg>
-						<span class="font-medium text-sm">Settings</span>
-					</button>
-				</div>
-			</nav>
-
-			<div class="p-6 bg-gray-50 border-t border-gray-200">
-				<div class="flex items-center space-x-3">
-					<div
-						class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-						JD
-					</div>
-					<div>
-						<p class="text-sm font-semibold">Hareesh Paladi</p>
-						<p class="text-xs text-gray-500 italic">Premium Plan</p>
-					</div>
-				</div>
-			</div>
-		</aside>
-
-		<!-- Main Content Area: 70% Width -->
-		<main class="w-[80%] h-full overflow-y-auto bg-white">
-
-			<!-- Dashboard View -->
-			<header>
-				<div class="max-w-6xl mx-auto">
-					<!-- New Top Navigation / Notification Bar -->
-					<nav
-						class="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-						<div class="flex items-center gap-4 flex-1 max-w-md">
-							<div class="relative w-full">
-								<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-									<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-											d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-									</svg>
-								</span>
-								<input type="text" placeholder="Search records, classes or properties..."
-									class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all">
-							</div>
-						</div>
-
-						<div class="flex items-center gap-4 ml-4">
-							<button
-								class="relative p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
-								<span
-									class="absolute top-2 right-2.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-								<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-										d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-									</path>
-								</svg>
-							</button>
-							<div
-								class="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border-2 border-white shadow-sm cursor-pointer">
-							</div>
-						</div>
-					</nav>
-			</header>
-			<section id="view-dashboard" class="p-8">
-
-
-				<div class="max-w-6xl mx-auto">
-					<!-- Header -->
-					<header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-
-						<div class="flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
-							<span class="flex h-3 w-3 rounded-full bg-green-500 animate-pulse"></span>
-							<span class="text-sm font-medium text-slate-600">System Live</span>
-							<span class="text-slate-300">|</span>
-							<span id="current-date" class="text-sm text-slate-500"></span>
-						</div>
-					</header>
-
-					<!-- Main Stats Grid -->
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-
-						<!-- Total Records -->
-						<div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-							<div class="flex items-center justify-between mb-4">
-								<div class="p-2 bg-blue-50 rounded-lg text-blue-600">
-									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-										viewBox="0 0 24 24" stroke="currentColor">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-											d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-									</svg>
-								</div>
-								<span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">+12%</span>
-							</div>
-							<h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Records</h3>
-							<div class="text-3xl font-bold text-slate-800 mt-1" id="count-records">1,284,000</div>
-						</div>
-
-						<!-- Total Classes -->
-						<div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-							<div class="flex items-center justify-between mb-4">
-								<div class="p-2 bg-purple-50 rounded-lg text-purple-600">
-									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-										viewBox="0 0 24 24" stroke="currentColor">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-											d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-									</svg>
-								</div>
-								<span
-									class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">Stable</span>
-							</div>
-							<h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Classes</h3>
-							<div class="text-3xl font-bold text-slate-800 mt-1" id="count-classes">42</div>
-						</div>
-
-						<!-- Properties Extracted -->
-						<div class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-							<div class="flex items-center justify-between mb-4">
-								<div class="p-2 bg-orange-50 rounded-lg text-orange-600">
-									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-										viewBox="0 0 24 24" stroke="currentColor">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-											d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-									</svg>
-								</div>
-								<span
-									class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">+542</span>
-							</div>
-							<h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Properties</h3>
-							<div class="text-3xl font-bold text-slate-800 mt-1" id="count-properties">8,912</div>
-						</div>
-
-						<!-- Accuracy % -->
-						<div
-							class="metric-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center">
-							<div class="relative inline-flex items-center justify-center">
-								<svg class="w-24 h-24">
-									<circle class="text-slate-100" stroke-width="8" stroke="currentColor"
-										fill="transparent" r="40" cx="48" cy="48" />
-									<circle id="accuracy-ring" class="text-indigo-600 progress-ring-circle"
-										stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="251.2"
-										stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48"
-										cy="48" />
-								</svg>
-								<span class="absolute text-xl font-bold text-slate-800" id="accuracy-text">0%</span>
-							</div>
-							<h3 class="text-slate-500 text-xs font-medium uppercase tracking-wider mt-2">Overall
-								Accuracy</h3>
-						</div>
-					</div>
-
-					<!-- Charts Section -->
-					<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-						<!-- Bar Chart: Records per Class -->
-						<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-							<div class="flex items-center justify-between mb-6">
-								<h2 class="font-bold text-slate-800">Records per Top Class</h2>
-								<select
-									class="text-xs bg-slate-50 border-none rounded-md px-2 py-1 text-slate-500 outline-none">
-									<option>Last 30 Days</option>
-									<option>Last 7 Days</option>
-								</select>
-							</div>
-							<div class="chart-container">
-								<canvas id="barChart"></canvas>
-							</div>
-						</div>
-
-						<!-- Pie Chart: Distribution -->
-						<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-							<h2 class="font-bold text-slate-800 mb-6">Property Distribution</h2>
-							<div class="chart-container">
-								<canvas id="pieChart"></canvas>
-							</div>
-						</div>
-					</div>
-				</div>
-
-			</section>
-
-			<!-- AI Automation View -->
-			<section id="view-ai-automation" class="hidden p-3">
-				<!-- File Import Section -->
-				<div class="max-w-7xl mx-auto">
-
-					<!-- Drop Zone -->
-					<div id="drop-zone" class="upload-zone mb-8 bg-white rounded-xl p-8 text-center"
-						ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
-						ondrop="handleDrop(event)">
-						<div class="max-w-xs mx-auto">
-							<div class="bg-indigo-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
-								onclick="document.getElementById('file-upload').click()">
-								<svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor"
-									viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-										d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
-									</path>
-								</svg>
-							</div>
-							<p class="text-sm font-bold text-slate-700">
-								Drag & Drop files here or Click to Upload
-							</p>
-							<p class="text-xs text-slate-400 mt-1">Ingest source data for automated Noun/Modifier
-								generation</p>
-							<input id="file-upload" type="file" class="hidden" accept=".csv,.json,.xlsx"
-								onchange="handleFileUpload(event)">
-						</div>
-					</div>
-					<div>
-					<button id="openModal"
-						class="aiButtonClass group relative px-8 py-4 bg-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-200 active:scale-95 flex items-center gap-3">
-						<svg xmlns="http://www.w3.org/2000/svg"
-							class="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" fill="none"
-							viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-						</svg>
-						Execute Batch Action
-					</button>
-					</div>
-					<div id="modalOverlay"
-						class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 modal-overlay hidden-modal" style="display: none;">
-
-						<!-- Modal Card -->
-						<div
-							class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh]">
-
-							<!-- Header -->
-							<div
-								class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-								<div>
-									<h3 class="text-xl font-bold text-gray-800">Batch Configuration</h3>
-									<p class="text-sm text-gray-500">Select parameters and operations to proceed</p>
-								</div>
-								<button id="closeModal"
-									class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">
-									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-										viewBox="0 0 24 24" stroke="currentColor">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-											d="M6 18L18 6M6 6l12 12" />
-									</svg>
-								</button>
-							</div>
-
-							<!-- Body (Scrollable) -->
-							<div class="p-6 space-y-6 overflow-y-auto">
-
-								<!-- Batch ID Selection -->
-								<div class="space-y-2">
-									<label class="block text-sm font-medium text-gray-700">Batch Identifier</label>
-									<select id="batchId"
-										class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
-										<option value="" disabled selected>Select an active Batch ID</option>
-										<option value="B-2024-001">B-2024-001 (Processing)</option>
-										<option value="B-2024-002">B-2024-002 (Queued)</option>
-										<option value="B-2024-003">B-2024-003 (New)</option>
-									</select>
-								</div>
-
-								<!-- Select All Toggle -->
-								<div class="flex items-center justify-between py-2 px-1">
-									<label
-										class="text-sm font-semibold text-gray-600 uppercase tracking-wider">Operations</label>
-									<button id="selectAllBtn"
-										class="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">
-										<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-											viewBox="0 0 24 24" stroke="currentColor">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-												d="M5 13l4 4L19 7" />
-										</svg>
-										<span>Select All</span>
-									</button>
-								</div>
-
-								<!-- Operations Grid -->
-								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-									<!-- Class Operation -->
-									<div
-										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
-										<label class="flex items-center gap-3 cursor-pointer">
-											<input type="checkbox" name="operation" value="class"
-												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
-											<span class="font-semibold text-gray-700">Class Operation</span>
-										</label>
-										<p class="mt-1 ml-8 text-xs text-gray-500">Categorize entities based on defined
-											schemas.</p>
-									</div>
-
-									<!-- Char Operation -->
-									<div
-										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
-										<label class="flex items-center gap-3 cursor-pointer">
-											<input type="checkbox" name="operation" value="char"
-												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
-											<span class="font-semibold text-gray-700">Char Analysis</span>
-										</label>
-										<p class="mt-1 ml-8 text-xs text-gray-500">Extract and validate character-level
-											traits.</p>
-									</div>
-
-									<!-- Reference Operation -->
-									<div
-										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
-										<label class="flex items-center gap-3 cursor-pointer">
-											<input type="checkbox" name="operation" value="reference"
-												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
-											<span class="font-semibold text-gray-700">Reference Link</span>
-										</label>
-										<p class="mt-1 ml-8 text-xs text-gray-500">Cross-reference with master data
-											records.</p>
-									</div>
-
-									<!-- Doc Operation -->
-									<div
-										class="p-4 border border-gray-100 rounded-xl bg-gray-50 hover:border-indigo-200 transition-colors">
-										<label class="flex items-center gap-3 cursor-pointer">
-											<input type="checkbox" name="operation" value="doc"
-												class="op-checkbox w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 transition-all">
-											<span class="font-semibold text-gray-700">Doc Generation</span>
-										</label>
-										<p class="mt-1 ml-8 text-xs text-gray-500">Compile results into structured
-											documents.</p>
-									</div>
-								</div>
-
-								<!-- Enrichment Choice -->
-								<div class="pt-4 border-t border-gray-100">
-									<label class="block text-sm font-medium text-gray-700 mb-3">Enrichment
-										Choice</label>
-									<div class="flex flex-wrap gap-3">
-										<label class="flex-1 min-w-[120px]">
-											<input type="radio" name="enrichment" value="standard" class="hidden peer"
-												checked>
-											<div
-												class="p-3 text-center border-2 border-gray-100 rounded-lg cursor-pointer peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:bg-gray-50 transition-all">
-												<span class="block text-sm font-semibold text-gray-700">Standard</span>
-											</div>
-										</label>
-										<label class="flex-1 min-w-[120px]">
-											<input type="radio" name="enrichment" value="premium" class="hidden peer">
-											<div
-												class="p-3 text-center border-2 border-gray-100 rounded-lg cursor-pointer peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:bg-gray-50 transition-all">
-												<span class="block text-sm font-semibold text-gray-700">Premium</span>
-											</div>
-										</label>
-										<label class="flex-1 min-w-[120px]">
-											<input type="radio" name="enrichment" value="custom" class="hidden peer">
-											<div
-												class="p-3 text-center border-2 border-gray-100 rounded-lg cursor-pointer peer-checked:border-indigo-600 peer-checked:bg-indigo-50 hover:bg-gray-50 transition-all">
-												<span class="block text-sm font-semibold text-gray-700">Custom</span>
-											</div>
-										</label>
-									</div>
-								</div>
-							</div>
-
-							<!-- Footer -->
-							<div
-								class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-3 justify-end sticky bottom-0">
-								<button id="cancelAction"
-									class="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">
-									Cancel
-								</button>
-								<button id="submitAction"
-									class="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all active:scale-95">
-									Start Process
-								</button>
-							</div>
-						</div>
-					</div>
-					
-
-					<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-						<table class="w-full text-left border-collapse">
-							<thead class="bg-slate-50 border-b border-slate-200">
-								<tr>
-									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest w-32">
-										Stg No</th>
-									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest w-32">
-										Record No</th>
-									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest w-48">
-										Class </th>
-									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest">
-										Short Description</th>
-									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest text-right">
-										Long Description</th>
-
-									<th class="px-6 py-4 text-xs font-bold text-slate-400  tracking-widest text-right">
-										Batch No</th>
-								</tr>
-							</thead>
-							<tbody id="records-table-body">
-								<!-- Data injected via JS -->
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				<!-- Notification Toast -->
-				<div id="toast"
-					class="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl transform translate-y-24 transition-transform duration-300 flex items-center gap-3">
-					<div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-					<span id="toast-msg" class="text-sm font-medium">Processing records...</span>
-				</div>
-
-			</section>
-
-		</main>
-	</div>
-
-	<!-- Feedback Message Component -->
-	<div id="toast"
-		class="fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl transform translate-y-24 transition-transform duration-300 flex items-center space-x-3">
-		<span id="toast-message">Message here</span>
-	</div>
-	<script>
-		let records = [
-			{
-				id: "BRG-032-CH",
-				metadata: {class: "Bearing Ball"},
-				source: {
-					short: "Ball, Chrome, 32mm",
-					long: "Premium Grade 10 Chrome Steel Bearing Ball, 32mm Diameter for High Precision Load Bearing applications.",
-					mfrName: "SKF Group",
-					mfrPart: "SKF-32-G10",
-					modelNo: "SERIES-X1",
-					altMfr: "NSK Ltd",
-					altMfrPart: "NSK-B32-CH",
-					mfrUrl: "https://www.skf.com",
-					supplierUrl: "https://www.industrial-supply.com"
-				},
-				aiOutput: {
-					nounModifier: "BALL, BEARING",
-					shortDesc: "BALL, BRG, CHRM, 32MM, G10",
-					longDesc: "BALL, BEARING: CHROME STEEL; 32MM DIA; GRADE 10; HIGH PRECISION; AISI 52100",
-					attributes: [
-						{key: "Attribute 1: Material", val: "AISI 52100 Chrome Steel"},
-						{key: "Attribute 2: Diameter", val: "32MM"},
-						{key: "Attribute 3: Grade", val: "G10 (G)"}
-					],
-					checks: {
-						missing: "None",
-						spelling: "Passed",
-						duplicates: "Not Found",
-						language: "English (EN-US)",
-						abbreviations: "BRG, CHRM, G"
-					}
-				}
-			},
-			{
-				id: "PMP-HYD-04",
-				metadata: {class: "Hydraulic Pump"},
-				source: {
-					short: "Pump, Hyd, Axial Piston",
-					long: "Axial Piston Hydraulic Pump with variable displacement, 45L/min flow capacity. Used in heavy machinery.",
-					mfrName: "Bosch Rexroth",
-					mfrPart: "A10VSO28",
-					modelNo: "A10V",
-					altMfr: "Parker Hannifin",
-					altMfrPart: "PVP33",
-					mfrUrl: "https://www.boschrexroth.com",
-					supplierUrl: "https://www.hydraulics-direct.com"
-				},
-				aiOutput: {
-					nounModifier: "PUMP, HYDRAULIC",
-					shortDesc: "PUMP, HYD, AXIAL PISTON, 45LPM",
-					longDesc: "PUMP, HYDRAULIC: AXIAL PISTON; VARIABLE DISPLACEMENT; 45L/MIN; 28CC; 350 BAR MAX",
-					attributes: [
-						{key: "Attribute 1: Type", val: "Axial Piston"},
-						{key: "Attribute 2: Flow", val: "45 L/min (LPM)"},
-						{key: "Attribute 3: Pressure", val: "350 Bar"}
-					],
-					checks: {
-						missing: "Seal Kit Part No",
-						spelling: "Passed",
-						duplicates: "Potential Match: PMP-HYD-02",
-						language: "English (EN-US)",
-						abbreviations: "HYD, LPM"
-					}
-				}
-			}
-		];
-
-		function showToast(message) {
-			const toast = document.getElementById('toast');
-			document.getElementById('toast-msg').innerText = message;
-			toast.classList.remove('translate-y-24');
-			setTimeout(() => toast.classList.add('translate-y-24'), 3000);
-		}
-
-		function handleDragOver(e) {e.preventDefault(); document.getElementById('drop-zone').classList.add('dragging');}
-		function handleDragLeave(e) {document.getElementById('drop-zone').classList.remove('dragging');}
-		function handleDrop(e) {
-			e.preventDefault();
-			document.getElementById('drop-zone').classList.remove('dragging');
-			const files = e.dataTransfer.files;
-			if (files.length > 0) processFile(files[0]);
-		}
-		function handleFileUpload(e) {const file = e.target.files[0]; if (file) processFile(file);}
-
-		function processFile(file) {
-			showToast(`Ingesting ${file.name}...`);
-			setTimeout(() => {
-				const newRecord = {
-					id: "AI-" + Math.floor(Math.random() * 9999),
-					metadata: {class: "System Generated"},
-					source: {
-						short: file.name.split('.')[0],
-						long: `Full raw data imported from ${file.name}. Processing for attribute extraction.`,
-						mfrName: "Extracted MFR",
-						mfrPart: "PN-8822",
-						modelNo: "M-99",
-						mfrUrl: "#",
-						supplierUrl: "#"
-					},
-					aiOutput: {
-						nounModifier: "PENDING, CLASSIFICATION",
-						shortDesc: "IMPORT_RESULT_40CH_MAX_LIMIT_ACTIVE",
-						longDesc: "Standardized Long Description will be generated following attribute validation phase.",
-						attributes: [{key: "Attribute 1", val: "Extracting..."}],
-						checks: {missing: "Check MFR", spelling: "Passed", duplicates: "Scanning...", language: "Auto-detect", abbreviations: "Pending"}
-					}
-				};
-				records.unshift(newRecord);
-				renderTable();
-				showToast("AI Generation Complete.");
-			}, 1200);
-		}
-
-		function renderTable() {
-			const tbody = document.getElementById('records-table-body');
-			tbody.innerHTML = records.map((rec, i) => `
-                <tr id="row-${i}" class="record-row border-b border-slate-100">
-                    <td class="px-6 py-5 font-mono text-sm font-bold text-blue-600">${rec.id}</td>
-                    <td class="px-6 py-5 text-slate-700 font-medium">${rec.source.mfrName}</td>
-                    <td class="px-6 py-5">
-                        <span class="text-purple-700 font-bold text-sm tracking-tight italic">${rec.aiOutput.nounModifier}</span>
-                    </td>
-                    <td class="px-6 py-5 text-right">
-                        <button class="action-trigger text-slate-400" onclick="handleActionClick(${i})">
-                            <svg class="rotate-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+        <!-- Main Content -->
+        <main class="flex-1 h-full overflow-y-auto bg-[#F8FAFC] custom-scrollbar">
+            <header class="sticky top-0 z-40 bg-[#F8FAFC]/80 backdrop-blur-md px-8 py-6">
+                <div class="max-w-7xl mx-auto flex items-center justify-between">
+                    <div>
+                        <h2 id="pageTitle" class="text-2xl font-black text-slate-900">Performance Insights</h2>
+                        <p class="text-slate-400 text-xs font-medium">Monitoring AI operations and ingestion health</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="relative group">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-orange-500"></i>
+                            <input type="text" placeholder="Quick search..."
+                                class="w-64 pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm">
+                        </div>
+                        <div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+                        <button class="relative p-2.5 bg-white border border-slate-200 text-slate-500 hover:text-orange-600 rounded-xl shadow-sm transition-all">
+                            <i data-lucide="bell" class="h-5 w-5"></i>
+                            <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-orange-600 rounded-full border-2 border-white"></span>
                         </button>
-                    </td>
-                </tr>
-                <tr id="details-${i}" class="details-container">
-                    <td colspan="4" class="p-0">
-                        <div class="p-8 bg-slate-50 border-b border-slate-200 shadow-inner">
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                
-                                <!-- INPUT DATA -->
-                                <div class="space-y-6">
-                                    <div class="flex items-center space-x-2">
-                                        <div class="w-1.5 h-4 bg-slate-400 rounded"></div>
-                                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest">Source Input Data</h4>
-                                    </div>
-                                    <div class="bg-white p-5 rounded-lg border border-slate-200 space-y-4">
-                                        <div><label class="text-[10px] uppercase text-slate-400 font-bold">Short & Long Description</label>
-                                        <p class="text-sm font-bold text-slate-800 mb-1">${rec.source.short}</p>
-                                        <p class="text-xs text-slate-600 leading-relaxed">${rec.source.long}</p></div>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div><label class="text-[10px] uppercase text-slate-400 font-bold">MFR Name / Part No</label><p class="text-sm font-semibold text-slate-700">${rec.source.mfrName}</p><p class="text-xs text-slate-500">${rec.source.mfrPart}</p></div>
-                                            <div><label class="text-[10px] uppercase text-slate-400 font-bold">Model / Alt MFR</label><p class="text-sm font-semibold text-slate-700">${rec.source.modelNo}</p><p class="text-xs text-slate-500">${rec.source.altMfr || 'No Alternate'}</p></div>
-                                            <div class="col-span-2 flex gap-4 pt-1"><a href="${rec.source.mfrUrl}" class="text-[10px] text-blue-500 font-bold underline uppercase">MFR URL</a><a href="${rec.source.supplierUrl}" class="text-[10px] text-blue-500 font-bold underline uppercase">Supplier URL</a></div>
+                        <button onclick="toggleProfileDropdown()" class="flex items-center gap-2 p-1.5 pr-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-orange-200 transition-all">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                            </div>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                        </button>
+                        <div id="profileDropdown" class="hidden absolute right-0 mt-3 w-64 bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[100] overflow-hidden dropdown-animate">
+                                <div class="p-5 border-b border-slate-50 bg-slate-50/50">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-sm">HP</div>
+                                        <div class="overflow-hidden">
+                                            <p class="text-sm font-black text-slate-900 truncate">Hareesh Paladi</p>
+                                            <p class="text-[10px] text-slate-400 font-medium truncate">hareesh@nexus.ai</p>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="p-2 space-y-1">
+                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-cog" aria-hidden="true" class="lucide lucide-user-cog w-4 h-4 text-slate-400 group-hover:text-orange-600"><path d="M10 15H6a4 4 0 0 0-4 4v2"></path><path d="m14.305 16.53.923-.382"></path><path d="m15.228 13.852-.923-.383"></path><path d="m16.852 12.228-.383-.923"></path><path d="m16.852 17.772-.383.924"></path><path d="m19.148 12.228.383-.923"></path><path d="m19.53 18.696-.382-.924"></path><path d="m20.772 13.852.924-.383"></path><path d="m20.772 16.148.924.383"></path><circle cx="18" cy="15" r="3"></circle><circle cx="9" cy="7" r="4"></circle></svg> Account Settings
+                                    </button>
+                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="credit-card" aria-hidden="true" class="lucide lucide-credit-card w-4 h-4 text-slate-400 group-hover:text-orange-600"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg> Billing &amp; Plans
+                                    </button>
+                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" aria-hidden="true" class="lucide lucide-shield-check w-4 h-4 text-slate-400 group-hover:text-orange-600"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg> Security &amp; Tokens
+                                    </button>
+                                    <div class="h-px bg-slate-50 mx-4 my-2"></div>
+                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-out" aria-hidden="true" class="lucide lucide-log-out w-4 h-4"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg> Sign Out
+                                    </button>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </header>
 
-                                <!-- AI OUTPUT -->
-                                <div class="space-y-6">
-                                    <div class="flex items-center space-x-2"><div class="w-1.5 h-4 bg-purple-500 rounded"></div><h4 class="text-xs font-black text-purple-600 uppercase tracking-widest">AI Generated Output</h4></div>
-                                    <div class="bg-white p-5 rounded-lg border-2 border-purple-100 space-y-4 relative">
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div class="col-span-1"><label class="text-[10px] uppercase text-purple-400 font-bold">Noun, Modifier</label><p class="text-sm font-black text-purple-900">${rec.aiOutput.nounModifier}</p></div>
-                                            <div class="col-span-1"><label class="text-[10px] uppercase text-purple-400 font-bold">Short Desc (40 Char)</label><p class="text-[11px] font-mono bg-slate-50 px-2 py-1 rounded text-slate-700 border border-slate-100">${rec.aiOutput.shortDesc}</p></div>
-                                        </div>
-                                        <div><label class="text-[10px] uppercase text-purple-400 font-bold">Long Description (Attribute Capturing)</label><p class="text-xs text-slate-700 leading-relaxed font-medium">${rec.aiOutput.longDesc}</p></div>
-                                        
-                                        <div class="flex space-x-4 pt-2 border-b border-slate-100">
-                                            <button onclick="switchTab(event, 'attr-${i}')" class="tab-btn active pb-2 text-[10px] font-black uppercase">Attributes List</button>
-                                            <button onclick="switchTab(event, 'audit-${i}')" class="tab-btn pb-2 text-[10px] font-black uppercase">Audit & Checks</button>
-                                        </div>
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="px-8 pb-12">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="glass-card p-6 rounded-[2rem] shadow-sm relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-500/5 rounded-full"></div>
+                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Classes</p>
+                            <h3 class="text-3xl font-black text-slate-900">142</h3>
+                            <div class="mt-4 flex items-center gap-1.5 text-emerald-500 font-bold text-[10px]">
+                                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                                <span>12% this month</span>
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-[2rem] shadow-sm relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/5 rounded-full"></div>
+                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Mapped Props</p>
+                            <h3 class="text-3xl font-black text-slate-900">1,842</h3>
+                            <div class="mt-4 flex items-center gap-1.5 text-blue-500 font-bold text-[10px]">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                                <span>85% Coverage</span>
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-[2rem] shadow-sm relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full"></div>
+                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Avg Accuracy</p>
+                            <h3 class="text-3xl font-black text-slate-900">98.4%</h3>
+                            <div class="mt-4 w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-[98%]"></div>
+                            </div>
+                        </div>
+                        <div class="bg-orange-600 p-6 rounded-[2rem] shadow-lg shadow-orange-200 relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full"></div>
+                            <p class="text-orange-100 text-[10px] font-bold uppercase tracking-widest mb-1">Processed</p>
+                            <h3 class="text-3xl font-black text-white">1.28M</h3>
+                            <p class="mt-4 text-[10px] text-orange-200 font-bold uppercase tracking-tighter">Live Stream Active</p>
+                        </div>
+                    </div>
 
-                                        <div id="attr-${i}" class="tab-content active pt-3">
-                                            <div class="grid grid-cols-1 gap-1.5">
-                                                ${rec.aiOutput.attributes.map(a => `<div class="flex justify-between text-[11px] py-1 border-b border-slate-50 last:border-0"><span class="text-slate-400 font-medium">${a.key}</span><span class="font-bold text-slate-700">${a.val}</span></div>`).join('')}
-                                            </div>
-                                        </div>
+                    <!-- Main Chart Row -->
+                    <div class="grid grid-cols-12 gap-6 mb-8">
+                        <div class="col-span-12 lg:col-span-8 glass-card p-8 rounded-[2.5rem] shadow-sm h-[450px] flex flex-col">
+                            <div class="flex justify-between items-center mb-8">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-8 bg-orange-600 rounded-full"></div>
+                                    <h2 class="font-black text-slate-900 text-lg">Ingestion Velocity</h2>
+                                </div>
+                                <div class="flex bg-slate-100 p-1 rounded-xl">
+                                    <button class="px-4 py-1.5 text-[10px] font-bold rounded-lg bg-white shadow-sm text-slate-900">D</button>
+                                    <button class="px-4 py-1.5 text-[10px] font-bold rounded-lg text-slate-500">W</button>
+                                    <button class="px-4 py-1.5 text-[10px] font-bold rounded-lg text-slate-500">M</button>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-h-0">
+                                <canvas id="mainChart"></canvas>
+                            </div>
+                        </div>
 
-                                        <div id="audit-${i}" class="tab-content pt-3">
-                                            <div class="grid grid-cols-2 gap-y-3 gap-x-6 text-[11px]">
-                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Missing Data</span><span class="${rec.aiOutput.checks.missing === 'None' ? 'text-green-600' : 'text-red-500 font-bold'}">${rec.aiOutput.checks.missing}</span></div>
-                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Spelling Check</span><span class="text-green-600">${rec.aiOutput.checks.spelling}</span></div>
-                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Duplicates Scan</span><span class="${rec.aiOutput.checks.duplicates === 'Not Found' ? 'text-slate-500' : 'text-orange-500 font-bold'}">${rec.aiOutput.checks.duplicates}</span></div>
-                                                <div><span class="text-slate-400 uppercase font-bold block mb-1">Language Change</span><span class="text-slate-500 italic">${rec.aiOutput.checks.language}</span></div>
-                                                <div class="col-span-2"><span class="text-slate-400 uppercase font-bold block mb-1">Abbreviations Captured</span><span class="bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-mono">${rec.aiOutput.checks.abbreviations}</span></div>
-                                            </div>
-                                        </div>
+                        <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                            <div class="glass-card p-8 rounded-[2.5rem] shadow-sm flex-1 flex flex-col">
+                                <h2 class="font-black text-slate-900 text-lg mb-6 flex items-center gap-2">
+                                    <i data-lucide="pie-chart" class="w-5 h-5 text-orange-500"></i> Data Mix
+                                </h2>
+                                <div class="flex-1 relative flex items-center justify-center">
+                                    <canvas id="doughnutChart"></canvas>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mt-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-orange-600"></div>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Leads (45%)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Users (25%)</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </td>
-                </tr>
-            `).join('');
-		}
+                    </div>
 
+                    <!-- Bottom Row -->
+                    <div class="grid grid-cols-12 gap-6">
+                         <div class="col-span-12 lg:col-span-7 glass-card p-8 rounded-[2.5rem] shadow-sm">
+                            <div class="flex items-center gap-3 mb-8">
+                                <i data-lucide="activity" class="w-5 h-5 text-emerald-500"></i>
+                                <h2 class="font-black text-slate-900 text-lg">System Health & Latency</h2>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                         </div>
+                         <div class="col-span-12 lg:col-span-5 glass-card p-8 rounded-[2.5rem] shadow-sm">
+                            <h2 class="font-black text-slate-900 text-lg mb-6">Recent Activity</h2>
+                            <div class="space-y-6">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 flex-shrink-0">
+                                        <i data-lucide="file-check" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-800">Batch_X942 Processed</p>
+                                        <p class="text-xs text-slate-400">1,204 rows mapped successfully</p>
+                                        <p class="text-[10px] text-slate-300 mt-1 uppercase font-bold">2 mins ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                                        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-800">Schema Synced</p>
+                                        <p class="text-xs text-slate-400">Enterprise leads structure updated</p>
+                                        <p class="text-[10px] text-slate-300 mt-1 uppercase font-bold">45 mins ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            </section>
 
+            <!-- AI Automation View -->
+            <section id="view-ai-automation" class="hidden px-8 pb-12">
+                <div class="max-w-7xl mx-auto space-y-8">
+                    <!-- Banner -->
+                    <div class="bg-gradient-to-r from-orange-600 to-orange-500 p-10 rounded-[3rem] shadow-xl relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
+                            <i data-lucide="cpu" class="w-64 h-64 -translate-y-12 translate-x-12"></i>
+                        </div>
+                        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                            <div>
+                                <h2 class="text-3xl font-black text-white leading-tight">Data Ingestion Engine</h2>
+                                <p class="text-orange-100 text-sm mt-2 max-w-md">Seamlessly map source data to target schemas using our specialized AI extraction logic.</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="downloadTemplate()" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl border border-white/20 transition-all flex items-center gap-2">
+                                    <i data-lucide="file-down" class="w-5 h-5"></i> Template
+                                </button>
+                                <button onclick="toggleConfigModal(true)" class="px-6 py-3.5 bg-white text-orange-600 font-bold rounded-2xl shadow-xl hover:shadow-orange-700/20 transition-all flex items-center gap-2">
+                                    <i data-lucide="sliders" class="w-5 h-5"></i> Advanced Config
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-		window.onload = renderTable;
-	</script>
-	<script>
-		const openBtn = document.getElementById('openModal');
-        const closeBtn = document.getElementById('closeModal');
-        const cancelBtn = document.getElementById('cancelAction');
-        const submitBtn = document.getElementById('submitAction');
-        const overlay = document.getElementById('modalOverlay');
-        const selectAllBtn = document.getElementById('selectAllBtn');
-        const toast = document.getElementById('toast');
-        const opCheckboxes = document.querySelectorAll('.op-checkbox');
+                    <!-- Step 1: Upload -->
+                    <div id="uploadSection" class="glass-card border-2 border-dashed border-slate-200 rounded-[3rem] p-24 text-center cursor-pointer hover:border-orange-400 transition-all bg-white group" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" class="hidden" accept=".xlsx, .xls, .csv">
+                        <div class="flex flex-col items-center">
+                            <div class="w-20 h-20 bg-orange-50 rounded-[2rem] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-100 transition-all">
+                                <i data-lucide="upload-cloud" class="text-orange-600 w-10 h-10"></i>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900">Upload CSV/XLSX Source</h3>
+                            <p class="text-slate-400 mt-2 text-sm">Drag and drop your file here to start the mapping process</p>
+                            <div class="mt-8 flex gap-4">
+                                <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Encrypted
+                                </div>
+                                <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <i data-lucide="zap" class="w-4 h-4 text-orange-500"></i> Instant Parsed
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="tableDataSection" class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+						</div>
 
-        function toggleModal(show) {
-            if (show) {
-                overlay.classList.remove('hidden-modal');
-                overlay.style.display="";
-                
-            } else {
-                overlay.classList.add('hidden-modal');
-                overlay.style.display="none"
+                    <!-- Step 2: Mapping UI -->
+                    <div id="mappingSection" class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div class="glass-card rounded-[3rem] p-10 relative min-h-[600px] shadow-sm">
+                            <div class="flex justify-between items-center mb-12">
+                                <h3 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+                                    <div class="w-1.5 h-8 bg-orange-500 rounded-full"></div>
+                                    Schema Alignment
+                                </h3>
+                                <div class="flex items-center gap-6">
+                                    <button onclick="autoMapHeaders()" class="flex items-center gap-2 text-sm font-black text-orange-600 hover:text-orange-700 transition-colors">
+                                        <i data-lucide="sparkles" class="w-4 h-4"></i> Magic Auto-Map
+                                    </button>
+                                    <button onclick="resetMapping()" class="text-sm font-bold text-slate-400 hover:text-red-500 transition-colors">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-32 relative z-10">
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Source File Headers</span>
+                                        <span class="text-[10px] font-bold text-orange-500">Select Item</span>
+                                    </div>
+                                    <div id="sourceFields" class="space-y-2.5 custom-scrollbar max-h-[500px] pr-4"></div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Destination Target</span>
+                                        <span class="text-[10px] font-bold text-orange-500">Map Here</span>
+                                    </div>
+                                    <div id="targetFields" class="space-y-2.5 custom-scrollbar max-h-[500px] pr-4"></div>
+                                </div>
+                            </div>
+                            <svg id="mappingLines" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></svg>
+                        </div>
+
+                        <div class="flex justify-between items-center bg-white p-8 rounded-[2rem] border border-slate-100">
+                            <div class="flex items-center gap-4">
+                                <div id="mappingCounter" class="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-800">
+                                    0
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">Fields Mapped</p>
+                                    <p class="text-xs text-slate-400">Target schema requires at least 1 mapping</p>
+                                </div>
+                            </div>
+                            <button id="btnRunProcess" disabled onclick="uploadFile()"
+                                class="px-10 py-4 bg-slate-100 text-slate-400 font-black rounded-2xl cursor-not-allowed transition-all flex items-center gap-3">
+                                <i data-lucide="zap" class="w-5 h-5"></i>
+                                Start Batch Process
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals & Overlays -->
+    <div id="configModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6">
+        <div class="bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl overflow-hidden modal-animate-in">
+            <div class="p-10 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900">Batch Logic</h2>
+                    <p class="text-slate-400 text-sm mt-1">Configure AI behavior for this ingestion</p>
+                </div>
+                <button onclick="toggleConfigModal(false)" class="p-3 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-slate-100">
+                    <i data-lucide="x" class="w-6 h-6 text-slate-400"></i>
+                </button>
+            </div>
+            <div class="p-10 space-y-8">
+                <div class="grid grid-cols-2 gap-6">
+                    <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-orange-200 transition-all cursor-pointer bg-slate-50/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            </div>
+                            <input type="checkbox" id="config-enrichment" class="w-5 h-5 accent-orange-600">
+                        </div>
+                        <p class="font-black text-slate-900 text-sm">AI Enrichment</p>
+                        <p class="text-[10px] text-slate-400 mt-1">Predict missing data fields</p>
+                    </label>
+                    <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-blue-200 transition-all cursor-pointer bg-slate-50/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                                <i data-lucide="spell-check" class="w-5 h-5"></i>
+                            </div>
+                            <input type="checkbox" id="config-spellcheck" class="w-5 h-5 accent-blue-600">
+                        </div>
+                        <p class="font-black text-slate-900 text-sm">Cleaning Mode</p>
+                        <p class="text-[10px] text-slate-400 mt-1">Normalize syntax & typos</p>
+                    </label>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Model Reference</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="config-classify" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500/20">
+                            <option>Standard Leads</option>
+                            <option>Enterprise B2B</option>
+                            <option>Retail Contacts</option>
+                        </select>
+                        <select id="config-char" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500/20">
+                            <option>UTF-8 Mapping</option>
+                            <option>Latin ASCII</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="p-10 pt-0">
+                <button onclick="toggleConfigModal(false)" class="w-full py-4 bg-orange-600 text-white font-black rounded-2xl shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all">
+                    Apply Batch Configuration
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="processingOverlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center">
+        <div class="bg-white rounded-[3rem] p-12 max-w-sm w-full text-center shadow-2xl">
+            <div class="relative w-24 h-24 mx-auto mb-8">
+                <div class="absolute inset-0 rounded-full border-4 border-orange-100"></div>
+                <div class="absolute inset-0 rounded-full border-4 border-orange-600 border-t-transparent animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i data-lucide="zap" class="w-8 h-8 text-orange-600 fill-current"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-black text-slate-900">Synchronizing...</h2>
+            <p class="text-slate-400 mt-2 text-sm">Analyzing mappings and predicting schema alignment</p>
+            <div class="mt-10">
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-orange-600 h-full w-0 transition-all duration-500"></div>
+                </div>
+                <p id="progressText" class="mt-3 text-[10px] font-black text-orange-600 uppercase tracking-widest">In Progress 0%</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Charts
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { display: false },
+                x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 10 }, color: '#94a3b8' } }
             }
-        }
+        };
 
-        function showToast(message) {
-            toast.textContent = message;
-            toast.classList.remove('opacity-0');
-            setTimeout(() => {
-                toast.classList.add('opacity-0');
-            }, 3000);
-        }
-
-        // Select All Logic
-        let allSelected = false;
-        selectAllBtn.addEventListener('click', () => {
-            allSelected = !allSelected;
-            opCheckboxes.forEach(cb => cb.checked = allSelected);
-            
-            // Update button text/ui
-            const label = selectAllBtn.querySelector('span');
-            label.textContent = allSelected ? 'Deselect All' : 'Select All';
+        const ctxMain = document.getElementById('mainChart').getContext('2d');
+        new Chart(ctxMain, {
+            type: 'line',
+            data: {
+                labels: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'],
+                datasets: [{
+                    data: [45, 52, 48, 70, 65, 85, 80, 95, 90, 110],
+                    borderColor: '#FF5C00',
+                    borderWidth: 4,
+                    pointRadius: 0,
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: (ctx) => {
+                        const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
+                        gradient.addColorStop(0, 'rgba(255, 92, 0, 0.15)');
+                        gradient.addColorStop(1, 'rgba(255, 92, 0, 0)');
+                        return gradient;
+                    }
+                }]
+            },
+            options: commonOptions
         });
 
-        // Individual Checkbox Logic (uncheck select all if one is unchecked)
-        opCheckboxes.forEach(cb => {
-            cb.addEventListener('change', () => {
-                const checkedCount = document.querySelectorAll('.op-checkbox:checked').length;
-                allSelected = checkedCount === opCheckboxes.length;
-                selectAllBtn.querySelector('span').textContent = allSelected ? 'Deselect All' : 'Select All';
+        const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+        new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Leads', 'Users', 'Other'],
+                datasets: [{
+                    data: [45, 25, 30],
+                    backgroundColor: ['#FF5C00', '#3b82f6', '#f1f5f9'],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                cutout: '80%',
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7'],
+                datasets: [{
+                    label: 'Latency',
+                    data: [400, 350, 420, 200, 310, 450, 210],
+                    backgroundColor: '#10b981',
+                    borderRadius: 8,
+                    barThickness: 12
+                }]
+            },
+            options: commonOptions
+        });
+
+        // App Logic
+        const targetFieldsList = ['ID','CLASS','SHORT_DESC','LONG_DESC','MATERIAL_TYPE','UNSPC]'];
+        let sourceFieldsList = [];
+        let mappings = [];
+        let selectedSource = null;
+
+        const fileInput = document.getElementById('fileInput');
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const bstr = evt.target.result;
+                const wb = XLSX.read(bstr, {type: 'binary'});
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                const data = XLSX.utils.sheet_to_json(ws, {header: 1});
+                if (data.length > 0) {
+                    sourceFieldsList = data[0];
+                    renderMappingUI();
+                }
+            };
+            reader.readAsBinaryString(file);
+        });
+
+        function renderMappingUI() {
+            document.getElementById('uploadSection').classList.add('hidden');
+            document.getElementById('mappingSection').classList.remove('hidden');
+            
+            const sourceContainer = document.getElementById('sourceFields');
+            const targetContainer = document.getElementById('targetFields');
+            sourceContainer.innerHTML = '';
+            targetContainer.innerHTML = '';
+
+            sourceFieldsList.forEach((field, i) => {
+                const div = document.createElement('div');
+                div.className = 'node-item p-5 border border-slate-100 rounded-2xl font-bold text-xs bg-white shadow-sm flex items-center justify-between cursor-pointer';
+                div.id = `source-${i}`;
+                div.innerHTML = `<span>${field}</span> <i data-lucide="circle" class="w-3 h-3 text-slate-200"></i>`;
+                div.onclick = () => selectSource(i);
+                sourceContainer.appendChild(div);
             });
-        });
 
-        openBtn.addEventListener('click', () => toggleModal(true));
-        closeBtn.addEventListener('click', () => toggleModal(false));
-        cancelBtn.addEventListener('click', () => toggleModal(false));
+            targetFieldsList.forEach((field, i) => {
+                const div = document.createElement('div');
+                div.className = 'node-item p-5 border border-slate-100 rounded-2xl font-bold text-xs bg-white shadow-sm flex items-center justify-between text-right cursor-pointer';
+                div.id = `target-${i}`;
+                div.innerHTML = `<i data-lucide="circle" class="w-3 h-3 text-slate-200"></i> <span>${field}</span>`;
+                div.onclick = () => selectTarget(i);
+                targetContainer.appendChild(div);
+            });
 
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) toggleModal(false);
-        });
+            lucide.createIcons();
+            window.addEventListener('resize', redrawLines);
+            setTimeout(redrawLines, 100);
+        }
 
-        submitBtn.addEventListener('click', () => {
-            const batchId = document.getElementById('batchId').value;
-            const operations = Array.from(document.querySelectorAll('.op-checkbox:checked')).map(cb => cb.value);
-            const enrichment = document.querySelector('input[name="enrichment"]:checked').value;
+        function selectSource(i) {
+            if (selectedSource !== null) document.getElementById(`source-${selectedSource}`).classList.remove('selected');
+            selectedSource = i;
+            document.getElementById(`source-${i}`).classList.add('selected');
+        }
 
-            if (!batchId) {
-                showToast("Please select a Batch ID first");
-                return;
-            }
-
-            if (operations.length === 0) {
-                showToast("Select at least one operation");
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Starting...';
+        function selectTarget(ti) {
+            if (selectedSource === null) return;
+            mappings = mappings.filter(m => m.target !== ti);
+            mappings.push({source: selectedSource, target: ti});
             
-            setTimeout(() => {
-                toggleModal(false);
-                showToast(`Started ${operations.length} operations for ${batchId}`);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Start Process';
-                
-                // Reset form optionally
-                allSelected = false;
-                opCheckboxes.forEach(cb => cb.checked = false);
-                selectAllBtn.querySelector('span').textContent = 'Select All';
-                document.getElementById('batchId').value = "";
-            }, 800);
-        });
-		const dropZone = document.getElementById('drop-zone');
-		dropZone.addEventListener('dragover', (e) => {
-			e.preventDefault();
-			dropZone.classList.add('bg-blue-50', 'border-blue-400');
-		});
-		dropZone.addEventListener('dragleave', () => {
-			dropZone.classList.remove('bg-blue-50', 'border-blue-400');
-		});
+            document.getElementById(`source-${selectedSource}`).classList.remove('selected');
+            document.getElementById(`source-${selectedSource}`).classList.add('mapped');
+            document.getElementById(`target-${ti}`).classList.add('mapped');
+            
+            selectedSource = null;
+            updateStatus();
+            redrawLines();
+        }
 
+        function redrawLines() {
+            const svg = document.getElementById('mappingLines');
+            if (!svg || svg.offsetParent === null) return;
+            svg.innerHTML = '';
+            const containerRect = svg.getBoundingClientRect();
 
-		document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
-			month: 'short', day: 'numeric', year: 'numeric'
-		});
+            mappings.forEach(m => {
+                const sEl = document.getElementById(`source-${m.source}`);
+                const tEl = document.getElementById(`target-${m.target}`);
+                if (!sEl || !tEl) return;
 
-		// Accuracy Circle Animation
-		const setAccuracy = (percent) => {
-			const circle = document.getElementById('accuracy-ring');
-			const text = document.getElementById('accuracy-text');
-			const radius = circle.r.baseVal.value;
-			const circumference = radius * 2 * Math.PI;
+                const sR = sEl.getBoundingClientRect();
+                const tR = tEl.getBoundingClientRect();
 
-			const offset = circumference - (percent / 100 * circumference);
-			circle.style.strokeDashoffset = offset;
+                const x1 = sR.right - containerRect.left - 20;
+                const y1 = sR.top - containerRect.top + (sR.height / 2);
+                const x2 = tR.left - containerRect.left + 20;
+                const y2 = tR.top - containerRect.top + (tR.height / 2);
 
-			let current = 0;
-			const timer = setInterval(() => {
-				if (current >= percent) {
-					clearInterval(timer);
-				} else {
-					current++;
-					text.textContent = current + '%';
-				}
-			}, 10);
-		};
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                const cp = x1 + (x2 - x1) / 2;
+                path.setAttribute("d", `M ${x1} ${y1} C ${cp} ${y1}, ${cp} ${y2}, ${x2} ${y2}`);
+                path.setAttribute("class", "mapping-line");
+                svg.appendChild(path);
+            });
+        }
 
-		// Initialize Charts
-		const initCharts = () => {
-			// Bar Chart Configuration
-			const ctxBar = document.getElementById('barChart').getContext('2d');
-			new Chart(ctxBar, {
-				type: 'bar',
-				data: {
-					labels: ['Finance', 'Legal', 'Identity', 'Orders', 'Logistics'],
-					datasets: [{
-						label: 'Records Extracted',
-						data: [452000, 210000, 185000, 92000, 145000],
-						backgroundColor: '#6366f1',
-						borderRadius: 8,
-						barThickness: 30
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-						legend: {display: false}
-					},
-					scales: {
-						y: {
-							beginAtZero: true,
-							grid: {color: '#f1f5f9'},
-							ticks: {font: {size: 11}, color: '#94a3b8'}
-						},
-						x: {
-							grid: {display: false},
-							ticks: {font: {size: 11}, color: '#94a3b8'}
-						}
-					}
-				}
-			});
+        function autoMapHeaders() {
+            resetMapping();
+            sourceFieldsList.forEach((sVal, si) => {
+                targetFieldsList.forEach((tVal, ti) => {
+                    const s = sVal.toLowerCase().replace(/[^a-z]/g, '');
+                    const t = tVal.toLowerCase().replace(/[^a-z]/g, '');
+                    if (s.includes(t) || t.includes(s)) {
+                        if (!mappings.find(m => m.target === ti)) {
+                            mappings.push({source: si, target: ti});
+                            document.getElementById(`source-${si}`).classList.add('mapped');
+                            document.getElementById(`target-${ti}`).classList.add('mapped');
+                        }
+                    }
+                });
+            });
+            updateStatus();
+            redrawLines();
+        }
 
-			// Pie Chart Configuration
-			const ctxPie = document.getElementById('pieChart').getContext('2d');
-			new Chart(ctxPie, {
-				type: 'doughnut',
-				data: {
-					labels: ['Verified', 'Pending', 'Flagged'],
-					datasets: [{
-						data: [75, 15, 10],
-						backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-						borderWidth: 0,
-						hoverOffset: 10
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					cutout: '70%',
-					plugins: {
-						legend: {
-							position: 'bottom',
-							labels: {
-								usePointStyle: true,
-								padding: 20,
-								font: {size: 12, family: 'Inter'}
-							}
-						}
-					}
-				}
-			});
-		};
+        function resetMapping() {
+            mappings = [];
+            selectedSource = null;
+            document.querySelectorAll('.node-item').forEach(el => el.classList.remove('mapped', 'selected'));
+            redrawLines();
+            updateStatus();
+        }
 
-		window.onload = () => {
-			initCharts();
-			setTimeout(() => {
-				setAccuracy(94);
-			}, 300);
-		};
-		
+        function updateStatus() {
+            const counter = document.getElementById('mappingCounter');
+            const btn = document.getElementById('btnRunProcess');
+            counter.innerText = mappings.length;
+            if (mappings.length > 0) {
+                btn.disabled = false;
+                btn.className = "px-10 py-4 bg-orange-600 text-white font-black rounded-2xl shadow-xl shadow-orange-100 hover:bg-orange-700 transition-all flex items-center gap-3 cursor-pointer";
+            } else {
+                btn.disabled = true;
+                btn.className = "px-10 py-4 bg-slate-100 text-slate-400 font-black rounded-2xl cursor-not-allowed transition-all flex items-center gap-3";
+            }
+        }
 
-	</script>
+        function switchTab(tabId) {
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-ai-automation').classList.add('hidden');
+            document.getElementById('btn-dashboard').classList.remove('active-menu');
+            document.getElementById('btn-ai-automation').classList.remove('active-menu');
+            
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`btn-${tabId}`).classList.add('active-menu');
+            
+            document.getElementById('pageTitle').innerText = tabId === 'dashboard' ? 'Performance Insights' : 'Data Ingestion Engine';
+            
+            if (tabId === 'ai-automation') setTimeout(redrawLines, 100);
+        }
 
+        function toggleConfigModal(show) {
+            document.getElementById('configModal').classList.toggle('hidden', !show);
+        }
+        function toggleProfileDropdown(e) {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        
+
+        function downloadTemplate() {
+            const ws = XLSX.utils.aoa_to_sheet([targetFieldsList]);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "TargetSchema");
+            XLSX.writeFile(wb, "Nexus_Target_Template.xlsx");
+        }
+    </script>
 </body>
-
 </html>

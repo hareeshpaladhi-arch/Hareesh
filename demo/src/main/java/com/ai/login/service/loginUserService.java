@@ -1,5 +1,7 @@
 package com.ai.login.service;
+import com.ai.login.DTO.BatchTemplate;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -8,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ai.login.DAO.UserFileImportRepository;
 import com.ai.login.DAO.loginUserDAO;
 import com.ai.login.DTO.ApiResponse;
 import com.ai.login.DTO.User;
@@ -20,6 +23,11 @@ public class loginUserService {
 
     @Autowired
     private PasswordEncoder encoder;
+    
+    @Autowired
+    private UserFileImportRepository fileRepo;
+    
+    
 
     public ApiResponse register(User user) {
 
@@ -59,4 +67,8 @@ public class loginUserService {
             return new ApiResponse("Registration failed", false);
         }
     }
+    public List<BatchTemplate> getByBatchId(String batchId) {
+        return fileRepo.findByBatchId(batchId);
+    }
+    
 }
