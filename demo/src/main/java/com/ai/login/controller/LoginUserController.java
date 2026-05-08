@@ -3,8 +3,12 @@ package com.ai.login.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +38,9 @@ import com.ai.login.service.FileUploadService;
 import com.ai.login.service.ProgressService;
 import com.ai.login.service.loginUserService;
 import com.ai.login.util.JwtUtil;
+
+import io.jsonwebtoken.lang.Arrays;
+
 import com.ai.login.DTO.BatchTemplate;
 
 @RestController
@@ -50,31 +57,33 @@ public class LoginUserController {
 	private JwtUtil jwtUtil;
 
 	@Autowired
-    private JobLauncher jobLauncher;
+	private JobLauncher jobLauncher;
 
 	@Autowired
 	private Job job;
 
 	@Autowired
 	private ProgressService progressService;
-	
+
 	@Autowired
-    private FileUploadService fileUploadService;
-	
+	private FileUploadService fileUploadService;
+
 	@Autowired
-    private Job importJob;
-	
-	@Autowired private BatchCounterListener counterListener;
+	private Job importJob;
+
+	@Autowired
+	private BatchCounterListener counterListener;
 
 	// ✅ LOGIN
 	@PostMapping("/checkUserLogin")
 	public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+		
 
 		try {
 			authManager.authenticate(
 					new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-			String token = jwtUtil.generateToken(request.getUsername());
+			String token = jwtUtil.generateToken(request.getUsername(),request.getEmail());
 
 			String cookie = "token=" + token + "; Path=/" + "; Max-Age=3600" + "; HttpOnly" + "; SameSite=Lax";
 
@@ -108,50 +117,29 @@ public class LoginUserController {
 
 	// ✅ FILE UPLOAD (FIXED)
 	@PostMapping("/upload")
-	public ResponseEntity<BatchJobResult> upload(
-	        @RequestParam("file") MultipartFile file) {
-	    try {
-	        String safeCsvPath = fileUploadService.prepareFileForBatch(file);
+	public ResponseEntity<BatchJobResult> upload(@RequestParam("file") MultipartFile file) {
+		try {
+			String safeCsvPath = fileUploadService.prepareFileForBatch(file);
 
-	        String random  = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-	        long   time    = System.currentTimeMillis();
-	        String batchId = "BATCH_" + file.getOriginalFilename() + "_" + time + "_" + random;
+			String random = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+			long time = System.currentTimeMillis();
+			String batchId = "BATCH_"+ time + "_" + random;
 
-	        JobParameters params = new JobParametersBuilder()
-	                .addString("filePath", safeCsvPath)
-	                .addString("batchId",  batchId)
-	                .addLong("timestamp",  time)
-	                .toJobParameters();
+			JobParameters params = new JobParametersBuilder().addString("filePath", safeCsvPath)
+					.addString("batchId", batchId).addLong("timestamp", time).toJobParameters();
 
-	        JobExecution execution = jobLauncher.run(importJob, params);
+			JobExecution execution = jobLauncher.run(importJob, params);
 
-	        BatchJobResult result = new BatchJobResult(
-	                batchId,
-	                counterListener.getTotalRead(),
-	                counterListener.getTotalSaved(),
-	                counterListener.getTotalSkipped(),
-	                execution.getStatus().toString(),
-	                "Batch completed successfully"
-	        );
+			BatchJobResult result = new BatchJobResult(batchId, counterListener.getTotalRead(),
+					counterListener.getTotalSaved(), counterListener.getTotalSkipped(),
+					execution.getStatus().toString(), "Batch completed successfully");
 
-	        return ResponseEntity.ok(result);
+			return ResponseEntity.ok(result);
 
-	    } catch (Exception e) {
-	        BatchJobResult error = new BatchJobResult(
-	                "N/A",
-	                0, 0, 0,
-	                "FAILED",
-	                "Upload failed: " + e.getMessage()
-	        );
-	        return ResponseEntity.status(500).body(error);
-	    }
-	}
-    
-
-	// ✅ PROGRESS
-	@GetMapping("/progress/{jobId}")
-	public Map<String, Object> getProgress(@PathVariable Long jobId) {
-		return progressService.get(jobId);
+		} catch (Exception e) {
+			BatchJobResult error = new BatchJobResult("N/A", 0, 0, 0, "FAILED", "Upload failed: " + e.getMessage());
+			return ResponseEntity.status(500).body(error);
+		}
 	}
 
 	// ✅ ERROR DOWNLOAD
@@ -163,8 +151,10 @@ public class LoginUserController {
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=error.csv")
 				.body(new InputStreamResource(new FileInputStream(file)));
 	}
+
 	@GetMapping("/batch/{batchId}")
-    public List<BatchTemplate> getData(@PathVariable String batchId) {
-        return userService.getByBatchId(batchId);
-    }
+	public List<BatchTemplate> getData(@PathVariable String batchId) {
+		return userService.getByBatchId(batchId);
+	}
+
 }

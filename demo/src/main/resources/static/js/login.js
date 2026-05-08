@@ -72,15 +72,7 @@ async function userLogin(event) {
 		document.getElementById("loaderDiv").style.display = "none";
 	}
 }
-async function logout() {
-    await fetch("/auth/logout", {
-        method: "POST",
-        credentials: "include"
-    });
 
-    // 🔁 redirect to login
-    window.location.href = "/login";
-}
 async function register(event) {
 	event.preventDefault();
 	document.getElementById("loaderDiv").style.display = "";

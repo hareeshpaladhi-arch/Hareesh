@@ -18,89 +18,7 @@
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" th:href="@{/css/Homepage.css}">
 	<script th:src="@{/js/Homepage.js}"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-
-        :root {
-            --brand-orange: #FF5C00;
-            --brand-black: #0F172A;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F8FAFC;
-        }
-
-        .active-menu {
-            background-color: var(--brand-orange) !important;
-            color: white !important;
-            box-shadow: 0 10px 15px -3px rgba(255, 92, 0, 0.3);
-        }
-
-        .sidebar-dark {
-            background-color: #020617;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(241, 245, 249, 1);
-        }
-
-        .mapping-line {
-            fill: none;
-            stroke: var(--brand-orange);
-            stroke-width: 2.5;
-            stroke-dasharray: 6;
-            animation: dash 30s linear infinite;
-            filter: drop-shadow(0 0 3px rgba(255, 92, 0, 0.4));
-        }
-
-        @keyframes dash {
-            to {
-                stroke-dashoffset: -1000;
-            }
-        }
-
-        .node-item {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .node-item:hover {
-            transform: translateX(4px);
-            border-color: var(--brand-orange);
-        }
-
-        .node-item.selected {
-            border-color: var(--brand-orange);
-            background-color: #FFF7ED;
-            box-shadow: 0 0 0 2px rgba(255, 92, 0, 0.1);
-        }
-
-        .node-item.mapped {
-            background-color: #F0FDF4;
-            border-color: #22C55E;
-            color: #166534;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #E2E8F0;
-            border-radius: 20px;
-        }
-
-        .modal-animate-in {
-            animation: modalIn 0.3s ease-out;
-        }
-
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-    </style>
+    
 </head>
 
 <body class="h-screen overflow-hidden text-slate-900">
@@ -146,7 +64,7 @@
                             HP
                         </div>
                         <div class="overflow-hidden">
-                            <p class="text-xs font-bold text-white truncate">Hareesh Paladi</p>
+                            <p class="text-xs font-bold text-white truncate" th:text="${userName}" >Hareesh Paladi</p>
                             <p class="text-[10px] text-orange-500 font-bold">PREMIUM PLAN</p>
                         </div>
                     </div>
@@ -183,14 +101,14 @@
                             </div>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
                         </button>
-                        <div id="profileDropdown" class="hidden absolute right-0 mt-3 w-64 bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[100] overflow-hidden dropdown-animate">
+                        <div id="profileDropdown" class="absolute right-0 top-full w-64 bg-white border border-slate-100 rounded-[1rem] shadow-2xl z-[100] overflow-hidden dropdown-animate hidden">
                                 <div class="p-5 border-b border-slate-50 bg-slate-50/50">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-sm">HP</div>
                                         <div class="overflow-hidden">
-                                            <p class="text-sm font-black text-slate-900 truncate">Hareesh Paladi</p>
-                                            <p class="text-[10px] text-slate-400 font-medium truncate">hareesh@nexus.ai</p>
-                                        </div>
+                                            <p id="userTextId" class="text-sm font-black text-slate-900 truncate" th:text="${userName}">Hareesh Paladi</p>
+                                            <p id="userEmailId" class="text-[10px] text-slate-400 font-medium truncate" th:text="${email}">hareesh@nexus.ai</p>
+                                        </div>	
                                     </div>
                                 </div>
                                 <div class="p-2 space-y-1">
@@ -204,7 +122,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" aria-hidden="true" class="lucide lucide-shield-check w-4 h-4 text-slate-400 group-hover:text-orange-600"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg> Security &amp; Tokens
                                     </button>
                                     <div class="h-px bg-slate-50 mx-4 my-2"></div>
-                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group">
+                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group" onclick="logout()">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-out" aria-hidden="true" class="lucide lucide-log-out w-4 h-4"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg> Sign Out
                                     </button>
                                 </div>
@@ -337,15 +255,12 @@
             <section id="view-ai-automation" class="hidden px-8 pb-12">
                 <div class="max-w-7xl mx-auto space-y-8">
                     <!-- Banner -->
-                    <div class="bg-gradient-to-r from-orange-600 to-orange-500 p-10 rounded-[3rem] shadow-xl relative overflow-hidden">
+                    <div class="bg-gradient-to-r from-orange-600 to-orange-500 p-4 rounded-[3rem] shadow-xl relative overflow-hidden">
                         <div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
                             <i data-lucide="cpu" class="w-64 h-64 -translate-y-12 translate-x-12"></i>
                         </div>
                         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                            <div>
-                                <h2 class="text-3xl font-black text-white leading-tight">Data Ingestion Engine</h2>
-                                <p class="text-orange-100 text-sm mt-2 max-w-md">Seamlessly map source data to target schemas using our specialized AI extraction logic.</p>
-                            </div>
+                            
                             <div class="flex gap-3">
                                 <button onclick="downloadTemplate()" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl border border-white/20 transition-all flex items-center gap-2">
                                     <i data-lucide="file-down" class="w-5 h-5"></i> Template
@@ -358,7 +273,7 @@
                     </div>
 
                     <!-- Step 1: Upload -->
-                    <div id="uploadSection" class="glass-card border-2 border-dashed border-slate-200 rounded-[3rem] p-24 text-center cursor-pointer hover:border-orange-400 transition-all bg-white group" onclick="document.getElementById('fileInput').click()">
+                    <div id="uploadSection" class="glass-card border-2 border-dashed border-slate-200 rounded-[1rem] p-4 text-center cursor-pointer hover:border-orange-400 transition-all bg-white group" onclick="document.getElementById('fileInput').click()">
                         <input type="file" id="fileInput" class="hidden" accept=".xlsx, .xls, .csv">
                         <div class="flex flex-col items-center">
                             <div class="w-20 h-20 bg-orange-50 rounded-[2rem] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-100 transition-all">
@@ -438,8 +353,8 @@
     </div>
 
     <!-- Modals & Overlays -->
-    <div id="configModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6">
-        <div class="bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl overflow-hidden modal-animate-in">
+    <div id="configModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div class="modal-div-class bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl  modal-animate-in">
             <div class="p-10 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-black text-slate-900">Batch Logic</h2>
@@ -449,8 +364,27 @@
                     <i data-lucide="x" class="w-6 h-6 text-slate-400"></i>
                 </button>
             </div>
-            <div class="p-10 space-y-8">
-                <div class="grid grid-cols-2 gap-6">
+            <div class="modal-content-class p-10 space-y-8">
+               
+                <div class="space-y-4">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Batch Selection</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="config-classify" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500/20">                            
+                        </select>
+                    </div>
+                </div>
+                 <div class="grid grid-cols-2 gap-6">
+					  <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-orange-200 transition-all cursor-pointer bg-slate-50/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            </div>
+                            <input type="checkbox" id="config-enrichment" class="w-5 h-5 accent-orange-600">
+                        </div>
+                        <p class="font-black text-slate-900 text-sm">Duplicate Check</p>
+                        <input type="text" id="accuracy"/>
+                        <p class="text-[10px] text-slate-400 mt-1">Check the find duplicates uploaded references</p>
+                    </label>
                     <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-orange-200 transition-all cursor-pointer bg-slate-50/30">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all">
@@ -461,6 +395,7 @@
                         <p class="font-black text-slate-900 text-sm">AI Enrichment</p>
                         <p class="text-[10px] text-slate-400 mt-1">Predict missing data fields</p>
                     </label>
+                    
                     <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-blue-200 transition-all cursor-pointer bg-slate-50/30">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all">
@@ -471,20 +406,6 @@
                         <p class="font-black text-slate-900 text-sm">Cleaning Mode</p>
                         <p class="text-[10px] text-slate-400 mt-1">Normalize syntax & typos</p>
                     </label>
-                </div>
-                <div class="space-y-4">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Model Reference</p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <select id="config-classify" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500/20">
-                            <option>Standard Leads</option>
-                            <option>Enterprise B2B</option>
-                            <option>Retail Contacts</option>
-                        </select>
-                        <select id="config-char" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500/20">
-                            <option>UTF-8 Mapping</option>
-                            <option>Latin ASCII</option>
-                        </select>
-                    </div>
                 </div>
             </div>
             <div class="p-10 pt-0">
@@ -744,9 +665,7 @@
             if (tabId === 'ai-automation') setTimeout(redrawLines, 100);
         }
 
-        function toggleConfigModal(show) {
-            document.getElementById('configModal').classList.toggle('hidden', !show);
-        }
+        
         function toggleProfileDropdown(e) {
             const dropdown = document.getElementById('profileDropdown');
             dropdown.classList.toggle('hidden');

@@ -2,6 +2,7 @@ package com.ai.login.util;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,9 +24,11 @@ public class JwtUtil {
     }
 
     // 🔐 Generate Token
-    public String generateToken(String username) {
+ // generate token with email
+    public String generateToken(String username, String email) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("email", email)        // add this
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -36,7 +39,13 @@ public class JwtUtil {
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
-
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
     // 🔍 Extract Expiration
     public Date extractExpiration(String token) {
         return extractAllClaims(token).getExpiration();
@@ -46,6 +55,7 @@ public class JwtUtil {
     public boolean validateToken(String token, String username) {
         return extractUsername(token).equals(username) && !isExpired(token);
     }
+    
 
     // ⏳ Check Expiry
     private boolean isExpired(String token) {

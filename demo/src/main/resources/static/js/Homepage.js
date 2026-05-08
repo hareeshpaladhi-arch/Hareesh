@@ -82,7 +82,6 @@ function uploadFile() {
 	const bar = document.getElementById('progressBar');
 	const txt = document.getElementById('progressText');
 	const mapping = document.getElementById('mappingSection');
-	const uploadSelection = document.getElementById('uploadSection');
 	const tableDataSection = document.getElementById('tableDataSection');
 
 	// Show overlay
@@ -130,39 +129,22 @@ function uploadFile() {
 		});
 }
 
-function track(id) {
-	interval = setInterval(() => {
-		fetch("/api/progress/" + id)
-			.then(r => r.json())
-			.then(d => {
 
-				document.getElementById("bar").style.width = d.percent + "%";
-				document.getElementById("bar").innerText = d.percent + "%";
-
-				document.getElementById("status").innerText =
-					"Status: " + d.status + " | " + d.read + "/" + d.total;
-
-				if (d.status === "COMPLETED" || d.status === "FAILED") {
-					clearInterval(interval);
-				}
-			});
-	}, 2000);
-}
 
 function downloadErrors() {
 	window.location = "/auth/errors";
 }
 function loadTable(batchId) {
 
-    fetch("/auth/batch/" + batchId)
-        .then(res => res.json())
-        .then(result => {
+	fetch("/auth/batch/" + batchId)
+		.then(res => res.json())
+		.then(result => {
 
-            // remove old table if exists
-            $('#tableDataSection').empty();
+			// remove old table if exists
+			$('#tableDataSection').empty();
 
-            // create table dynamically
-            $('#tableDataSection').append(`
+			// create table dynamically
+			$('#tableDataSection').append(`
                 <table id="dynamicTable" class="display" style="width:100%">
                     <thead>
                         <tr>
@@ -176,23 +158,132 @@ function loadTable(batchId) {
                 </table>
             `);
 
-            // initialize DataTable on the new table
-            $('#dynamicTable').DataTable({
-                data: result,
-                columns: [
-                    { data: 'id' },
-                    { data: 'className' },
-                    { data: 'shortDesc' },
-                    { data: 'longDesc' },
-                    { data: 'materialType', defaultContent: '-' }
-                ]
-            });
+			// initialize DataTable on the new table
+			$('#dynamicTable').DataTable({
+				data: result,
+				columns: [
+					{ data: 'id' },
+					{ data: 'className' },
+					{ data: 'shortDesc' },
+					{ data: 'longDesc' },
+					{ data: 'materialType', defaultContent: '-' }
+				]
+			});
 
-        })
-        .catch(err => console.error(err));
+		})
+		.catch(err => console.error(err));
 }
+function toggleConfigModal(show) {
+	if (show) {
+		getBatchIdList();
+	}
+	document.getElementById('configModal').classList.toggle('hidden', !show);
+}
+function getBatchIdList() {
+    $.ajax({
 
+        url: "/api/batchList",
 
-// Initialize drop zone visual cues
+        type: "GET",
+
+        success: function(response) {
+
+            $("#config-classify").empty();
+
+            let optionStr = "<option value=''>Select Batch Id</option>";
+
+            if (response && response.length > 0) {
+
+                response.forEach(function(batchId) {
+
+                    optionStr += `
+                        <option value="${batchId}">
+                            ${batchId}
+                        </option>
+                    `;
+
+                });
+
+            }
+
+            $("#config-classify").html(optionStr);
+
+        },
+
+        error: function(xhr) {
+
+            console.log(xhr);
+
+            alert("Error while fetching Batch Id List");
+
+        }
+
+    });
+
+}
+function loadDuplicates() {
+
+	let batchId = $("#batchId").val();
+	let accuracy = $("#accuracy").val();
+
+	$.ajax({
+
+		url: "/api/duplicate/" + batchId + "?accuracy=" + accuracy,
+
+		type: "GET",
+
+		success: function(response) {
+
+			table.clear();
+
+			let duplicates = response.duplicates;
+
+			if (duplicates.length > 0) {
+
+				duplicates.forEach(function(row) {
+
+					table.row.add([
+
+						row.row1Id,
+						row.row2Id,
+						row.row1Desc,
+						row.row2Desc,
+						row.matchPercentage + "%"
+
+					]).draw(false);
+
+				});
+
+			} else {
+
+				alert("No Duplicate Records Found");
+
+			}
+
+		},
+
+		error: function(xhr) {
+
+			console.log(xhr);
+
+			alert("Error while fetching duplicate data");
+
+		}
+
+	});
+
+}
+async function logout() {
+  try {
+    await fetch('/auth/logout', {
+      method: 'POST',
+      credentials: 'include'  // important — sends and receives cookies
+    });
+  } catch (err) {
+    console.error('Logout failed', err);
+  } finally {
+    window.location.href = '/login';
+  }
+}
 
 

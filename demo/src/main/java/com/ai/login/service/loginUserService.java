@@ -70,5 +70,8 @@ public class loginUserService {
     public List<BatchTemplate> getByBatchId(String batchId) {
         return fileRepo.findByBatchId(batchId);
     }
+    public Optional<User> getUserDetails(String userName) {
+        return userDao.findByUsername(userName);
+    }
     
 }
