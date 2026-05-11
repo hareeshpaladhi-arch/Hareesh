@@ -136,42 +136,83 @@ function downloadErrors() {
 }
 function loadTable(batchId) {
 
-	fetch("/auth/batch/" + batchId)
-		.then(res => res.json())
-		.then(result => {
+	const mapping = document.getElementById('mappingSection');
+	const uploadSection = document.getElementById('uploadSection');
+	const tableDataSection = document.getElementById('tableDataSection');
 
-			// remove old table if exists
-			$('#tableDataSection').empty();
+	$("#web-breadcrumbs").find("span")
+		.attr('class', 'text-slate-400 hover:text-blue-600 cursor-pointer');
 
-			// create table dynamically
-			$('#tableDataSection').append(`
-                <table id="dynamicTable" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Class Name</th>
-                            <th>Short Desc</th>
-                            <th>Long Desc</th>
-                            <th>Material Type</th>
-                        </tr>
-                    </thead>
-                </table>
-            `);
-
-			// initialize DataTable on the new table
-			$('#dynamicTable').DataTable({
-				data: result,
-				columns: [
-					{ data: 'id' },
-					{ data: 'className' },
-					{ data: 'shortDesc' },
-					{ data: 'longDesc' },
-					{ data: 'materialType', defaultContent: '-' }
-				]
-			});
-
+	$("#web-breadcrumbs")
+		.find("span")
+		.filter(function () {
+			return $(this).text().trim().toLowerCase() === "view data";
 		})
-		.catch(err => console.error(err));
+		.attr("class", "text-slate-900 font-semibold");
+
+	mapping.classList.add('hidden');
+	uploadSection.classList.add('hidden');
+	tableDataSection.classList.remove('hidden');
+
+	$("#uploadButtonsId").hide();
+
+	// destroy existing table
+	if ($.fn.DataTable.isDataTable('#dynamicTable')) {
+		$('#dynamicTable').DataTable().destroy();
+	}
+
+	$('#tableDataSection').html(`
+		<table id="dynamicTable" class="display nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Class Name</th>
+					<th>Short Desc</th>
+					<th>Long Desc</th>
+					<th>Material Type</th>
+				</tr>
+			</thead>
+		</table>
+	`);
+
+	$('#dynamicTable').DataTable({
+		processing: true,
+		serverSide: true,
+		paging: true,
+		searching: true,
+		ordering: true,
+		pageLength: 10,
+
+		ajax: function(data, callback, settings) {
+
+			let page = (data.start / data.length);
+			let size = data.length;
+			let search = data.search.value;
+
+			fetch(`/auth/batch/${batchId}?page=${page}&size=${size}&search=${search}`)
+				.then(res => res.json())
+				.then(result => {
+					callback({
+						draw: data.draw,
+						recordsTotal: result.totalRecords,
+						recordsFiltered: result.totalRecords,
+						data: result.data
+					});
+				})
+				.catch(err => {
+					hideLoader();
+					console.error(err);
+				});
+		},
+
+		columns: [
+			{ data: 'id' },
+			{ data: 'className' },
+			{ data: 'shortDesc' },
+			{ data: 'longDesc' },
+			{ data: 'materialType', defaultContent: '-' }
+		]
+	});
 }
 function toggleConfigModal(show) {
 	if (show) {
@@ -179,46 +220,112 @@ function toggleConfigModal(show) {
 	}
 	document.getElementById('configModal').classList.toggle('hidden', !show);
 }
+function applyConfigModal(show) {
+
+	var batchId = "";
+	var processSelectionObj = {};
+
+	$(".modal-content-class .grid").each(function() {
+		if (!batchId) {
+			batchId = $(this).find("select").val();
+		}
+
+		$(this).find("label").each(function() {
+
+			var key = $(this).find("p").text().trim();
+
+			var checked = $(this).find("input[type='checkbox']").is(":checked");
+
+			processSelectionObj[key] = checked;
+		});
+
+	});
+
+	if (batchId && !jQuery.isEmptyObject(processSelectionObj)) {
+		processSelectionFlow(batchId, processSelectionObj);
+	}
+
+	document.getElementById('configModal')
+		.classList.toggle('hidden', !show);
+}
+function processSelectionFlow(batchId, processSelectionObj) {
+
+	if (batchId) {
+		var breadCrumbStr = `<div class="flex items-center gap-2">
+		<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256" class="text-slate-300"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>
+                        <span class="text-slate-900 font-semibold" onclick="loadTable('${batchId}')">View Data</span>   
+                    </div>`;
+		$("#web-breadcrumbs").append(breadCrumbStr);
+		loadTable(batchId);
+	}
+
+	for (var key in processSelectionObj) {
+
+		if (processSelectionObj[key]) {
+
+			console.log("Selected Process:", key);
+
+
+		}
+	}
+}
+function getUploadSectionShow() {
+	const mapping = document.getElementById('mappingSection');
+	const uploadSection = document.getElementById('uploadSection');
+	const tableDataSection = document.getElementById('tableDataSection');
+	$("#web-breadcrumbs").find("span").attr('class', 'text-slate-400 hover:text-blue-600 cursor-pointer');
+	$("#web-breadcrumbs")
+    .find("span")
+    .filter(function () {
+        return $(this).text().trim().toLowerCase() === "upload";
+    })
+    .attr("class", "text-slate-900 font-semibold");
+	mapping.classList.add('hidden');
+	uploadSection.classList.remove('hidden');
+	tableDataSection.classList.add('hidden');
+	$("#uploadButtonsId").show();
+
+}
 function getBatchIdList() {
-    $.ajax({
+	$.ajax({
 
-        url: "/api/batchList",
+		url: "/api/batchList",
 
-        type: "GET",
+		type: "GET",
 
-        success: function(response) {
+		success: function(response) {
 
-            $("#config-classify").empty();
+			$("#config-classify").empty();
 
-            let optionStr = "<option value=''>Select Batch Id</option>";
+			let optionStr = "<option value=''>Select Batch Id</option>";
 
-            if (response && response.length > 0) {
+			if (response && response.length > 0) {
 
-                response.forEach(function(batchId) {
+				response.forEach(function(batchId) {
 
-                    optionStr += `
+					optionStr += `
                         <option value="${batchId}">
                             ${batchId}
                         </option>
                     `;
 
-                });
+				});
 
-            }
+			}
 
-            $("#config-classify").html(optionStr);
+			$("#config-classify").html(optionStr);
 
-        },
+		},
 
-        error: function(xhr) {
+		error: function(xhr) {
 
-            console.log(xhr);
+			console.log(xhr);
 
-            alert("Error while fetching Batch Id List");
+			alert("Error while fetching Batch Id List");
 
-        }
+		}
 
-    });
+	});
 
 }
 function loadDuplicates() {
@@ -274,16 +381,16 @@ function loadDuplicates() {
 
 }
 async function logout() {
-  try {
-    await fetch('/auth/logout', {
-      method: 'POST',
-      credentials: 'include'  // important — sends and receives cookies
-    });
-  } catch (err) {
-    console.error('Logout failed', err);
-  } finally {
-    window.location.href = '/login';
-  }
+	try {
+		await fetch('/auth/logout', {
+			method: 'POST',
+			credentials: 'include'  // important — sends and receives cookies
+		});
+	} catch (err) {
+		console.error('Logout failed', err);
+	} finally {
+		window.location.href = '/login';
+	}
 }
 
 

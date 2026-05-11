@@ -1,6 +1,9 @@
 package com.ai.login.controller;
 
 import java.io.File;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -153,8 +157,27 @@ public class LoginUserController {
 	}
 
 	@GetMapping("/batch/{batchId}")
-	public List<BatchTemplate> getData(@PathVariable String batchId) {
-		return userService.getByBatchId(batchId);
+	public Map<String, Object> getData(
+	        @PathVariable String batchId,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size,
+	        @RequestParam(defaultValue = "") String search) {
+
+	    Pageable pageable = PageRequest.of(page, size);
+
+	    Page<BatchTemplate> pageData;
+
+	    if (search != null && !search.trim().isEmpty()) {
+	        pageData = userService.searchByBatchId(batchId, search, pageable);
+	    } else {
+	        pageData = userService.getByBatchId(batchId, pageable);
+	    }
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("data", pageData.getContent());
+	    response.put("totalRecords", pageData.getTotalElements());
+
+	    return response;
 	}
 
 }

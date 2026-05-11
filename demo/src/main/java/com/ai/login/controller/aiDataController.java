@@ -51,7 +51,7 @@ public class aiDataController {
 	public ResponseEntity<Map<String, Object>> findDuplicates(@PathVariable String batchId,
 			@RequestParam(defaultValue = "70") double accuracy) {
 
-		List<BatchTemplate> rows = repository.findByBatchId(batchId);
+		List<BatchTemplate> rows = (List<BatchTemplate>) repository.findByBatchId(batchId, null);
 
 		List<Map<String, Object>> duplicateRows = new ArrayList<>();
 

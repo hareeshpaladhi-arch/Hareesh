@@ -7,6 +7,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,8 +70,12 @@ public class loginUserService {
             return new ApiResponse("Registration failed", false);
         }
     }
-    public List<BatchTemplate> getByBatchId(String batchId) {
-        return fileRepo.findByBatchId(batchId);
+    public Page<BatchTemplate> getByBatchId(String batchId, Pageable pageable) {
+        return fileRepo.findByBatchId(batchId, pageable);
+    }
+
+    public Page<BatchTemplate> searchByBatchId(String batchId, String search, Pageable pageable) {
+        return fileRepo.searchByBatchId(batchId, search, pageable);
     }
     public Optional<User> getUserDetails(String userName) {
         return userDao.findByUsername(userName);
