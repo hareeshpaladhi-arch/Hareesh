@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MDM | Enterprise Data Hub</title>
+	<!-- Tailwind CSS -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<!-- Font Awesome for Modern Enterprise Icons -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<!-- Google Fonts: Inter & JetBrains Mono -->
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+	
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/Login.css}">
+	<script th:src="@{/js/login.js}"></script>
+	<style>
+		body {
+			font-family: 'Inter', sans-serif;
+			background-color: #fafaf9;
+			overflow-x: hidden;
+		}
+
+		/* Premium Futuristic Glassmorphism with Orange and White Theme */
+		.glass-panel {
+			background: rgba(255, 255, 255, 0.85);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+			border: 1px solid rgba(234, 88, 12, 0.12);
+			box-shadow: 0 30px 70px -15px rgba(234, 88, 12, 0.12), 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+		}
+
+		.glass-card {
+			background: rgba(255, 255, 255, 0.7);
+			border: 1px solid rgba(234, 88, 12, 0.08);
+			backdrop-filter: blur(8px);
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.glass-card:hover {
+			border-color: rgba(234, 88, 12, 0.25);
+			background: rgba(255, 255, 255, 0.9);
+			transform: translateY(-2px);
+			box-shadow: 0 12px 20px -10px rgba(234, 88, 12, 0.15);
+		}
+
+		/* Deep Warm Orange Gradient for Sidebar */
+		.brand-gradient {
+			background: linear-gradient(135deg, #ea580c 0%, #f97316 45%, #ffedd5 100%);
+		}
+
+		/* Smooth animated navigation tabs in Orange */
+		.nav-tab {
+			position: relative;
+			color: #78716c;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.nav-tab::after {
+			content: '';
+			position: absolute;
+			bottom: -1px;
+			left: 0;
+			width: 0;
+			height: 2px;
+			background: #ea580c;
+			transition: all 0.3s ease;
+		}
+
+		.nav-tab.active {
+			color: #ea580c;
+			font-weight: 700;
+		}
+
+		.nav-tab.active::after {
+			width: 100%;
+		}
+
+		/* Focused Glowing State for Inputs mapping to Orange-600 */
+		.input-focus-effect:focus {
+			border-color: #ea580c;
+			box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12);
+		}
+
+		/* Custom scrollbars matching the Orange/White scheme */
+		::-webkit-scrollbar {
+			width: 6px;
+		}
+		::-webkit-scrollbar-track {
+			background: rgba(250, 250, 249, 0.5);
+		}
+		::-webkit-scrollbar-thumb {
+			background: rgba(234, 88, 12, 0.3);
+			border-radius: 3px;
+		}
+		::-webkit-scrollbar-thumb:hover {
+			background: rgba(234, 88, 12, 0.6);
+		}
+
+		/* Matrix / Connecting Nodes Background Canvas */
+		#bg-canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 0;
+			pointer-events: none;
+		}
+	</style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 relative select-none">
+
+	<canvas id="bg-canvas"></canvas>
+
+	<!-- Global Toast Alerts -->
+	<div id="toast" class="fixed top-6 right-6 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-500 ease-out max-w-sm w-full glass-panel p-4 rounded-xl border-l-4 shadow-2xl flex items-center gap-3">
+		<div id="toast-icon-wrapper" class="w-8 h-8 rounded-full flex items-center justify-center text-white">
+			<i id="toast-icon" class="fas"></i>
+		</div>
+		<div>
+			<h4 id="toast-title" class="text-sm font-bold text-slate-800">System Notification</h4>
+			<p id="toast-msg" class="text-xs text-slate-500 mt-0.5"></p>
+		</div>
+	</div>
+
+	<!-- Interactive Secure Syncing Loader -->
+	<div id="loaderDiv" class="fixed inset-0 bg-white/90 backdrop-blur-md z-50 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+		<div class="relative w-24 h-24">
+			<!-- Outer spin -->
+			<div class="absolute inset-0 border-4 border-orange-600/20 border-t-orange-600 rounded-full animate-spin"></div>
+			<!-- Inner reverse spin -->
+			<div class="absolute inset-2 border-4 border-amber-500/10 border-b-amber-500 rounded-full animate-spin [animation-direction:reverse]"></div>
+			<!-- Keyhole/Security Lock Icon -->
+			<div class="absolute inset-0 flex items-center justify-center text-orange-600">
+				<i class="fas fa-fingerprint text-2xl animate-pulse"></i>
+			</div>
+		</div>
+		<p id="loaderText" class="text-orange-600 font-mono tracking-widest text-[10px] uppercase animate-pulse font-bold">Decrypting access layer...</p>
+	</div>
+
+	<div class="relative z-10 w-full max-w-5xl glass-panel rounded-3xl overflow-hidden flex flex-col md:flex-row min-h-[600px] transition-all duration-500">
+		
+		<!-- Sidebar Branding (Deep Warm Amber & Crisp Orange) -->
+		<div class="md:w-[42%] brand-gradient p-8 text-white flex flex-col justify-between relative overflow-hidden">
+			<!-- Animated Radial Glow Elements -->
+			<div class="absolute -top-10 -right-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-30 animate-pulse"></div>
+			<div class="absolute -bottom-10 -left-10 w-72 h-72 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
+
+			<!-- Brand Header -->
+			<div class="relative z-10">
+				<div class="flex items-center gap-3 mb-12">
+					<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center rotate-3 shadow-orange-600/30 shadow-lg transition-transform hover:rotate-12 duration-300">
+						<i class="fas fa-cubes text-lg text-orange-600"></i>
+					</div>
+					<div class="flex flex-col">
+						<span class="text-xl font-extrabold tracking-wider italic text-white">
+							AETHER <span class="text-orange-950/80">MDM</span>
+						</span>
+						<span class="text-[9px] text-white/90 uppercase font-mono tracking-widest -mt-1 font-bold">Enterprise Hub</span>
+					</div>
+				</div>
+
+				<div class="space-y-4">
+					<h1 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.1] text-white">
+						Data Integrity <br><span class="text-orange-950">Redefined.</span>
+					</h1>
+					<p class="text-white/90 text-sm leading-relaxed max-w-sm">
+						Orchestrate master data assets across the complex enterprise with AI-driven active synthesis, real-time deduplication, and automated lineage governance.
+					</p>
+				</div>
+			</div>
+
+			<!-- Compliance and version info footer -->
+			<div class="relative z-10 space-y-6 mt-12 md:mt-0">
+				<div class="p-5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md">
+					<div class="flex items-center gap-4 mb-2">
+						<div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
+							<i class="fas fa-shield-halved text-xs"></i>
+						</div>
+						<span class="font-semibold text-sm text-white">Trust & Compliance Shield</span>
+					</div>
+					<p class="text-xs text-white/85 leading-normal">
+						Fully compliant with SOC2 Type II, GDPR, and HIPAA data residency structures for cross-continental cluster security.
+					</p>
+				</div>
+
+				<!-- Footer of Sidebar -->
+				<div class="flex items-center justify-between text-[10px] text-white/80 uppercase tracking-widest font-mono border-t border-white/20 pt-4">
+					<span>Platform v5.1.0-Secure</span>
+					<div class="flex gap-4 text-xs">
+						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i class="fab fa-github"></i></a>
+						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i class="fab fa-linkedin"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main Content Panel -->
+		<div id="main-content-panel" class="md:w-[58%] bg-white/90 p-6 md:p-10 flex flex-col justify-between relative overflow-y-auto">
+			
+			<div class="w-full">
+				<!-- Header Tabs -->
+				<div class="flex gap-8 mb-10 border-b border-slate-200">
+					<button onclick="showSection('login')" id="tab-login" class="nav-tab active pb-4 text-xs font-bold uppercase tracking-wider">
+						<i class="fas fa-lock mr-1.5 text-[10px]"></i> Sign In
+					</button>
+					<button onclick="showSection('register')" id="tab-register" class="nav-tab pb-4 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
+						<i class="fas fa-user-plus mr-1.5 text-[10px]"></i> Registration
+					</button>
+				</div>
+
+				<!-- Form Content Swapper -->
+				<div class="flex-grow flex flex-col justify-center max-w-sm mx-auto w-full transition-all duration-300">
+
+					<!-- SIGN IN SECTION -->
+					<section id="login-section" class="space-y-6">
+						<div>
+							<h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+								Enterprise Login
+							</h2>
+							<p class="text-slate-500 text-xs mt-1">Connect securely to your cluster's metadata layer.</p>
+						</div>
+
+						<form autocomplete="off" class="space-y-4" onsubmit="userLogin(event, 'login')">
+							<div class="space-y-1.5">
+								<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex justify-between">
+									<span>User Access Email</span>
+									<span class="text-slate-400 font-mono text-[9px]">Required</span>
+								</label>
+								<div class="relative">
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-envelope"></i></span>
+									<input type="text" id="username" required placeholder="corp.name@company.com"
+										class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
+								</div>
+							</div>
+
+							<div class="space-y-1.5">
+								<div class="flex justify-between items-center">
+									<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+										Authorization Token / Key
+									</label>
+									<button type="button" onclick="showSection('forgot')" class="text-[10px] font-bold text-orange-600 hover:text-orange-700 transition-colors uppercase tracking-wider">
+										Bypass Key?
+									</button>
+								</div>
+								<div class="relative">
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-key"></i></span>
+									<input type="password" id="password" required placeholder="••••••••••••"
+										class="w-full pl-11 pr-12 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
+									<button type="button" onclick="togglePasswordVisibility('password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+										<i class="fas fa-eye" id="password-toggle-eye"></i>
+									</button>
+								</div>
+							</div>
+
+							<div id="loginError" class="text-rose-600 text-xs font-semibold min-h-[1.25rem] transition-all duration-200"></div>
+
+							<button type="submit"
+								class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg shadow-orange-600/10 hover:shadow-orange-600/20 transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
+								Secure Portal Entry
+							</button>
+						</form>
+					</section>
+
+					<!-- REGISTRATION SECTION -->
+					<section id="register-section" class="hidden space-y-6">
+						<div>
+							<h2 class="text-2xl font-bold text-slate-800">Request Hub Node</h2>
+							<p class="text-slate-500 text-xs mt-1">Submit server authorization requests to global directories.</p>
+						</div>
+
+						<form autocomplete="off" class="space-y-4" onsubmit="handleAuth(event, 'register')">
+							<div class="space-y-1.5">
+								<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+									Work Identity Email
+								</label>
+								<div class="relative">
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-at"></i></span>
+									<input type="email" id="rgemail" required placeholder="authorized.user@company.com"
+										class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
+								</div>
+							</div>
+
+							<div class="space-y-1.5">
+								<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+									Directory Username
+								</label>
+								<div class="relative">
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-user-tag"></i></span>
+									<input type="text" id="rgusername" required placeholder="e.g., corp_admin_4"
+										class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
+								</div>
+							</div>
+
+							<div class="space-y-1.5">
+								<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+									Generated Security Pin
+								</label>
+								<div class="relative">
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-shield-halved"></i></span>
+									<input type="password" id="rgpassword" required placeholder="Must exceed 8 complex characters"
+										class="w-full pl-11 pr-12 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
+									<button type="button" onclick="togglePasswordVisibility('rgpassword')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+										<i class="fas fa-eye" id="rgpassword-toggle-eye"></i>
+									</button>
+								</div>
+							</div>
+
+							<div id="loginRegisterError" class="text-rose-600 text-xs font-semibold min-h-[1.25rem] transition-all duration-200"></div>
+
+							<button type="submit"
+								class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
+								Request Directory Addition
+							</button>
+						</form>
+					</section>
+
+					<!-- FORGOT PASSWORD SECTION -->
+					<section id="forgot-section" class="hidden space-y-6 text-center">
+						<div class="w-16 h-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-200">
+							<i class="fas fa-key text-xl animate-bounce"></i>
+						</div>
+						<div>
+							<h2 class="text-2xl font-bold text-slate-800">Bypass Key Recovery</h2>
+							<p class="text-slate-500 text-xs mt-1 leading-relaxed">
+								Provide your authenticated directory email address to dispatch a time-sensitive authorization bypass key.
+							</p>
+						</div>
+
+						<form onsubmit="handleAuth(event, 'forgot')" class="space-y-4">
+							<div class="relative">
+								<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-envelope-open-text"></i></span>
+								<input type="email" id="recoveryEmail" required placeholder="registered.email@company.com"
+									class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect text-center tracking-wide transition-all">
+							</div>
+							
+							<button type="submit"
+								class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg transition-all">
+								Dispatch Recovery Token
+							</button>
+							<button type="button" onclick="showSection('login')"
+								class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest block mx-auto mt-2">
+								<i class="fas fa-arrow-left mr-1"></i> Back to secure gate
+							</button>
+						</form>
+					</section>
+
+				</div>
+			</div>
+
+			<!-- Decryption Key Frame Footer -->
+			<div class="mt-8 text-center text-[9px] text-slate-400 font-bold uppercase tracking-[0.25em] flex items-center justify-center gap-2">
+				<span class="inline-block w-1.5 h-1.5 rounded-full bg-orange-600 animate-pulse"></span>
+				Decryption Protocol: AES-256-GCM Secure Cluster
+			</div>
+
+		</div>
+
+		<!-- Simulated Integrated Dashboard Layer (Shows on successful entry) -->
+		<div id="dashboard-panel" class="hidden w-full bg-[#fdfdfd] p-6 sm:p-10 flex flex-col justify-between relative overflow-y-auto">
+			<div class="flex items-center justify-between border-b border-slate-100 pb-5">
+				<div class="flex items-center gap-3">
+					<div class="w-8 h-8 bg-gradient-to-tr from-orange-600 to-orange-500 rounded flex items-center justify-center shadow-lg">
+						<i class="fas fa-server text-white text-sm"></i>
+					</div>
+					<div>
+						<h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest" id="user-display-name">CLUSTER LEADER</h3>
+						<p class="text-[9px] font-mono text-orange-600 font-bold">STATUS: LIVE HUB DIRECTORY</p>
+					</div>
+				</div>
+				<button onclick="logout()" class="px-4 py-2 rounded-lg border border-orange-200 text-orange-600 hover:bg-orange-50 text-xs font-bold uppercase tracking-wider transition-all">
+					<i class="fas fa-power-off mr-1.5"></i> Exit Hub
+				</button>
+			</div>
+
+			<!-- Dynamic Live Metrics Grid -->
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+				<div class="glass-card p-4 rounded-xl border border-orange-100 relative overflow-hidden">
+					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i class="fas fa-database"></i></div>
+					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Indexed Assets</h5>
+					<p class="text-3xl font-extrabold text-orange-600 mt-2">4,891,093</p>
+					<span class="text-[9px] text-emerald-600 font-bold"><i class="fas fa-arrow-trend-up mr-1"></i>+12.4% synced</span>
+				</div>
+
+				<div class="glass-card p-4 rounded-xl border border-orange-100 relative overflow-hidden">
+					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i class="fas fa-diagram-project"></i></div>
+					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Synthesized Entities</h5>
+					<p class="text-3xl font-extrabold text-orange-600 mt-2">312,890</p>
+					<span class="text-[9px] text-orange-500 font-bold"><i class="fas fa-circle-check mr-1"></i>99.98% Integrity</span>
+				</div>
+
+				<div class="glass-card p-4 rounded-xl border border-orange-100 relative overflow-hidden">
+					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i class="fas fa-shield-halved"></i></div>
+					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Active Policy Rules</h5>
+					<p class="text-3xl font-extrabold text-slate-700 mt-2">1,204</p>
+					<span class="text-[9px] text-slate-500">GDPR & ISO Enforcement</span>
+				</div>
+			</div>
+
+			<!-- Active Realtime Logging Consolidation -->
+			<div class="glass-card p-5 rounded-xl border border-slate-200 flex-grow mb-8 min-h-[160px]">
+				<h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-widest mb-3 flex items-center justify-between">
+					<span>Real-Time MDM Sync Log</span>
+					<span class="inline-flex w-2 h-2 rounded-full bg-orange-600 animate-ping"></span>
+				</h4>
+				<div class="space-y-2 font-mono text-[11px] text-slate-600" id="live-syslogs">
+					<div>[14:03:12] <span class="text-orange-600 font-bold">SYS_INIT:</span> Master record synchronization triggered across enterprise clusters.</div>
+					<div>[14:03:18] <span class="text-orange-500 font-bold">MERGE_PROG:</span> Identified 23 duplicated profiles. Initiating active synthesis heuristics.</div>
+					<div>[14:03:22] <span class="text-slate-700">SECURE:</span> Vault keys verified successfully. Directory compliance check passed.</div>
+				</div>
+			</div>
+
+			<p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest text-center">
+				Protected by Quantum Security Keys (AES-256-GCM Secure Cluster)
+			</p>
+		</div>
+
+	</div>
+
+	<script>
+		// Setup Interactive Background Canvas (Connecting node clusters)
+		const canvas = document.getElementById('bg-canvas');
+		const ctx = canvas.getContext('2d');
+		let particles = [];
+
+		function resizeCanvas() {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		}
+		window.addEventListener('resize', resizeCanvas);
+		resizeCanvas();
+
+		class Particle {
+			constructor() {
+				this.x = Math.random() * canvas.width;
+				this.y = Math.random() * canvas.height;
+				this.vx = (Math.random() - 0.5) * 0.4;
+				this.vy = (Math.random() - 0.5) * 0.4;
+				this.radius = Math.random() * 2 + 1.5;
+			}
+			update() {
+				this.x += this.vx;
+				this.y += this.vy;
+				if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+				if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+			}
+			draw() {
+				ctx.beginPath();
+				ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+				ctx.fillStyle = 'rgba(234, 88, 12, 0.25)';
+				ctx.fill();
+			}
+		}
+
+		for (let i = 0; i < 40; i++) {
+			particles.push(new Particle());
+		}
+
+		function animateParticles() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			// Draw Connecting nodes
+			for (let i = 0; i < particles.length; i++) {
+				for (let j = i + 1; j < particles.length; j++) {
+					const dist = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
+					if (dist < 130) {
+						ctx.beginPath();
+						ctx.moveTo(particles[i].x, particles[i].y);
+						ctx.lineTo(particles[j].x, particles[j].y);
+						ctx.strokeStyle = `rgba(234, 88, 12, ${0.1 * (1 - dist / 130)})`;
+						ctx.lineWidth = 0.8;
+						ctx.stroke();
+					}
+				}
+			}
+
+			particles.forEach(p => {
+				p.update();
+				p.draw();
+			});
+
+			requestAnimationFrame(animateParticles);
+		}
+		
+		window.onload = function() {
+			animateParticles();
+		};
+
+		// Manage Navigation Tab Views
+		function showSection(sectionId) {
+			const loginSec = document.getElementById('login-section');
+			const regSec = document.getElementById('register-section');
+			const forgotSec = document.getElementById('forgot-section');
+
+			const loginTab = document.getElementById('tab-login');
+			const regTab = document.getElementById('tab-register');
+
+			// Hide all sections first
+			loginSec.classList.add('hidden');
+			regSec.classList.add('hidden');
+			forgotSec.classList.add('hidden');
+
+			// Update tabs styling
+			loginTab.classList.remove('active');
+			loginTab.classList.add('text-slate-400');
+			regTab.classList.remove('active');
+			regTab.classList.add('text-slate-400');
+
+			if (sectionId === 'login') {
+				loginSec.classList.remove('hidden');
+				loginTab.classList.add('active');
+				loginTab.classList.remove('text-slate-400');
+			} else if (sectionId === 'register') {
+				regSec.classList.remove('hidden');
+				regTab.classList.add('active');
+				regTab.classList.remove('text-slate-400');
+			} else if (sectionId === 'forgot') {
+				forgotSec.classList.remove('hidden');
+			}
+
+			// Clear error states
+			document.getElementById('loginError').innerText = "";
+			document.getElementById('loginRegisterError').innerText = "";
+		}
+
+		// Reveal / Mask Password input toggler
+		function togglePasswordVisibility(id) {
+			const target = document.getElementById(id);
+			const eyeIcon = document.getElementById(`${id}-toggle-eye`);
+			if (target.type === 'password') {
+				target.type = 'text';
+				eyeIcon.classList.remove('fa-eye');
+				eyeIcon.classList.add('fa-eye-slash');
+			} else {
+				target.type = 'password';
+				eyeIcon.classList.remove('fa-eye-slash');
+				eyeIcon.classList.add('fa-eye');
+			}
+		}
+
+		// Show Global Notification System (Toasts)
+		function triggerToast(type, title, msg) {
+			const toast = document.getElementById('toast');
+			const iconWrapper = document.getElementById('toast-icon-wrapper');
+			const icon = document.getElementById('toast-icon');
+			const titleEl = document.getElementById('toast-title');
+			const msgEl = document.getElementById('toast-msg');
+
+			// Set text
+			titleEl.innerText = title;
+			msgEl.innerText = msg;
+
+			// Reset classes safely
+			toast.className = "fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out max-w-sm w-full glass-panel p-4 rounded-xl border-l-4 shadow-2xl flex items-center gap-3";
+			iconWrapper.className = "w-8 h-8 rounded-full flex items-center justify-center text-white";
+
+			if (type === 'success') {
+				toast.classList.add('border-l-orange-500');
+				iconWrapper.classList.add('bg-orange-500/20', 'text-orange-600');
+				icon.className = "fas fa-circle-check";
+			} else if (type === 'error') {
+				toast.classList.add('border-l-rose-500');
+				iconWrapper.classList.add('bg-rose-500/20', 'text-rose-600');
+				icon.className = "fas fa-triangle-exclamation";
+			} else {
+				toast.classList.add('border-l-amber-500');
+				iconWrapper.classList.add('bg-amber-500/20', 'text-amber-600');
+				icon.className = "fas fa-circle-info";
+			}
+
+			// Slide in
+			toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+			toast.classList.add('translate-y-0', 'opacity-100');
+
+			// Slide out after delay
+			setTimeout(() => {
+				toast.classList.remove('translate-y-0', 'opacity-100');
+				toast.classList.add('translate-y-[-100px]', 'opacity-0');
+			}, 4000);
+		}
+
+		function handleAuth(event, type) {
+			event.preventDefault();
+
+			const loader = document.getElementById('loaderDiv');
+			const loaderText = document.getElementById('loaderText');
+
+			if (type === 'login') {
+				const usernameVal = document.getElementById('username').value;
+				const passwordVal = document.getElementById('password').value;
+				const errorField = document.getElementById('loginError');
+
+				// Standard Security Syntax Validation
+				if (!usernameVal.includes('@')) {
+					errorField.innerText = "Directory Identity must match standardized corporate structure (name@company.com).";
+					return;
+				}
+				if (passwordVal.length < 5) {
+					errorField.innerText = "Security token/password requires additional complex characters.";
+					return;
+				}
+
+				errorField.innerText = "";
+				
+				// Open Loader with phase messages
+				loader.style.opacity = '1';
+				loader.style.pointerEvents = 'all';
+				loaderText.innerText = "Connecting to global enterprise directory...";
+
+				setTimeout(() => {
+					loaderText.innerText = "Validating cryptographic integrity keys...";
+				}, 1000);
+
+				setTimeout(() => {
+					loaderText.innerText = "Authorizing active cluster nodes...";
+				}, 2000);
+
+				setTimeout(() => {
+					loader.style.opacity = '0';
+					loader.style.pointerEvents = 'none';
+					
+					// Swap views
+					document.getElementById('main-content-panel').classList.add('hidden');
+					document.getElementById('dashboard-panel').classList.remove('hidden');
+					
+					// Update display name
+					const namePart = usernameVal.split('@')[0];
+					document.getElementById('user-display-name').innerText = namePart.toUpperCase() + " // HUB";
+
+					triggerToast('success', 'Access Authorized', `Successfully linked credentials for: ${usernameVal}`);
+					addSystemLogEntry(namePart);
+				}, 3000);
+
+			} else if (type === 'register') {
+				const emailVal = document.getElementById('rgemail').value;
+				const userVal = document.getElementById('rgusername').value;
+				const passVal = document.getElementById('rgpassword').value;
+				const errorField = document.getElementById('loginRegisterError');
+
+				if (!emailVal.includes('@')) {
+					errorField.innerText = "Email must map directly to corporate identity databases.";
+					return;
+				}
+				if (passVal.length < 8) {
+					errorField.innerText = "Key must exceed 8 complex characters.";
+					return;
+				}
+
+				errorField.innerText = "";
+
+				loader.style.opacity = '1';
+				loader.style.pointerEvents = 'all';
+				loaderText.innerText = "Submitting Directory Addition Request...";
+
+				setTimeout(() => {
+					loader.style.opacity = '0';
+					loader.style.pointerEvents = 'none';
+					triggerToast('success', 'Registration Filed', `Directory request for ${userVal} has been dispatched to administrators.`);
+					showSection('login');
+				}, 2200);
+
+			} else if (type === 'forgot') {
+				const email = document.getElementById('recoveryEmail').value;
+
+				loader.style.opacity = '1';
+				loader.style.pointerEvents = 'all';
+				loaderText.innerText = "Dispatching Security Recovery Link...";
+
+				setTimeout(() => {
+					loader.style.opacity = '0';
+					loader.style.pointerEvents = 'none';
+					triggerToast('success', 'Recovery Dispatch', `A bypass key has been safely sent to ${email}`);
+					showSection('login');
+				}, 1800);
+			}
+		}
+
+		// Inject simulated logs directly into the terminal console
+		function addSystemLogEntry(username) {
+			const syslogDiv = document.getElementById('live-syslogs');
+			const cleanUser = username.replace(/[^a-zA-Z0-9]/g, '');
+			const now = new Date();
+			const timeStr = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+			
+			const newLog = document.createElement('div');
+			newLog.innerHTML = `${timeStr} <span class="text-orange-600 font-bold">SESSION_START:</span> Operator <span class="text-slate-800 font-bold">${cleanUser}</span> established secure gateway connection. Sync protocols unlocked.`;
+			syslogDiv.prepend(newLog);
+		}
+
+		// Safely terminate current authenticated hub directory session
+		function logout() {
+			const loader = document.getElementById('loaderDiv');
+			const loaderText = document.getElementById('loaderText');
+
+			loader.style.opacity = '1';
+			loader.style.pointerEvents = 'all';
+			loaderText.innerText = "Terminating directory cluster connection...";
+
+			setTimeout(() => {
+				loader.style.opacity = '0';
+				loader.style.pointerEvents = 'none';
+				
+				document.getElementById('dashboard-panel').classList.add('hidden');
+				document.getElementById('main-content-panel').classList.remove('hidden');
+				
+				// Clear login inputs
+				document.getElementById('username').value = "";
+				document.getElementById('password').value = "";
+				
+				triggerToast('info', 'Session Closed', "Your cluster session has been successfully closed.");
+			}, 1500);
+		}
+	</script>
+</body>
+
+</html>
