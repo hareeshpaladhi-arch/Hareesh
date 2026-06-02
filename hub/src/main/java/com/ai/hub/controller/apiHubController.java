@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -273,6 +274,34 @@ public class apiHubController {
 		    response.put("totalRecords", pageData.getTotalElements());
 
 		    return response;
+		}
+		@PostMapping("/updateRecords")
+		public ResponseEntity<String> updateRecords(
+		        @RequestBody List<BatchTemplate> records) {
+
+		    for (BatchTemplate record : records) {
+
+		        BatchTemplate existing = repository.findById(record.getId())
+		                .orElseThrow(() -> new RuntimeException("Record not found"));
+
+		        existing.setMaterialType(record.getMaterialType());
+		        existing.setShortDesc(record.getShortDesc());
+		        existing.setLongDesc(record.getLongDesc());
+		        existing.setClassName(record.getClassName());
+
+		        repository.save(existing);
+		    }
+
+		    return ResponseEntity.ok(records.size() + " record(s) updated successfully.");
+		}
+		
+		@PostMapping("/deleteRecords")
+		public ResponseEntity<String> deleteRecords(@RequestBody List<String> ids) {
+
+		    int deletedCount = apiService.deleteRecords(ids);
+		    return ResponseEntity.ok(
+		        deletedCount + " record(s) deleted successfully."
+		    );
 		}
 
 }

@@ -2,6 +2,7 @@ package com.ai.hub.service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -35,9 +36,9 @@ public class apiHubService {
 
 	@Autowired
 	private ClassificationMasterRepository classMasterRepo;
-	
+
 	@Autowired
-    private UserFileImportRepository fileRepo;
+	private UserFileImportRepository fileRepo;
 
 	public Map<String, Object> classifyDescription(String longDescription) {
 
@@ -259,12 +260,18 @@ public class apiHubService {
 
 		return result;
 	}
-	 public Page<BatchTemplate> getByBatchId(String batchId, Pageable pageable) {
-	        return fileRepo.findByBatchId(batchId, pageable);
-	    }
 
-	    public Page<BatchTemplate> searchByBatchId(String batchId, String search, Pageable pageable) {
-	        return fileRepo.searchByBatchId(batchId, search, pageable);
-	    }
-	    
+	public Page<BatchTemplate> getByBatchId(String batchId, Pageable pageable) {
+		return fileRepo.findByBatchId(batchId, pageable);
+	}
+
+	public Page<BatchTemplate> searchByBatchId(String batchId, String search, Pageable pageable) {
+		return fileRepo.searchByBatchId(batchId, search, pageable);
+	}
+	
+	public int deleteRecords(List<String> ids) {
+		fileRepo.deleteAllById(ids);
+        return ids.size();
+    }
+
 }
