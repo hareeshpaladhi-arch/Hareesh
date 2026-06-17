@@ -262,7 +262,11 @@ public class apiHubService {
 	}
 
 	public Page<BatchTemplate> getByBatchId(String batchId, Pageable pageable) {
-		return fileRepo.findByBatchId(batchId, pageable);
+
+	    if (batchId != null && "NULL".equalsIgnoreCase(batchId)) {
+	        return fileRepo.findAll(pageable);
+	    }
+	    return fileRepo.findByBatchId(batchId, pageable);
 	}
 
 	public Page<BatchTemplate> searchByBatchId(String batchId, String search, Pageable pageable) {

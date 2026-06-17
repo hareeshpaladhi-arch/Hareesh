@@ -17,8 +17,18 @@ public class SideBar {
     private String menuIcon;
 
     private String menuUrl;
+    
+    private Long ParentId;
 
-    public Long getId() {
+    public Long getParentId() {
+		return ParentId;
+	}
+
+	public void setParentId(Long parentId) {
+		ParentId = parentId;
+	}
+
+	public Long getId() {
         return id;
     }
 
