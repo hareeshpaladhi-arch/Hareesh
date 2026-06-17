@@ -78,4 +78,56 @@ body input {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	
+}
+
+@keyframes bold-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes bold-pulse {
+
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+
+	50% {
+		transform: scale(0.9);
+		opacity: 0.5;
+	}
+}
+
+@keyframes bold-dash {
+	0% {
+		stroke-dashoffset: 100;
+	}
+
+	100% {
+		stroke-dashoffset: 0;
+	}
+}
+
+.fiori-blue {
+	border-color: #0070f2;
+}
+
+.bg-fiori-blue {
+	background-color: #0070f2;
+}
+
+.loader-bold-ring {
+	border: 8px solid #f3f4f6;
+	border-top: 8px solid #0070f2;
+	border-radius: 50%;
+	width: 95px;
+	height: 95px;
+	animation: bold-spin 1s linear infinite;
 }

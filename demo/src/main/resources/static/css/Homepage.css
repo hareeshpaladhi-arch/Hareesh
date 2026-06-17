@@ -349,3 +349,156 @@ body {
 	opacity: 0;
 	pointer-events: none;
 }
+
+.uploadButtonsClass {
+	float: right;
+}
+
+.sourceFieldsDivClass,
+.targetFieldsDivClass {
+	overflow: scroll;
+}
+
+.modal-div-class {
+	height: 500px;
+}
+
+button,
+select {
+	font-size: 12px !important;
+}
+
+button,
+select {
+	height: 32px;
+}
+
+.loaderDivClass {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(234 88 12, 0.7);
+	z-index: 9999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+}
+
+@keyframes bold-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes bold-pulse {
+
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+
+	50% {
+		transform: scale(0.9);
+		opacity: 0.5;
+	}
+}
+
+@keyframes bold-dash {
+	0% {
+		stroke-dashoffset: 100;
+	}
+
+	100% {
+		stroke-dashoffset: 0;
+	}
+}
+
+.fiori-blue {
+	border-color: #0070f2;
+}
+
+.bg-fiori-blue {
+	background-color: #0070f2;
+}
+
+.loader-bold-ring {
+	border: 8px solid #f3f4f6;
+	border-top: 8px solid #0070f2;
+	border-radius: 50%;
+	width: 95px;
+	height: 95px;
+	animation: bold-spin 1s linear infinite;
+}
+
+.searchFilterDivClass {
+	margin-top: 0px !important;
+}
+
+
+.tab-content {
+	display: none;
+	opacity: 0;
+	transform: translateY(15px);
+	transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tab-content.active {
+	display: block;
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.pill-indicator {
+	transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Subtle glow for the container */
+.glass-shadow {
+	box-shadow: 0 10px 40px -10px rgba(79, 70, 229, 0.15);
+}
+
+.tableButtonDivClass {
+	position: relative;
+	left: 30%;
+}
+
+.menuTitleClass {
+	color: #0070f2;
+}
+
+.active-menu .menuTitleClass {
+	color: #fff;
+}
+
+.sideBarNavClass {
+	height: 500px;
+	overflow-y: auto;
+}
+
+.profileDropdownClass {
+	transform: translate(180px, -34px);
+}
+
+.notification-card {
+	transition: all 0.2s ease-in-out;
+}
+
+.notification-card:hover {
+	transform: translateY(-2px);
+}
+
+.unread {
+	border-left: 4px solid #3b82f6;
+}
+
+.dropdown-transition {
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}

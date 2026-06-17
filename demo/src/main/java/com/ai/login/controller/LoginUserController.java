@@ -1,6 +1,8 @@
 package com.ai.login.controller;
 
 import java.io.File;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,16 +18,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,18 +27,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ai.login.DTO.ApiResponse;
-import com.ai.login.DTO.BatchJobResult;
 import com.ai.login.DTO.LoginRequest;
 import com.ai.login.DTO.User;
-import com.ai.login.config.BatchCounterListener;
-import com.ai.login.service.FileUploadService;
-import com.ai.login.service.ProgressService;
+
+
 import com.ai.login.service.loginUserService;
 import com.ai.login.util.JwtUtil;
 
 import io.jsonwebtoken.lang.Arrays;
 
-import com.ai.login.DTO.BatchTemplate;
 
 @RestController
 @RequestMapping("/auth")
@@ -60,23 +50,6 @@ public class LoginUserController {
 	@Autowired
 	private JwtUtil jwtUtil;
 
-	@Autowired
-	private JobLauncher jobLauncher;
-
-	@Autowired
-	private Job job;
-
-	@Autowired
-	private ProgressService progressService;
-
-	@Autowired
-	private FileUploadService fileUploadService;
-
-	@Autowired
-	private Job importJob;
-
-	@Autowired
-	private BatchCounterListener counterListener;
 
 	// ✅ LOGIN
 	@PostMapping("/checkUserLogin")
@@ -92,8 +65,9 @@ public class LoginUserController {
 			String cookie = "token=" + token + "; Path=/" + "; Max-Age=3600" + "; HttpOnly" + "; SameSite=Lax";
 
 			response.setHeader("Set-Cookie", cookie);
-
-			return ResponseEntity.ok(Map.of("message", "Login successful"));
+			Map<String, String> responseMap = new HashMap<>();
+			responseMap.put("message", "Login successful");
+			return ResponseEntity.ok(responseMap);
 
 		} catch (BadCredentialsException e) {
 			return ResponseEntity.status(401).body(new ApiResponse("Invalid username or password", false));
@@ -119,65 +93,6 @@ public class LoginUserController {
 		return ResponseEntity.ok().build();
 	}
 
-	// ✅ FILE UPLOAD (FIXED)
-	@PostMapping("/upload")
-	public ResponseEntity<BatchJobResult> upload(@RequestParam("file") MultipartFile file) {
-		try {
-			String safeCsvPath = fileUploadService.prepareFileForBatch(file);
-
-			String random = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-			long time = System.currentTimeMillis();
-			String batchId = "BATCH_"+ time + "_" + random;
-
-			JobParameters params = new JobParametersBuilder().addString("filePath", safeCsvPath)
-					.addString("batchId", batchId).addLong("timestamp", time).toJobParameters();
-
-			JobExecution execution = jobLauncher.run(importJob, params);
-
-			BatchJobResult result = new BatchJobResult(batchId, counterListener.getTotalRead(),
-					counterListener.getTotalSaved(), counterListener.getTotalSkipped(),
-					execution.getStatus().toString(), "Batch completed successfully");
-
-			return ResponseEntity.ok(result);
-
-		} catch (Exception e) {
-			BatchJobResult error = new BatchJobResult("N/A", 0, 0, 0, "FAILED", "Upload failed: " + e.getMessage());
-			return ResponseEntity.status(500).body(error);
-		}
-	}
-
-	// ✅ ERROR DOWNLOAD
-	@GetMapping("/errors")
-	public ResponseEntity<InputStreamResource> downloadError() throws Exception {
-
-		File file = new File("uploads/error.csv");
-
-		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=error.csv")
-				.body(new InputStreamResource(new FileInputStream(file)));
-	}
-
-	@GetMapping("/batch/{batchId}")
-	public Map<String, Object> getData(
-	        @PathVariable String batchId,
-	        @RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "10") int size,
-	        @RequestParam(defaultValue = "") String search) {
-
-	    Pageable pageable = PageRequest.of(page, size);
-
-	    Page<BatchTemplate> pageData;
-
-	    if (search != null && !search.trim().isEmpty()) {
-	        pageData = userService.searchByBatchId(batchId, search, pageable);
-	    } else {
-	        pageData = userService.getByBatchId(batchId, pageable);
-	    }
-
-	    Map<String, Object> response = new HashMap<>();
-	    response.put("data", pageData.getContent());
-	    response.put("totalRecords", pageData.getTotalElements());
-
-	    return response;
-	}
+	
 
 }

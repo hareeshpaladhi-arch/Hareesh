@@ -2,702 +2,892 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Nexus | Smart Automation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Nexus | Smart Automation</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"/>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" th:href="@{/css/Homepage.css}">
+	<!-- DataTables CSS -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+
+	<!-- DataTables JS -->
+	<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+	<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+	<link rel="stylesheet" th:href="@{/css/Homepage.css}">
 	<script th:src="@{/js/Homepage.js}"></script>
-    
+
 </head>
 
 <body class="h-screen overflow-hidden text-slate-900">
+	<div id="loaderDivId" class="loaderDivClass" style="display: none;">
+		<div class="loader-bold-ring" id="loader"></div>
+		<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Syncing Domain</p>
+	</div>
+	<div id="commonDialog" style="display:none;"></div>
 
-    <div class="flex h-full w-full">
-        <!-- Sidebar -->
-        <aside 
-            id="sidebar" 
-            class="sidebar-transition group flex flex-col  border-r border-slate-800 h-full w-20 hover:w-72 [&.is-pinned]:w-72"
-        >
-            <!-- Toggle Header -->
-            <div class="p-6 flex items-center justify-between">
-                <div class="flex items-center gap-3 overflow-hidden">
-                    <div class="min-w-[40px] w-10 h-10 bg-[#FF5C00] rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-900/20 shrink-0">
-                        <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
-                    </div>
-                    <span class="text-fade text-white font-extrabold text-xl tracking-tight opacity-0">AI NEXUS</span>
-                </div>
-                <button id="toggleBtn" class="p-2 rounded-lg hover:bg-slate-800 transition-colors shrink-0">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
+	<div class="flex h-full w-full">
+		<!-- Sidebar -->
+		<aside id="sidebar"
+			class="sidebar-transition group flex flex-col  border-r border-slate-800 h-full w-20 hover:w-72 [&.is-pinned]:w-72">
+			<!-- Toggle Header -->
+			<div class="p-6 flex items-center justify-between">
+				<div class="flex items-center gap-3 overflow-hidden">
+					<div
+						class="min-w-[40px] w-10 h-10 bg-[#FF5C00] rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-900/20 shrink-0">
+						<i data-lucide="zap" class="w-6 h-6 fill-current"></i>
+					</div>
+					<span class="text-fade text-white font-extrabold text-xl tracking-tight opacity-0">AI NEXUS</span>
+				</div>
+				<button id="toggleBtn" class="p-2 rounded-lg hover:bg-slate-800 transition-colors shrink-0">
+					<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M4 6h16M4 12h16M4 18h16"></path>
+					</svg>
+				</button>
+			</div>
 
-            <!-- Navigation -->
-            <nav class="flex-1 px-4 space-y-2 mt-4">
-                <p class="text-fade text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] px-4 mb-4 opacity-0">Main Menu</p>
-                
-                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all text-slate-400 active-menu hover:text-white hover:bg-slate-800/50">
-                    <i data-lucide="layout-grid" class="w-5 h-5 shrink-0"></i>
-                    <span class="text-fade font-bold opacity-0">Insights</span>
-                </button>
+			<!-- Navigation -->
+			<nav class="sideBarNavClass flex-1 px-4 space-y-2 mt-4" id="sideBarNavId">
+				<p
+					class="text-fade text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] px-4 mb-4 opacity-0">
+					Main Menu</p>
+			</nav>
 
-                <button onclick="switchTab('ai-automation')" id="btn-ai-automation" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all">
-                    <i data-lucide="cpu" class="w-5 h-5 shrink-0"></i>
-                    <span class="text-fade font-bold opacity-0">Automation</span>
-                </button>
+			<!-- User Profile -->
+		</aside>
 
-                <button onclick="switchTab('ai-automation-data')" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all text-slate-400 hover:text-white hover:bg-slate-800/50">
-                    <i data-lucide="database" class="w-5 h-5 shrink-0"></i>
-                    <span class="text-fade font-bold opacity-0">Datasets</span>
-                </button>
+		<!-- Main Content -->
+		<main class="flex-1 h-full overflow-y-auto bg-[#F8FAFC] custom-scrollbar">
+			<header class="sticky top-0 z-40 bg-[#F8FAFC]/80 backdrop-blur-md px-8 py-6">
+				<div class="max-w-7xl mx-auto flex items-center justify-between">
+					<div>
+						<h2 id="pageTitle" class="text-2xl font-black text-slate-900">Performance Insights</h2>
+						<p class="text-slate-400 text-xs font-medium">Monitoring AI operations and ingestion health</p>
+					</div>
 
-                <button onclick="switchTab('ai-automation-models')" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all text-slate-400 hover:text-white hover:bg-slate-800/50">
-                    <i data-lucide="settings-2" class="w-5 h-5 shrink-0"></i>
-                    <span class="text-fade font-bold opacity-0">Models</span>
-                </button>
-            </nav>
+					<div class="flex items-center gap-4">
+						<div class="relative group">
+							<i data-lucide="search"
+								class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-orange-500"></i>
+							<input type="text" placeholder="Quick search..."
+								class="w-64 pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm">
+						</div>
+						<div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+						
+						<button id="notificationId"
+							class="relative p-2.5 bg-white border border-slate-200 text-slate-500 hover:text-orange-600 rounded-xl shadow-sm transition-all">
+							<i data-lucide="bell" class="h-5 w-5"></i>
+							<span
+								class="absolute top-2.5 right-2.5 w-2 h-2 bg-orange-600 rounded-full border-2 border-white"></span>
+						</button>
+						<div id="notification-panel"
+							class="hidden absolute right-4 md:right-auto  mt-2 w-full max-w-sm bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-40 dropdown-transition">
+							<div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+								<h2 class="font-bold text-gray-900">Notifications</h2>
+								
+							</div>
+							<div id="notification-container" class="max-h-[400px] overflow-y-auto p-4 space-y-3">
+								<!-- Notifications injected here -->
+							</div>
+						</div>
+						<button onclick="toggleProfileDropdown()"
+							class="flex items-center gap-2 p-1.5 pr-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-orange-200 transition-all">
+							<div
+								class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+								<i data-lucide="user" class="w-4 h-4"></i>
+							</div>
+							<i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+						</button>
+						<div id="profileDropdown"
+							class="profileDropdownClass absolute  top-full w-64 bg-white border border-slate-100 rounded-[1rem] shadow-2xl z-[100] overflow-hidden dropdown-animate hidden">
+							<div class="p-5 border-b border-slate-50 bg-slate-50/50">
+								<div class="flex items-center gap-3">
+									<div
+										class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-sm">
+										HP</div>
+									<div class="overflow-hidden">
+										<p id="userTextId" class="text-sm font-black text-slate-900 truncate"
+											th:text="${userName}">Hareesh Paladi</p>
+										<p id="userEmailId" class="text-[10px] text-slate-400 font-medium truncate"
+											th:text="${email}">hareesh@nexus.ai</p>
+									</div>
+								</div>
+							</div>
+							<div class="p-2 space-y-1">
+								<button
+									class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+										fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+										stroke-linejoin="round" data-lucide="user-cog" aria-hidden="true"
+										class="lucide lucide-user-cog w-4 h-4 text-slate-400 group-hover:text-orange-600">
+										<path d="M10 15H6a4 4 0 0 0-4 4v2"></path>
+										<path d="m14.305 16.53.923-.382"></path>
+										<path d="m15.228 13.852-.923-.383"></path>
+										<path d="m16.852 12.228-.383-.923"></path>
+										<path d="m16.852 17.772-.383.924"></path>
+										<path d="m19.148 12.228.383-.923"></path>
+										<path d="m19.53 18.696-.382-.924"></path>
+										<path d="m20.772 13.852.924-.383"></path>
+										<path d="m20.772 16.148.924.383"></path>
+										<circle cx="18" cy="15" r="3"></circle>
+										<circle cx="9" cy="7" r="4"></circle>
+									</svg> Account Settings
+								</button>
+								<button
+									class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+										fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+										stroke-linejoin="round" data-lucide="credit-card" aria-hidden="true"
+										class="lucide lucide-credit-card w-4 h-4 text-slate-400 group-hover:text-orange-600">
+										<rect width="20" height="14" x="2" y="5" rx="2"></rect>
+										<line x1="2" x2="22" y1="10" y2="10"></line>
+									</svg> Billing &amp; Plans
+								</button>
+								<button
+									class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+										fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+										stroke-linejoin="round" data-lucide="shield-check" aria-hidden="true"
+										class="lucide lucide-shield-check w-4 h-4 text-slate-400 group-hover:text-orange-600">
+										<path
+											d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+										</path>
+										<path d="m9 12 2 2 4-4"></path>
+									</svg> Security &amp; Tokens
+								</button>
+								<div class="h-px bg-slate-50 mx-4 my-2"></div>
+								<button
+									class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+									onclick="logout()">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+										fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+										stroke-linejoin="round" data-lucide="log-out" aria-hidden="true"
+										class="lucide lucide-log-out w-4 h-4">
+										<path d="m16 17 5-5-5-5"></path>
+										<path d="M21 12H9"></path>
+										<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+									</svg> Sign Out
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</header>
 
-            <!-- User Profile -->
-            <div class="p-6">
-                <div class="bg-slate-950/50 rounded-2xl p-4 border border-slate-800">
-                    <div class="flex items-center gap-3 overflow-hidden">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-600 to-amber-400 flex items-center justify-center text-white font-bold border-2 border-slate-800 shrink-0">
-                            HP
-                        </div>
-                        <div class="text-fade opacity-0 overflow-hidden">
-                            <p class="text-xs font-bold text-white truncate" th:text="${userName}">Hareesh Paladi</p>
-                            <p class="text-[10px] text-orange-500 font-bold">PREMIUM PLAN</p>
-                        </div>
-                    </div>
-                    <button class="text-fade opacity-0 w-full mt-3 py-2 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold rounded-lg transition-colors">
-                        UPGRADE
-                    </button>
-                </div>
-            </div>
-        </aside>
+			<!-- Dashboard View -->
+			<section id="view-Insights" class="px-8 pb-12">
+				<div class="max-w-7xl mx-auto">
+					<div id="metrics-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+					</div>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+							<h3 class="text-lg font-semibold mb-4">Classes</h3><canvas id="pieChart"
+								class="max-h-64"></canvas>
+						</div>
+						<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+							<h3 class="text-lg font-semibold mb-4">Properties</h3><canvas id="doughnutChart"
+								class="max-h-64"></canvas>
+						</div>
+						<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+							<h3 class="text-lg font-semibold mb-4">Monthly Records Imported</h3><canvas id="barChart"
+								class="max-h-64"></canvas>
+						</div>
+						<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+							<h3 class="text-lg font-semibold mb-4">Yearly Records Imported</h3><canvas
+								id="stackedBarChart" class="max-h-64"></canvas>
+						</div>
+						<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+							<h3 class="text-lg font-semibold mb-4">Performance History</h3><canvas id="lineChart"
+								class="max-h-64"></canvas>
+						</div>
+						<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+							<h3 class="text-lg font-semibold mb-4">Category Comparison</h3><canvas id="polarAreaChart"
+								class="max-h-64"></canvas>
+						</div>
+						<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+							<h3 class="text-lg font-semibold mb-4">KPI Overview</h3><canvas id="radarChart"
+								class="max-h-64"></canvas>
+						</div>
+					</div>
+				</div>
 
-        <!-- Main Content -->
-        <main class="flex-1 h-full overflow-y-auto bg-[#F8FAFC] custom-scrollbar">
-            <header class="sticky top-0 z-40 bg-[#F8FAFC]/80 backdrop-blur-md px-8 py-6">
-                <div class="max-w-7xl mx-auto flex items-center justify-between">
-                    <div>
-                        <h2 id="pageTitle" class="text-2xl font-black text-slate-900">Performance Insights</h2>
-                        <p class="text-slate-400 text-xs font-medium">Monitoring AI operations and ingestion health</p>
-                    </div>
-                    
-                    <div class="flex items-center gap-4">
-                        <div class="relative group">
-                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-orange-500"></i>
-                            <input type="text" placeholder="Quick search..."
-                                class="w-64 pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm">
-                        </div>
-                        <div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
-                        <button class="relative p-2.5 bg-white border border-slate-200 text-slate-500 hover:text-orange-600 rounded-xl shadow-sm transition-all">
-                            <i data-lucide="bell" class="h-5 w-5"></i>
-                            <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-orange-600 rounded-full border-2 border-white"></span>
-                        </button>
-                        <button onclick="toggleProfileDropdown()" class="flex items-center gap-2 p-1.5 pr-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-orange-200 transition-all">
-                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
-                                <i data-lucide="user" class="w-4 h-4"></i>
-                            </div>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-                        </button>
-                        <div id="profileDropdown" class="absolute right-0 top-full w-64 bg-white border border-slate-100 rounded-[1rem] shadow-2xl z-[100] overflow-hidden dropdown-animate hidden">
-                                <div class="p-5 border-b border-slate-50 bg-slate-50/50">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-sm">HP</div>
-                                        <div class="overflow-hidden">
-                                            <p id="userTextId" class="text-sm font-black text-slate-900 truncate" th:text="${userName}">Hareesh Paladi</p>
-                                            <p id="userEmailId" class="text-[10px] text-slate-400 font-medium truncate" th:text="${email}">hareesh@nexus.ai</p>
-                                        </div>	
-                                    </div>
-                                </div>
-                                <div class="p-2 space-y-1">
-                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-cog" aria-hidden="true" class="lucide lucide-user-cog w-4 h-4 text-slate-400 group-hover:text-orange-600"><path d="M10 15H6a4 4 0 0 0-4 4v2"></path><path d="m14.305 16.53.923-.382"></path><path d="m15.228 13.852-.923-.383"></path><path d="m16.852 12.228-.383-.923"></path><path d="m16.852 17.772-.383.924"></path><path d="m19.148 12.228.383-.923"></path><path d="m19.53 18.696-.382-.924"></path><path d="m20.772 13.852.924-.383"></path><path d="m20.772 16.148.924.383"></path><circle cx="18" cy="15" r="3"></circle><circle cx="9" cy="7" r="4"></circle></svg> Account Settings
-                                    </button>
-                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="credit-card" aria-hidden="true" class="lucide lucide-credit-card w-4 h-4 text-slate-400 group-hover:text-orange-600"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg> Billing &amp; Plans
-                                    </button>
-                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all group">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" aria-hidden="true" class="lucide lucide-shield-check w-4 h-4 text-slate-400 group-hover:text-orange-600"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg> Security &amp; Tokens
-                                    </button>
-                                    <div class="h-px bg-slate-50 mx-4 my-2"></div>
-                                    <button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group" onclick="logout()">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-out" aria-hidden="true" class="lucide lucide-log-out w-4 h-4"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg> Sign Out
-                                    </button>
-                                </div>
-                            </div>
-                    </div>
-                </div>
-            </header>
+			</section>
 
-            <!-- Dashboard View -->
-            <section id="view-dashboard" class="px-8 pb-12">
-                <div class="max-w-7xl mx-auto">
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <div class="glass-card p-6 rounded-[2rem] shadow-sm relative overflow-hidden">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-500/5 rounded-full"></div>
-                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Classes</p>
-                            <h3 class="text-3xl font-black text-slate-900">142</h3>
-                            <div class="mt-4 flex items-center gap-1.5 text-emerald-500 font-bold text-[10px]">
-                                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
-                                <span>12% this month</span>
-                            </div>
-                        </div>
-                        <div class="glass-card p-6 rounded-[2rem] shadow-sm relative overflow-hidden">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/5 rounded-full"></div>
-                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Mapped Props</p>
-                            <h3 class="text-3xl font-black text-slate-900">1,842</h3>
-                            <div class="mt-4 flex items-center gap-1.5 text-blue-500 font-bold text-[10px]">
-                                <i data-lucide="check" class="w-3 h-3"></i>
-                                <span>85% Coverage</span>
-                            </div>
-                        </div>
-                        <div class="glass-card p-6 rounded-[2rem] shadow-sm relative overflow-hidden">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full"></div>
-                            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Avg Accuracy</p>
-                            <h3 class="text-3xl font-black text-slate-900">98.4%</h3>
-                            <div class="mt-4 w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full w-[98%]"></div>
-                            </div>
-                        </div>
-                        <div class="bg-orange-600 p-6 rounded-[2rem] shadow-lg shadow-orange-200 relative overflow-hidden">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full"></div>
-                            <p class="text-orange-100 text-[10px] font-bold uppercase tracking-widest mb-1">Processed</p>
-                            <h3 class="text-3xl font-black text-white">1.28M</h3>
-                            <p class="mt-4 text-[10px] text-orange-200 font-bold uppercase tracking-tighter">Live Stream Active</p>
-                        </div>
-                    </div>
+			<!-- AI Automation View -->
+			<section id="view-Automation" class="hidden px-8 pb-12">
+				<input type="file" id="fileInput" class="hidden" accept=".xlsx, .xls, .csv">
+				<div id="automationMainDivId" class="max-w-7xl mx-auto space-y-8">
 
-                    <!-- Main Chart Row -->
-                    <div class="grid grid-cols-12 gap-6 mb-8">
-                        <div class="col-span-12 lg:col-span-8 glass-card p-8 rounded-[2.5rem] shadow-sm h-[450px] flex flex-col">
-                            <div class="flex justify-between items-center mb-8">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-2 h-8 bg-orange-600 rounded-full"></div>
-                                    <h2 class="font-black text-slate-900 text-lg">Ingestion Velocity</h2>
-                                </div>
-                                <div class="flex bg-slate-100 p-1 rounded-xl">
-                                    <button class="px-4 py-1.5 text-[10px] font-bold rounded-lg bg-white shadow-sm text-slate-900">D</button>
-                                    <button class="px-4 py-1.5 text-[10px] font-bold rounded-lg text-slate-500">W</button>
-                                    <button class="px-4 py-1.5 text-[10px] font-bold rounded-lg text-slate-500">M</button>
-                                </div>
-                            </div>
-                            <div class="flex-1 min-h-0">
-                                <canvas id="mainChart"></canvas>
-                            </div>
-                        </div>
+					<!-- Toolbar -->
+					<div
+						class="searchFilterDivClass bg-white p-2 border-b border-gray-200 flex flex-wrap items-center gap-4">
+						<div class="relative flex-1 min-w-[200px]">
+							<i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+							<input type="text" placeholder="Search materials..."
+								class="w-full pl-10 pr-4 py-2 border rounded-md text-sm outline-none focus:ring-2 focus:ring-blue-500">
+						</div>
+						<select class="border rounded-md px-3 py-2 text-sm text-gray-600">
+							<option>All Classes</option>
+						</select>
+						<select class="border rounded-md px-3 py-2 text-sm text-gray-600">
+							<option>All Plants</option>
+						</select>
+						<select id="batchSelectId" class="border rounded-md px-3 py-2 text-sm text-gray-600"
+							onchange="loadTable(this.value,'dynamicTable')">
+							<option>All Batches</option>
+						</select>
+					</div>
 
-                        <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
-                            <div class="glass-card p-8 rounded-[2.5rem] shadow-sm flex-1 flex flex-col">
-                                <h2 class="font-black text-slate-900 text-lg mb-6 flex items-center gap-2">
-                                    <i data-lucide="pie-chart" class="w-5 h-5 text-orange-500"></i> Data Mix
-                                </h2>
-                                <div class="flex-1 relative flex items-center justify-center">
-                                    <canvas id="doughnutChart"></canvas>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4 mt-6">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full bg-orange-600"></div>
-                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Leads (45%)</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Users (25%)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Bottom Row -->
-                    <div class="grid grid-cols-12 gap-6">
-                         <div class="col-span-12 lg:col-span-7 glass-card p-8 rounded-[2.5rem] shadow-sm">
-                            <div class="flex items-center gap-3 mb-8">
-                                <i data-lucide="activity" class="w-5 h-5 text-emerald-500"></i>
-                                <h2 class="font-black text-slate-900 text-lg">System Health & Latency</h2>
-                            </div>
-                            <div class="h-64">
-                                <canvas id="barChart"></canvas>
-                            </div>
-                         </div>
-                         <div class="col-span-12 lg:col-span-5 glass-card p-8 rounded-[2.5rem] shadow-sm">
-                            <h2 class="font-black text-slate-900 text-lg mb-6">Recent Activity</h2>
-                            <div class="space-y-6">
-                                <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 flex-shrink-0">
-                                        <i data-lucide="file-check" class="w-5 h-5"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-800">Batch_X942 Processed</p>
-                                        <p class="text-xs text-slate-400">1,204 rows mapped successfully</p>
-                                        <p class="text-[10px] text-slate-300 mt-1 uppercase font-bold">2 mins ago</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
-                                        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-800">Schema Synced</p>
-                                        <p class="text-xs text-slate-400">Enterprise leads structure updated</p>
-                                        <p class="text-[10px] text-slate-300 mt-1 uppercase font-bold">45 mins ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                         </div>
-                    </div>
-                </div>
-            </section>
+					<div id="tableDataSection"
+						class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+						<table id="dynamicTable" class="display nowrap w-full"></table>
+					</div>
 
-            <!-- AI Automation View -->
-            <section id="view-ai-automation" class="hidden px-8 pb-12">
-				<div id="web-breadcrumbs" class="md: flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 bg-slate-100 p-2 rounded-lg">                
-                    <div class="flex items-center gap-2">
-                        <span class="text-slate-900 font-semibold" onclick="getUploadSectionShow()">Upload</span>                       
-                    </div>
-                </div>
-                <div id="automationMainDivId" class="max-w-7xl mx-auto space-y-8">
-                    <!-- Banner -->
-                    <div id="uploadButtonsId" class="bg-gradient-to-r from-orange-600 to-orange-500 p-4 rounded-[3rem] shadow-xl relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
-                            <i data-lucide="cpu" class="w-64 h-64 -translate-y-12 translate-x-12"></i>
-                        </div>
-                        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                            
-                            <div class="flex gap-3">
-                                <button onclick="downloadTemplate()" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl border border-white/20 transition-all flex items-center gap-2">
-                                    <i data-lucide="file-down" class="w-5 h-5"></i> Template
-                                </button>
-                                <button onclick="toggleConfigModal(true)" class="px-6 py-3.5 bg-white text-orange-600 font-bold rounded-2xl shadow-xl hover:shadow-orange-700/20 transition-all flex items-center gap-2">
-                                    <i data-lucide="sliders" class="w-5 h-5"></i> Advanced Config
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+					<!-- Step 2: Mapping UI -->
 
-                    <!-- Step 1: Upload -->
-                    <div id="uploadSection" class="glass-card border-2 border-dashed border-slate-200 rounded-[1rem] p-4 text-center cursor-pointer hover:border-orange-400 transition-all bg-white group" onclick="document.getElementById('fileInput').click()">
-                        <input type="file" id="fileInput" class="hidden" accept=".xlsx, .xls, .csv">
-                        <div class="flex flex-col items-center">
-                            <div class="w-20 h-20 bg-orange-50 rounded-[2rem] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-100 transition-all">
-                                <i data-lucide="upload-cloud" class="text-orange-600 w-10 h-10"></i>
-                            </div>
-                            <h3 class="text-xl font-black text-slate-900">Upload CSV/XLSX Source</h3>
-                            <p class="text-slate-400 mt-2 text-sm">Drag and drop your file here to start the mapping process</p>
-                            <div class="mt-8 flex gap-4">
-                                <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Encrypted
-                                </div>
-                                <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                    <i data-lucide="zap" class="w-4 h-4 text-orange-500"></i> Instant Parsed
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="tableDataSection" class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+					<div id="mappingSection"
+						class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+						<div class="glass-card rounded-[3rem] relative min-h-[600px]">
+							<div class="flex justify-between items-center mb-12">
+								<h3 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+									<div class="w-1.5 h-8 bg-orange-500 rounded-full"></div>
+									Schema Alignment
+								</h3>
+								<div class="flex items-center gap-6">
+									<button onclick="autoMapHeaders()"
+										class="flex items-center gap-2 text-sm font-black text-orange-600 hover:text-orange-700 transition-colors">
+										<i data-lucide="sparkles" class="w-4 h-4"></i> Magic Auto-Map
+									</button>
+									<button onclick="resetMapping()"
+										class="text-sm font-bold text-slate-400 hover:text-red-500 transition-colors">Reset</button>
+								</div>
+							</div>
+
+							<div class="grid grid-cols-2 gap-32 relative z-10">
+								<div class="space-y-4">
+									<div class="flex items-center justify-between mb-2">
+										<span
+											class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Source
+											File Headers</span>
+										<span class="text-[10px] font-bold text-orange-500">Select Item</span>
+									</div>
+									<div id="sourceFields"
+										class="sourceFieldsDivClass space-y-2.5 custom-scrollbar max-h-[500px] pr-4">
+									</div>
+								</div>
+								<div class="space-y-4">
+									<div class="flex items-center justify-between mb-2">
+										<span
+											class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Destination
+											Target</span>
+										<span class="text-[10px] font-bold text-orange-500">Map Here</span>
+									</div>
+									<div id="targetFields"
+										class="targetFieldsDivClass space-y-2.5 custom-scrollbar max-h-[500px] pr-4">
+									</div>
+								</div>
+							</div>
+							<svg id="mappingLines"
+								class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></svg>
 						</div>
 
-                    <!-- Step 2: Mapping UI -->
-                    <div id="mappingSection" class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div class="glass-card rounded-[3rem] p-10 relative min-h-[600px] shadow-sm">
-                            <div class="flex justify-between items-center mb-12">
-                                <h3 class="text-2xl font-black text-slate-900 flex items-center gap-3">
-                                    <div class="w-1.5 h-8 bg-orange-500 rounded-full"></div>
-                                    Schema Alignment
-                                </h3>
-                                <div class="flex items-center gap-6">
-                                    <button onclick="autoMapHeaders()" class="flex items-center gap-2 text-sm font-black text-orange-600 hover:text-orange-700 transition-colors">
-                                        <i data-lucide="sparkles" class="w-4 h-4"></i> Magic Auto-Map
-                                    </button>
-                                    <button onclick="resetMapping()" class="text-sm font-bold text-slate-400 hover:text-red-500 transition-colors">Reset</button>
-                                </div>
-                            </div>
+						<div
+							class="flex justify-between items-center bg-white p-8 rounded-[2rem] border border-slate-100">
+							<div class="flex items-center gap-4">
+								<div id="mappingCounter"
+									class="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-800">
+									0
+								</div>
+								<div>
+									<p class="text-sm font-bold text-slate-800">Fields Mapped</p>
+									<p class="text-xs text-slate-400">Target schema requires at least 1 mapping</p>
+								</div>
+							</div>
+							<button id="btnRunProcess" disabled onclick="uploadFile()"
+								class="px-10 py-4 bg-slate-100 text-slate-400 font-black rounded-2xl cursor-not-allowed transition-all flex items-center gap-3">
+								<i data-lucide="zap" class="w-5 h-5"></i>
+								Start Batch Process
+							</button>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section id="view-Extraction" class="px-8 pb-12" style="display: none;">
+				<main class="max-w-5xl mx-auto">
+					<div class="relative bg-slate-200/60 p-1.5 rounded-2xl inline-flex gap-1 mb-8 shadow-inner"
+						id="tab-container">
+						<button onclick="showTab('characteristics','charactersticDataTableId')"
+							class="px-6 py-3 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 z-10 text-slate-600 hover:text-slate-900"
+							id="tab-characteristics">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+							</svg>
+							<span>Specs</span>
+							<span class="bg-slate-300/50 text-[10px] px-2 py-0.5 rounded-full text-slate-600">4</span>
+						</button>
+						<button onclick="showTab('reference','refernceDataTableId')"
+							class="px-6 py-3 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 z-10 text-slate-600 hover:text-slate-900"
+							id="tab-reference">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+								</path>
+							</svg>
+							<span>Reference</span>
+							<span class="bg-slate-300/50 text-[10px] px-2 py-0.5 rounded-full text-slate-600">1</span>
+						</button>
+						<button onclick="showTab('document','documentDataTableId')"
+							class="px-6 py-3 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 z-10 text-slate-600 hover:text-slate-900"
+							id="tab-document">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+								</path>
+							</svg>
+							<span>Docs</span>
+							<span class="bg-slate-300/50 text-[10px] px-2 py-0.5 rounded-full text-slate-600">1</span>
+						</button>
 
-                            <div class="grid grid-cols-2 gap-32 relative z-10">
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Source File Headers</span>
-                                        <span class="text-[10px] font-bold text-orange-500">Select Item</span>
-                                    </div>
-                                    <div id="sourceFields" class="space-y-2.5 custom-scrollbar max-h-[500px] pr-4"></div>
-                                </div>
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Destination Target</span>
-                                        <span class="text-[10px] font-bold text-orange-500">Map Here</span>
-                                    </div>
-                                    <div id="targetFields" class="space-y-2.5 custom-scrollbar max-h-[500px] pr-4"></div>
-                                </div>
-                            </div>
-                            <svg id="mappingLines" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></svg>
+
+						<div id="pill" class="absolute top-1.5 bottom-1.5 rounded-xl bg-white shadow-md pill-indicator"
+							style="width: 110px; transform: translateX(6px);"></div>
+					</div>
+					<div
+						class="searchFilterDivClass bg-white p-2 border-b border-gray-200 flex flex-wrap items-center gap-4">
+						<div class="relative flex-1 min-w-[200px]">
+							<i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+							<input type="text" placeholder="Search materials..."
+								class="w-full pl-10 pr-4 py-2 border rounded-md text-sm outline-none focus:ring-2 focus:ring-blue-500">
+						</div>
+						<select class="border rounded-md px-3 py-2 text-sm text-gray-600">
+							<option>All Classes</option>
+						</select>
+						<select class="border rounded-md px-3 py-2 text-sm text-gray-600">
+							<option>All Plants</option>
+						</select>
+						<select id="batchExtSelectId" class="border rounded-md px-3 py-2 text-sm text-gray-600"
+							onchange="loadTable(this.value,'dynamicTable')">
+							<option>All Batches</option>
+						</select>
+					</div>
+
+					<div class="rounded-3xl p-6 glass-shadow border border-slate-100 min-h-[300px]">
+
+
+						<div id="characteristics" class="tab-content active">
+							<table id="charactersticDataTableId"></table>
+						</div>
+
+						<div id="reference" class="tab-content">
+							<table id="refernceDataTableId"></table>
+						</div>
+
+						<div id="document" class="tab-content">
+							<table id="documentDataTableId"></table>
+						</div>
+					</div>
+				</main>
+			</section>
+		</main>
+	</div>
+
+
+	<div id="processingOverlay"
+		class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center">
+		<div class="bg-white rounded-[3rem] p-12 max-w-sm w-full text-center shadow-2xl">
+			<div class="relative w-24 h-24 mx-auto mb-8">
+				<div class="absolute inset-0 rounded-full border-4 border-orange-100"></div>
+				<div class="absolute inset-0 rounded-full border-4 border-orange-600 border-t-transparent animate-spin">
+				</div>
+				<div class="absolute inset-0 flex items-center justify-center">
+					<i data-lucide="zap" class="w-8 h-8 text-orange-600 fill-current"></i>
+				</div>
+			</div>
+			<h2 class="text-2xl font-black text-slate-900">Synchronizing...</h2>
+			<p class="text-slate-400 mt-2 text-sm">Analyzing mappings and predicting schema alignment</p>
+			<div class="mt-10">
+				<div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+					<div id="progressBar" class="bg-orange-600 h-full w-0 transition-all duration-500"></div>
+				</div>
+				<p id="progressText" class="mt-3 text-[10px] font-black text-orange-600 uppercase tracking-widest">In
+					Progress 0%</p>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Init Icons
+		loadSidebarData();
+		lucide.createIcons();
+
+		Chart.register(ChartDataLabels);
+
+		const metrics = [
+			{label: "Total Records", value: "24,500", bg: "from-blue-500 to-indigo-600"},
+			{label: "Total Classes", value: "128", bg: "from-purple-500 to-indigo-600"},
+			{label: "Total Properties", value: "1,042", bg: "from-pink-500 to-rose-600"},
+			{label: "Enriched Records", value: "18,200", bg: "from-emerald-500 to-teal-600"},
+			{label: "Accuracy", value: "98.4%", bg: "from-amber-500 to-orange-600"}
+		];
+
+		document.getElementById('metrics-container').innerHTML = metrics.map(item => `
+            <div class="bg-gradient-to-br ${item.bg} p-6 rounded-2xl shadow-lg border border-white/20">
+                <p class="text-xs text-white/80 font-medium uppercase tracking-wider">${item.label}</p>
+                <p class="text-2xl font-bold text-white mt-1">${item.value}</p>
+            </div>
+        `).join('');
+
+		function createCharts() {
+			const ctxPie = document.getElementById('pieChart').getContext('2d');
+			const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+			const ctxBar = document.getElementById('barChart').getContext('2d');
+			const ctxStacked = document.getElementById('stackedBarChart').getContext('2d');
+			const ctxLine = document.getElementById('lineChart').getContext('2d');
+			const ctxPolar = document.getElementById('polarAreaChart').getContext('2d');
+			const ctxRadar = document.getElementById('radarChart').getContext('2d');
+
+			const barGradient = ctxBar.createLinearGradient(0, 0, 0, 300);
+			barGradient.addColorStop(0, '#6366f1');
+			barGradient.addColorStop(1, '#a855f7');
+
+			const lineGradient = ctxLine.createLinearGradient(0, 0, 0, 300);
+			lineGradient.addColorStop(0, 'rgba(99, 102, 241, 0.6)');
+			lineGradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+			const defaultOptions = {
+				responsive: true, maintainAspectRatio: false,
+				plugins: {datalabels: {color: '#333', font: {weight: 'bold'}}}
+			};
+
+			new Chart(ctxPie, {
+				type: 'pie', data: {
+					labels: [
+						'Bearing,Ball', 'Valve', 'Gasket', 'Bolt', 'Nut',
+						'Washer', 'Pipe', 'Flange', 'Coupling', 'Seal',
+					], datasets: [{
+						data: [
+							70, 20, 10, 15, 12,
+							18, 25, 8, 14, 9,
+						], backgroundColor: ['#6366f1', '#a855f7', '#ec4899']
+					}]
+				}, options: defaultOptions
+			});
+			new Chart(ctxDoughnut, {type: 'doughnut', data: {labels: ['Total Properties Extracted', 'Total Properties Mapped'], datasets: [{data: [85, 15], backgroundColor: ['#3b82f6', '#8b5cf6']}]}, options: defaultOptions});
+			new Chart(ctxBar, {type: 'bar', data: {labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{label: 'Total Records', data: [500, 1900, 3000, 5200, 8320, 9600, 1200, 2200, 6300, 10000, 22000, 33650], backgroundColor: barGradient}]}, options: defaultOptions});
+			new Chart(ctxStacked, {type: 'bar', data: {labels: ['Record Count'], datasets: [{label: '2026', data: [50000], backgroundColor: '#6366f1'}]}, options: {...defaultOptions, scales: {x: {stacked: true}, y: {stacked: true}}}});
+			new Chart(ctxLine, {type: 'line', data: {labels: ['Q1', 'Q2', 'Q3', 'Q4'], datasets: [{label: 'Trend', data: [10, 25, 20, 40], borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: lineGradient}]}, options: defaultOptions});
+			new Chart(ctxPolar, {type: 'polarArea', data: {labels: ['D1', 'D2', 'D3'], datasets: [{data: [15, 25, 35], backgroundColor: ['#6366f1', '#a855f7', '#ec4899']}]}, options: defaultOptions});
+			new Chart(ctxRadar, {type: 'radar', data: {labels: ['Speed', 'Rel', 'Cost', 'Scale'], datasets: [{label: 'Metrics', data: [80, 90, 70, 85], backgroundColor: 'rgba(99, 102, 241, 0.3)', borderColor: '#6366f1'}]}, options: defaultOptions});
+		}
+
+		window.onload = createCharts;
+
+		const targetFieldsList = ['ID', 'CLASS', 'SHORT_DESC', 'LONG_DESC', 'MATERIAL_TYPE', 'UNSPC'];
+		let sourceFieldsList = [];
+		let mappings = [];
+		let selectedSource = null;
+		const fileInput = document.getElementById('fileInput');
+
+		const uploadSection = document.getElementById('uploadSection');
+
+		function processExcelFile(file) {
+			if (!file) return;
+
+			const reader = new FileReader();
+
+			reader.onload = (evt) => {
+				const bstr = evt.target.result;
+				const wb = XLSX.read(bstr, {type: 'binary'});
+				const ws = wb.Sheets[wb.SheetNames[0]];
+				const data = XLSX.utils.sheet_to_json(ws, {header: 1});
+
+				if (data.length > 0) {
+					sourceFieldsList = data[0];
+					mappingDialog({
+						title: "Mapping",
+						message: "Please select at least one record.",
+						width: 700,
+						height: 500
+					});
+					setTimeout(function () {
+						renderMappingUI();
+					}, 500);
+
+				}
+			};
+
+			reader.readAsBinaryString(file);
+		}
+
+		// File browse
+		fileInput.addEventListener('change', (e) => {
+			processExcelFile(e.target.files[0]);
+		});
+
+		function renderMappingUI() {
+			const sourceContainer = document.getElementById('sourceFields');
+			const targetContainer = document.getElementById('targetFields');
+			sourceContainer.innerHTML = '';
+			targetContainer.innerHTML = '';
+
+			sourceFieldsList.forEach((field, i) => {
+				const div = document.createElement('div');
+				div.className = 'node-item p-5 border border-slate-100 rounded-2xl font-bold text-xs bg-white shadow-sm flex items-center justify-between cursor-pointer';
+				div.id = `source-${i}`;
+				div.innerHTML = `<span>${field}</span> <i data-lucide="circle" class="w-3 h-3 text-slate-200"></i>`;
+				div.onclick = () => selectSource(i);
+				sourceContainer.appendChild(div);
+			});
+
+			targetFieldsList.forEach((field, i) => {
+				const div = document.createElement('div');
+				div.className = 'node-item p-5 border border-slate-100 rounded-2xl font-bold text-xs bg-white shadow-sm flex items-center justify-between text-right cursor-pointer';
+				div.id = `target-${i}`;
+				div.innerHTML = `<i data-lucide="circle" class="w-3 h-3 text-slate-200"></i> <span>${field}</span>`;
+				div.onclick = () => selectTarget(i);
+				targetContainer.appendChild(div);
+			});
+
+			lucide.createIcons();
+			window.addEventListener('resize', redrawLines);
+			setTimeout(redrawLines, 100);
+		}
+
+		function selectSource(i) {
+			if (selectedSource !== null) document.getElementById(`source-${selectedSource}`).classList.remove('selected');
+			selectedSource = i;
+			document.getElementById(`source-${i}`).classList.add('selected');
+		}
+
+		function selectTarget(ti) {
+			if (selectedSource === null) return;
+			mappings = mappings.filter(m => m.target !== ti);
+			mappings.push({source: selectedSource, target: ti});
+
+			document.getElementById(`source-${selectedSource}`).classList.remove('selected');
+			document.getElementById(`source-${selectedSource}`).classList.add('mapped');
+			document.getElementById(`target-${ti}`).classList.add('mapped');
+
+			selectedSource = null;
+			updateStatus();
+			redrawLines();
+		}
+
+		function redrawLines() {
+			const svg = document.getElementById('mappingLines');
+			if (!svg || svg.offsetParent === null) return;
+			svg.innerHTML = '';
+			const containerRect = svg.getBoundingClientRect();
+
+			mappings.forEach(m => {
+				const sEl = document.getElementById(`source-${m.source}`);
+				const tEl = document.getElementById(`target-${m.target}`);
+				if (!sEl || !tEl) return;
+
+				const sR = sEl.getBoundingClientRect();
+				const tR = tEl.getBoundingClientRect();
+
+				const x1 = sR.right - containerRect.left - 20;
+				const y1 = sR.top - containerRect.top + (sR.height / 2);
+				const x2 = tR.left - containerRect.left + 20;
+				const y2 = tR.top - containerRect.top + (tR.height / 2);
+
+				const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				const cp = x1 + (x2 - x1) / 2;
+				path.setAttribute("d", `M ${x1} ${y1} C ${cp} ${y1}, ${cp} ${y2}, ${x2} ${y2}`);
+				path.setAttribute("class", "mapping-line");
+				svg.appendChild(path);
+			});
+		}
+
+		function autoMapHeaders() {
+			resetMapping();
+			sourceFieldsList.forEach((sVal, si) => {
+				targetFieldsList.forEach((tVal, ti) => {
+					const s = sVal.toLowerCase().replace(/[^a-z]/g, '');
+					const t = tVal.toLowerCase().replace(/[^a-z]/g, '');
+					if (s.includes(t) || t.includes(s)) {
+						if (!mappings.find(m => m.target === ti)) {
+							mappings.push({source: si, target: ti});
+							document.getElementById(`source-${si}`).classList.add('mapped');
+							document.getElementById(`target-${ti}`).classList.add('mapped');
+						}
+					}
+				});
+			});
+			updateStatus();
+			redrawLines();
+		}
+
+		function resetMapping() {
+			mappings = [];
+			selectedSource = null;
+			document.querySelectorAll('.node-item').forEach(el => el.classList.remove('mapped', 'selected'));
+			redrawLines();
+			updateStatus();
+		}
+
+		function updateStatus() {
+			const counter = document.getElementById('mappingCounter');
+			const btn = document.getElementById('btnRunProcess');
+			counter.innerText = mappings.length;
+			if (mappings.length > 0) {
+				btn.disabled = false;
+				btn.className = "px-10 py-4 bg-orange-600 text-white font-black rounded-2xl shadow-xl shadow-orange-100 hover:bg-orange-700 transition-all flex items-center gap-3 cursor-pointer";
+			} else {
+				btn.disabled = true;
+				btn.className = "px-10 py-4 bg-slate-100 text-slate-400 font-black rounded-2xl cursor-not-allowed transition-all flex items-center gap-3";
+			}
+		}
+
+		function switchTab(tabId) {
+			if (tabId === 'Extracted Data') {
+				$("#view-Extraction").show();
+				loadTable("NULL", "charactersticDataTableId");
+				getBatchIdList("batchExtSelectId");
+				setTimeout(redrawLines, 100);
+			}
+			else {
+				$("#view-Extraction").hide();
+			}
+
+			document.getElementById('view-Insights').classList.add('hidden');
+			document.getElementById('view-Automation').classList.add('hidden');
+
+			document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+			document.getElementById('pageTitle').innerText = tabId === 'dashboard' ? 'Performance Insights' : '';
+
+			if (tabId === 'Automation') {
+				loadTable("NULL", "dynamicTable");
+				getBatchIdList();
+				setTimeout(redrawLines, 100);
+			}
+
+
+		}
+		function uploadFile() {
+			$("#mappingSection").hide();
+			try {
+				$("#mappingSection").dialog("close");
+			} catch (e) {
+			}
+
+			let fileInput = document.getElementById("fileInput");
+			let file = fileInput.files[0];
+
+			if (!file) {
+				alert("Please select a file");
+				return;
+			}
+
+			if (!mappings || mappings.length === 0) {
+				alert("Please map at least one field");
+				return;
+			}
+
+			console.log("sourceFieldsList:", sourceFieldsList);
+			console.log("targetFieldsList:", targetFieldsList);
+			console.log("mappings:", mappings);
+
+			const mappedData = mappings.map(m => ({
+				sourceField: sourceFieldsList[m.source],
+				targetField: targetFieldsList[m.target]
+			}));
+
+			console.log("mappedData:", mappedData);
+			console.log("mappedData JSON:", JSON.stringify(mappedData));
+
+			let fd = new FormData();
+			fd.append("file", file);
+			fd.append("mappedData", JSON.stringify(mappedData));
+
+			for (let pair of fd.entries()) {
+				console.log(pair[0], pair[1]);
+			}
+
+			const overlay = document.getElementById('processingOverlay');
+			const bar = document.getElementById('progressBar');
+			const txt = document.getElementById('progressText');
+			const mapping = document.getElementById('mappingSection');
+			const tableDataSection = document.getElementById('tableDataSection');
+
+			overlay.classList.remove('hidden');
+			bar.style.width = "10%";
+			txt.innerText = "Uploading file...";
+
+			fetch("/api/upload", {
+				method: "POST",
+				body: fd
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error("Upload failed");
+					}
+
+					bar.style.width = "60%";
+					txt.innerText = "Processing file...";
+
+					return response.json();
+				})
+				.then(result => {
+
+					console.log("Upload Result:", result);
+
+					bar.style.width = "100%";
+
+					txt.innerHTML = `
+            <div style="text-align:left">
+                <b>Status:</b> ${result.status}<br>
+                <b>Batch ID:</b> ${result.batchId}<br>
+                <b>Total Read:</b> ${result.totalRead}<br>
+                <b>Total Saved:</b> ${result.totalSaved}<br>
+                <b>Total Skipped:</b> ${result.totalSkipped}<br>
+                <b>Message:</b> ${result.message}
+            </div>
+        `;
+					getBatchIdList();
+					setTimeout(() => {
+
+						overlay.classList.add('hidden');
+
+						mapping.classList.add('hidden');
+						tableDataSection.classList.remove('hidden');
+
+						resetMapping();
+
+						if (result.batchId) {
+							loadTable(result.batchId);
+							$("#batchSelectId").val(result.batchId);
+						}
+
+					}, 3000);
+				})
+				.catch(error => {
+
+					console.error("Upload Error:", error);
+
+					txt.innerHTML = `
+            <span style="color:red">
+                Error: ${error.message}
+            </span>
+        `;
+
+					setTimeout(() => {
+						overlay.classList.add('hidden');
+					}, 2000);
+				});
+		}
+
+
+		function toggleProfileDropdown(e) {
+			const dropdown = document.getElementById('profileDropdown');
+			dropdown.classList.toggle('hidden');
+		}
+
+		function downloadTemplate() {
+			const ws = XLSX.utils.aoa_to_sheet([targetFieldsList]);
+			const wb = XLSX.utils.book_new();
+			XLSX.utils.book_append_sheet(wb, ws, "TargetSchema");
+			XLSX.writeFile(wb, "Nexus_Target_Template.xlsx");
+		}
+		const notifications = [
+            { id: 1, type: 'MDRM', status: 'Assigned', title: 'Risk Assessment #402', msg: 'You have been assigned as the primary reviewer.', time: '2m ago', read: false },
+            { id: 2, type: 'MDG', status: 'Assigned', title: 'Master Data Request #998', msg: 'New data entry task assigned to your queue.', time: '1h ago', read: false },
+            { id: 3, type: 'MDRM', status: 'Review', title: 'Device Hazard Report', msg: 'Report awaiting final sign-off.', time: '3h ago', read: true },
+            { id: 4, type: 'MDG', status: 'Assigned', title: 'Vendor Update #552', msg: 'Assigned to audit vendor registration data.', time: '5h ago', read: false }
+        ];
+
+        const panel = document.getElementById('notification-panel');
+        const bellBtn = document.getElementById('notificationId');
+
+        // Toggle notification panel
+        bellBtn.addEventListener('click', () => {
+            panel.classList.toggle('hidden');
+        });
+
+        // Close when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!bellBtn.contains(e.target) && !panel.contains(e.target)) {
+                panel.classList.add('hidden');
+            }
+        });
+
+        function renderNotifications(filter = 'all') {
+            const container = document.getElementById('notification-container');
+            container.innerHTML = '';
+
+            const filtered = filter === 'all' 
+                ? notifications 
+                : notifications.filter(n => n.type === filter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-400 py-4 text-sm">No new notifications</p>';
+                return;
+            }
+
+            filtered.forEach(n => {
+                const card = document.createElement('div');
+                card.className = `notification-card p-3 rounded-lg border cursor-pointer ${n.read ? 'bg-gray-50 border-gray-100' : 'bg-white border-gray-200'} ${n.read ? '' : 'unread'}`;
+                card.onclick = () => markAsRead(n.id);
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="pr-2">
+                            <span class="text-[10px] font-bold uppercase tracking-wider ${n.type === 'MDRM' ? 'text-purple-600' : 'text-emerald-600'}">
+                                ${n.type}
+                            </span>
+                            <h3 class="font-semibold text-sm text-gray-900">${n.title}</h3>
+                            <p class="text-xs text-gray-500 mt-0.5 truncate">${n.msg}</p>
                         </div>
-
-                        <div class="flex justify-between items-center bg-white p-8 rounded-[2rem] border border-slate-100">
-                            <div class="flex items-center gap-4">
-                                <div id="mappingCounter" class="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-800">
-                                    0
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-800">Fields Mapped</p>
-                                    <p class="text-xs text-slate-400">Target schema requires at least 1 mapping</p>
-                                </div>
-                            </div>
-                            <button id="btnRunProcess" disabled onclick="uploadFile()"
-                                class="px-10 py-4 bg-slate-100 text-slate-400 font-black rounded-2xl cursor-not-allowed transition-all flex items-center gap-3">
-                                <i data-lucide="zap" class="w-5 h-5"></i>
-                                Start Batch Process
-                            </button>
+                        <div class="text-right shrink-0">
+                            <span class="block text-[10px] text-gray-400 font-medium">${n.time}</span>
+                            <span class="text-[10px] font-bold text-amber-600">${n.status === 'Assigned' ? '● ' + n.status : ''}</span>
                         </div>
                     </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Modals & Overlays -->
-    <div id="configModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6">
-        <div class="modal-div-class bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl  modal-animate-in">
-            <div class="p-10 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
-                <div>
-                    <h2 class="text-2xl font-black text-slate-900">Batch Logic</h2>
-                    <p class="text-slate-400 text-sm mt-1">Configure AI behavior for this ingestion</p>
-                </div>
-                <button onclick="toggleConfigModal(false)" class="p-3 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-slate-100">
-                    <i data-lucide="x" class="w-6 h-6 text-slate-400"></i>
-                </button>
-            </div>
-            <div class="modal-content-class p-10 space-y-8">
-               
-                <div class="space-y-4">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Batch Selection</p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <select id="config-classify" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500/20">                            
-                        </select>
-                    </div>
-                </div>
-                 <div class="grid grid-cols-2 gap-6">
-					  <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-orange-200 transition-all cursor-pointer bg-slate-50/30">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all">
-                                <i data-lucide="sparkles" class="w-5 h-5"></i>
-                            </div>
-                            <input type="checkbox" id="config-enrichment" class="w-5 h-5 accent-orange-600">
-                        </div>
-                        <p class="font-black text-slate-900 text-sm">Duplicate Check</p>
-                        <input type="text" id="accuracy"/>
-                        <p class="text-[10px] text-slate-400 mt-1">Check the find duplicates uploaded references</p>
-                    </label>
-                    <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-orange-200 transition-all cursor-pointer bg-slate-50/30">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all">
-                                <i data-lucide="sparkles" class="w-5 h-5"></i>
-                            </div>
-                            <input type="checkbox" id="config-enrichment" class="w-5 h-5 accent-orange-600">
-                        </div>
-                        <p class="font-black text-slate-900 text-sm">AI Enrichment</p>
-                        <p class="text-[10px] text-slate-400 mt-1">Predict missing data fields</p>
-                    </label>
-                    
-                    <label class="group p-5 border-2 border-slate-50 rounded-[2rem] hover:border-blue-200 transition-all cursor-pointer bg-slate-50/30">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                                <i data-lucide="spell-check" class="w-5 h-5"></i>
-                            </div>
-                            <input type="checkbox" id="config-spellcheck" class="w-5 h-5 accent-blue-600">
-                        </div>
-                        <p class="font-black text-slate-900 text-sm">Cleaning Mode</p>
-                        <p class="text-[10px] text-slate-400 mt-1">Normalize syntax & typos</p>
-                    </label>
-                </div>
-            </div>
-            <div class="p-10 pt-0">
-                <button onclick="applyConfigModal(false)" class="w-full py-4 bg-orange-600 text-white font-black rounded-2xl shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all">
-                    Apply Batch Configuration
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="processingOverlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center">
-        <div class="bg-white rounded-[3rem] p-12 max-w-sm w-full text-center shadow-2xl">
-            <div class="relative w-24 h-24 mx-auto mb-8">
-                <div class="absolute inset-0 rounded-full border-4 border-orange-100"></div>
-                <div class="absolute inset-0 rounded-full border-4 border-orange-600 border-t-transparent animate-spin"></div>
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <i data-lucide="zap" class="w-8 h-8 text-orange-600 fill-current"></i>
-                </div>
-            </div>
-            <h2 class="text-2xl font-black text-slate-900">Synchronizing...</h2>
-            <p class="text-slate-400 mt-2 text-sm">Analyzing mappings and predicting schema alignment</p>
-            <div class="mt-10">
-                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                    <div id="progressBar" class="bg-orange-600 h-full w-0 transition-all duration-500"></div>
-                </div>
-                <p id="progressText" class="mt-3 text-[10px] font-black text-orange-600 uppercase tracking-widest">In Progress 0%</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Init Icons
-        loadSidebarData();
-        lucide.createIcons();
-
-        // Charts
-        const commonOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { display: false },
-                x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 10 }, color: '#94a3b8' } }
-            }
-        };
-
-        const ctxMain = document.getElementById('mainChart').getContext('2d');
-        new Chart(ctxMain, {
-            type: 'line',
-            data: {
-                labels: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'],
-                datasets: [{
-                    data: [45, 52, 48, 70, 65, 85, 80, 95, 90, 110],
-                    borderColor: '#FF5C00',
-                    borderWidth: 4,
-                    pointRadius: 0,
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: (ctx) => {
-                        const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
-                        gradient.addColorStop(0, 'rgba(255, 92, 0, 0.15)');
-                        gradient.addColorStop(1, 'rgba(255, 92, 0, 0)');
-                        return gradient;
-                    }
-                }]
-            },
-            options: commonOptions
-        });
-
-        const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
-        new Chart(ctxDoughnut, {
-            type: 'doughnut',
-            data: {
-                labels: ['Leads', 'Users', 'Other'],
-                datasets: [{
-                    data: [45, 25, 30],
-                    backgroundColor: ['#FF5C00', '#3b82f6', '#f1f5f9'],
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                cutout: '80%',
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        const ctxBar = document.getElementById('barChart').getContext('2d');
-        new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7'],
-                datasets: [{
-                    label: 'Latency',
-                    data: [400, 350, 420, 200, 310, 450, 210],
-                    backgroundColor: '#10b981',
-                    borderRadius: 8,
-                    barThickness: 12
-                }]
-            },
-            options: commonOptions
-        });
-
-        // App Logic
-        const targetFieldsList = ['ID','CLASS','SHORT_DESC','LONG_DESC','MATERIAL_TYPE','UNSPC]'];
-        let sourceFieldsList = [];
-        let mappings = [];
-        let selectedSource = null;
-
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                const bstr = evt.target.result;
-                const wb = XLSX.read(bstr, {type: 'binary'});
-                const ws = wb.Sheets[wb.SheetNames[0]];
-                const data = XLSX.utils.sheet_to_json(ws, {header: 1});
-                if (data.length > 0) {
-                    sourceFieldsList = data[0];
-                    renderMappingUI();
-                }
-            };
-            reader.readAsBinaryString(file);
-        });
-
-        function renderMappingUI() {
-            document.getElementById('uploadSection').classList.add('hidden');
-            document.getElementById('mappingSection').classList.remove('hidden');
-            
-            const sourceContainer = document.getElementById('sourceFields');
-            const targetContainer = document.getElementById('targetFields');
-            sourceContainer.innerHTML = '';
-            targetContainer.innerHTML = '';
-
-            sourceFieldsList.forEach((field, i) => {
-                const div = document.createElement('div');
-                div.className = 'node-item p-5 border border-slate-100 rounded-2xl font-bold text-xs bg-white shadow-sm flex items-center justify-between cursor-pointer';
-                div.id = `source-${i}`;
-                div.innerHTML = `<span>${field}</span> <i data-lucide="circle" class="w-3 h-3 text-slate-200"></i>`;
-                div.onclick = () => selectSource(i);
-                sourceContainer.appendChild(div);
+                `;
+                container.appendChild(card);
             });
 
-            targetFieldsList.forEach((field, i) => {
-                const div = document.createElement('div');
-                div.className = 'node-item p-5 border border-slate-100 rounded-2xl font-bold text-xs bg-white shadow-sm flex items-center justify-between text-right cursor-pointer';
-                div.id = `target-${i}`;
-                div.innerHTML = `<i data-lucide="circle" class="w-3 h-3 text-slate-200"></i> <span>${field}</span>`;
-                div.onclick = () => selectTarget(i);
-                targetContainer.appendChild(div);
-            });
-
-            lucide.createIcons();
-            window.addEventListener('resize', redrawLines);
-            setTimeout(redrawLines, 100);
+            // Update badge visibility
+            const hasUnread = notifications.some(n => !n.read);
+            document.getElementById('unread-badge').classList.toggle('hidden', !hasUnread);
         }
 
-        function selectSource(i) {
-            if (selectedSource !== null) document.getElementById(`source-${selectedSource}`).classList.remove('selected');
-            selectedSource = i;
-            document.getElementById(`source-${i}`).classList.add('selected');
+        function filterNotifications(type) {
+            renderNotifications(type);
         }
 
-        function selectTarget(ti) {
-            if (selectedSource === null) return;
-            mappings = mappings.filter(m => m.target !== ti);
-            mappings.push({source: selectedSource, target: ti});
-            
-            document.getElementById(`source-${selectedSource}`).classList.remove('selected');
-            document.getElementById(`source-${selectedSource}`).classList.add('mapped');
-            document.getElementById(`target-${ti}`).classList.add('mapped');
-            
-            selectedSource = null;
-            updateStatus();
-            redrawLines();
-        }
-
-        function redrawLines() {
-            const svg = document.getElementById('mappingLines');
-            if (!svg || svg.offsetParent === null) return;
-            svg.innerHTML = '';
-            const containerRect = svg.getBoundingClientRect();
-
-            mappings.forEach(m => {
-                const sEl = document.getElementById(`source-${m.source}`);
-                const tEl = document.getElementById(`target-${m.target}`);
-                if (!sEl || !tEl) return;
-
-                const sR = sEl.getBoundingClientRect();
-                const tR = tEl.getBoundingClientRect();
-
-                const x1 = sR.right - containerRect.left - 20;
-                const y1 = sR.top - containerRect.top + (sR.height / 2);
-                const x2 = tR.left - containerRect.left + 20;
-                const y2 = tR.top - containerRect.top + (tR.height / 2);
-
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                const cp = x1 + (x2 - x1) / 2;
-                path.setAttribute("d", `M ${x1} ${y1} C ${cp} ${y1}, ${cp} ${y2}, ${x2} ${y2}`);
-                path.setAttribute("class", "mapping-line");
-                svg.appendChild(path);
-            });
-        }
-
-        function autoMapHeaders() {
-            resetMapping();
-            sourceFieldsList.forEach((sVal, si) => {
-                targetFieldsList.forEach((tVal, ti) => {
-                    const s = sVal.toLowerCase().replace(/[^a-z]/g, '');
-                    const t = tVal.toLowerCase().replace(/[^a-z]/g, '');
-                    if (s.includes(t) || t.includes(s)) {
-                        if (!mappings.find(m => m.target === ti)) {
-                            mappings.push({source: si, target: ti});
-                            document.getElementById(`source-${si}`).classList.add('mapped');
-                            document.getElementById(`target-${ti}`).classList.add('mapped');
-                        }
-                    }
-                });
-            });
-            updateStatus();
-            redrawLines();
-        }
-
-        function resetMapping() {
-            mappings = [];
-            selectedSource = null;
-            document.querySelectorAll('.node-item').forEach(el => el.classList.remove('mapped', 'selected'));
-            redrawLines();
-            updateStatus();
-        }
-
-        function updateStatus() {
-            const counter = document.getElementById('mappingCounter');
-            const btn = document.getElementById('btnRunProcess');
-            counter.innerText = mappings.length;
-            if (mappings.length > 0) {
-                btn.disabled = false;
-                btn.className = "px-10 py-4 bg-orange-600 text-white font-black rounded-2xl shadow-xl shadow-orange-100 hover:bg-orange-700 transition-all flex items-center gap-3 cursor-pointer";
-            } else {
-                btn.disabled = true;
-                btn.className = "px-10 py-4 bg-slate-100 text-slate-400 font-black rounded-2xl cursor-not-allowed transition-all flex items-center gap-3";
+        function markAsRead(id) {
+            const item = notifications.find(n => n.id === id);
+            if (item) {
+                item.read = true;
+                renderNotifications();
             }
         }
+        renderNotifications();
 
-        function switchTab(tabId) {
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-ai-automation').classList.add('hidden');
-            document.getElementById('btn-dashboard').classList.remove('active-menu');
-            document.getElementById('btn-ai-automation').classList.remove('active-menu');
-            
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            document.getElementById(`btn-${tabId}`).classList.add('active-menu');
-            
-            document.getElementById('pageTitle').innerText = tabId === 'dashboard' ? 'Performance Insights' : 'Data Ingestion Engine';
-            
-            if (tabId === 'ai-automation') setTimeout(redrawLines, 100);
-        }
+        // Initial Load
+       
 
-        
-        function toggleProfileDropdown(e) {
-            const dropdown = document.getElementById('profileDropdown');
-            dropdown.classList.toggle('hidden');
-        }
-
-        
-
-        function downloadTemplate() {
-            const ws = XLSX.utils.aoa_to_sheet([targetFieldsList]);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "TargetSchema");
-            XLSX.writeFile(wb, "Nexus_Target_Template.xlsx");
-        }
-    </script>
+	</script>
 </body>
+
 </html>

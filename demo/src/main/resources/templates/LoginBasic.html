@@ -15,6 +15,8 @@
 	<script src="https://cdn.tailwindcss.com"></script>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<link rel="stylesheet" th:href="@{/css/Login.css}">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 	<script th:src="@{/js/login.js}"></script>
 	<style>
 		body {
@@ -113,6 +115,10 @@
 </head>
 
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 relative select-none">
+	 <div id="loaderDivId" class="loaderDivClass" style="display: none;">
+            <div class="loader-bold-ring" id="loader"></div>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Syncing Domain</p>
+        </div>
 
 	<canvas id="bg-canvas"></canvas>
 
@@ -142,10 +148,10 @@
 		<p id="loaderText" class="text-orange-600 font-mono tracking-widest text-[10px] uppercase animate-pulse font-bold">Decrypting access layer...</p>
 	</div>
 
-	<div class="relative z-10 w-full max-w-5xl glass-panel rounded-3xl overflow-hidden flex flex-col md:flex-row min-h-[600px] transition-all duration-500">
+	<div class="relative z-10 w-full max-w-5xl glass-panel rounded-3xl overflow-hidden flex flex-col md:flex-row min-h-[450px] transition-all duration-500">
 		
 		<!-- Sidebar Branding (Deep Warm Amber & Crisp Orange) -->
-		<div class="md:w-[42%] brand-gradient p-8 text-white flex flex-col justify-between relative overflow-hidden">
+		<div class="md:w-[25%] brand-gradient p-8 text-white flex flex-col justify-between relative overflow-hidden">
 			<!-- Animated Radial Glow Elements -->
 			<div class="absolute -top-10 -right-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-30 animate-pulse"></div>
 			<div class="absolute -bottom-10 -left-10 w-72 h-72 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
@@ -156,21 +162,10 @@
 					<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center rotate-3 shadow-orange-600/30 shadow-lg transition-transform hover:rotate-12 duration-300">
 						<i class="fas fa-cubes text-lg text-orange-600"></i>
 					</div>
-					<div class="flex flex-col">
-						<span class="text-xl font-extrabold tracking-wider italic text-white">
-							AETHER <span class="text-orange-950/80">MDM</span>
-						</span>
-						<span class="text-[9px] text-white/90 uppercase font-mono tracking-widest -mt-1 font-bold">Enterprise Hub</span>
-					</div>
+					
 				</div>
 
-				<div class="space-y-4">
-					<h1 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.1] text-white">
-						Data Integrity <br><span class="text-orange-950">Redefined.</span>
-					</h1>
-					<p class="text-white/90 text-sm leading-relaxed max-w-sm">
-						Orchestrate master data assets across the complex enterprise with AI-driven active synthesis, real-time deduplication, and automated lineage governance.
-					</p>
+				<div class="space-y-1">
 				</div>
 			</div>
 
@@ -183,14 +178,11 @@
 						</div>
 						<span class="font-semibold text-sm text-white">Trust & Compliance Shield</span>
 					</div>
-					<p class="text-xs text-white/85 leading-normal">
-						Fully compliant with SOC2 Type II, GDPR, and HIPAA data residency structures for cross-continental cluster security.
-					</p>
+					
 				</div>
 
 				<!-- Footer of Sidebar -->
 				<div class="flex items-center justify-between text-[10px] text-white/80 uppercase tracking-widest font-mono border-t border-white/20 pt-4">
-					<span>Platform v5.1.0-Secure</span>
 					<div class="flex gap-4 text-xs">
 						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i class="fab fa-github"></i></a>
 						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i class="fab fa-linkedin"></i></a>
@@ -200,7 +192,7 @@
 		</div>
 
 		<!-- Main Content Panel -->
-		<div id="main-content-panel" class="md:w-[58%] bg-white/90 p-6 md:p-10 flex flex-col justify-between relative overflow-y-auto">
+		<div id="main-content-panel" class="md:w-[75%] bg-white/90 p-6 md:p-10 flex flex-col justify-between relative overflow-y-auto">
 			
 			<div class="w-full">
 				<!-- Header Tabs -->
@@ -268,10 +260,7 @@
 
 					<!-- REGISTRATION SECTION -->
 					<section id="register-section" class="hidden space-y-6">
-						<div>
-							<h2 class="text-2xl font-bold text-slate-800">Request Hub Node</h2>
-							<p class="text-slate-500 text-xs mt-1">Submit server authorization requests to global directories.</p>
-						</div>
+						
 
 						<form autocomplete="off" class="space-y-4" onsubmit="handleAuth(event, 'register')">
 							<div class="space-y-1.5">
@@ -353,10 +342,7 @@
 			</div>
 
 			<!-- Decryption Key Frame Footer -->
-			<div class="mt-8 text-center text-[9px] text-slate-400 font-bold uppercase tracking-[0.25em] flex items-center justify-center gap-2">
-				<span class="inline-block w-1.5 h-1.5 rounded-full bg-orange-600 animate-pulse"></span>
-				Decryption Protocol: AES-256-GCM Secure Cluster
-			</div>
+			
 
 		</div>
 
@@ -655,13 +641,7 @@
 				loader.style.opacity = '1';
 				loader.style.pointerEvents = 'all';
 				loaderText.innerText = "Submitting Directory Addition Request...";
-
-				setTimeout(() => {
-					loader.style.opacity = '0';
-					loader.style.pointerEvents = 'none';
-					triggerToast('success', 'Registration Filed', `Directory request for ${userVal} has been dispatched to administrators.`);
-					showSection('login');
-				}, 2200);
+                register();
 
 			} else if (type === 'forgot') {
 				const email = document.getElementById('recoveryEmail').value;

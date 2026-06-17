@@ -35,6 +35,7 @@ function notify(msg, type = 'success') {
 }
 async function userLogin(event) {
 	event.preventDefault();
+	loader(true);
 	document.getElementById("loaderDiv").style.display = "";
 
 	try {
@@ -50,7 +51,7 @@ async function userLogin(event) {
 			})
 		});
 
-
+        loader(false);
 		const data = await response.json();
 		document.getElementById("loaderDiv").style.display = "none";
 
@@ -73,10 +74,8 @@ async function userLogin(event) {
 	}
 }
 
-async function register(event) {
-	event.preventDefault();
-	document.getElementById("loaderDiv").style.display = "";
-
+async function register() {
+	loader(true);
 	try {
 		const response = await fetch("/auth/register", {
 			method: "POST",
@@ -89,8 +88,7 @@ async function register(event) {
 				email: document.getElementById("rgemail").value
 			})
 		});
-
-
+        loader(false);
 		const data = await response.json();
 		document.getElementById("loaderDiv").style.display = "none";
 		if (data.success) {
@@ -110,4 +108,14 @@ async function register(event) {
 		document.getElementById("loginRegisterError").innerText = error.message;
 		document.getElementById("loaderDiv").style.display = "none";
 	}
+}
+function loader(display) {
+    if (display) {
+        $("#loaderDivId").show();
+        $("body").css("pointer-events", "none");
+        $("#loaderDivId").css("pointer-events", "auto"); // keep loader clickable
+    } else {
+        $("#loaderDivId").hide();
+        $("body").css("pointer-events", "auto");
+    }
 }
