@@ -669,7 +669,10 @@ function deleteSelectedRecords(tableId) {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify(selectedIds)
+		 body: JSON.stringify({
+        tableId: tableId,
+        selectedIds: selectedIds
+    })
 	})
 		.then(response => response.text())
 		.then(result => {
@@ -681,7 +684,7 @@ function deleteSelectedRecords(tableId) {
 				width: 400
 			});
 
-			$('#dynamicTable').DataTable().ajax.reload(null, false);
+			$('#'+tableId).DataTable().ajax.reload(null, false);
 
 		})
 		.catch(error => {

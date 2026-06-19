@@ -42,17 +42,10 @@
 
 	<div class="flex h-full w-full">
 		<!-- Sidebar -->
-		<aside id="sidebar"
-			class="sidebar-transition group flex flex-col  border-r border-slate-800 h-full w-20 hover:w-72 [&.is-pinned]:w-72">
+		<aside id="sidebar" class="sidebar-transition group flex flex-col  border-r border-slate-800">
 			<!-- Toggle Header -->
 			<div class="p-6 flex items-center justify-between">
-				<div class="flex items-center gap-3 overflow-hidden">
-					<div
-						class="min-w-[40px] w-10 h-10 bg-[#FF5C00] rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-900/20 shrink-0">
-						<i data-lucide="zap" class="w-6 h-6 fill-current"></i>
-					</div>
-					<span class="text-fade text-white font-extrabold text-xl tracking-tight opacity-0">AI NEXUS</span>
-				</div>
+
 				<button id="toggleBtn" class="p-2 rounded-lg hover:bg-slate-800 transition-colors shrink-0">
 					<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -88,7 +81,20 @@
 								class="w-64 pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm">
 						</div>
 						<div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
-						
+
+						<button id="theme-toggle"
+							class="relative group rounded-full bg-gray-200 dark:bg-gray-700 hover:scale-105 transition-all outline-none focus:ring-4 focus:ring-blue-400">
+							<div class="toggle-icon flex items-center justify-center w-8 h-8">
+								<!-- Moon/Sun Icon -->
+								<svg id="icon" class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor"
+									viewBox="0 0 24 24">
+									<path id="icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+									</path>
+								</svg>
+							</div>
+						</button>
+
 						<button id="notificationId"
 							class="relative p-2.5 bg-white border border-slate-200 text-slate-500 hover:text-orange-600 rounded-xl shadow-sm transition-all">
 							<i data-lucide="bell" class="h-5 w-5"></i>
@@ -99,9 +105,9 @@
 							class="hidden absolute right-4 md:right-auto  mt-2 w-full max-w-sm bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-40 dropdown-transition">
 							<div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
 								<h2 class="font-bold text-gray-900">Notifications</h2>
-								
+
 							</div>
-							<div id="notification-container" class="max-h-[400px] overflow-y-auto p-4 space-y-3">
+							<div id="notification-container" class="max-h-[300px] overflow-y-auto p-4 space-y-3">
 								<!-- Notifications injected here -->
 							</div>
 						</div>
@@ -448,11 +454,11 @@
 		];
 
 		document.getElementById('metrics-container').innerHTML = metrics.map(item => `
-            <div class="bg-gradient-to-br ${item.bg} p-6 rounded-2xl shadow-lg border border-white/20">
-                <p class="text-xs text-white/80 font-medium uppercase tracking-wider">${item.label}</p>
-                <p class="text-2xl font-bold text-white mt-1">${item.value}</p>
-            </div>
-        `).join('');
+                <div class="metric-card bg-gradient-to-br ${item.bg} p-6 rounded-2xl shadow-lg border border-white/20">
+                    <p class="text-xs text-white/80 font-medium uppercase tracking-wider">${item.label}</p>
+                    <p class="text-2xl font-bold text-white mt-1">${item.value}</p>
+                </div>
+            `).join('');
 
 		function createCharts() {
 			const ctxPie = document.getElementById('pieChart').getContext('2d');
@@ -471,30 +477,111 @@
 			lineGradient.addColorStop(0, 'rgba(99, 102, 241, 0.6)');
 			lineGradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
 
+
 			const defaultOptions = {
 				responsive: true, maintainAspectRatio: false,
 				plugins: {datalabels: {color: '#333', font: {weight: 'bold'}}}
 			};
+			const charts = [
+				new Chart(ctxPie, {
+					type: 'pie',
+					data: {
+						labels: [
+							'Bearing,Ball', 'Valve', 'Gasket', 'Bolt', 'Nut',
+							'Washer', 'Pipe', 'Flange', 'Coupling', 'Seal'
+						],
+						datasets: [{
+							data: [70, 20, 10, 15, 12, 18, 25, 8, 14, 9],
+							backgroundColor: [
+								'#6366f1',
+								'#a855f7',
+								'#ec4899',
+								'#3b82f6',
+								'#14b8a6',
+								'#f59e0b',
+								'#ef4444',
+								'#8b5cf6',
+								'#10b981',
+								'#f97316'
+							]
+						}]
+					},
+					options: defaultOptions
+				}),
 
-			new Chart(ctxPie, {
-				type: 'pie', data: {
-					labels: [
-						'Bearing,Ball', 'Valve', 'Gasket', 'Bolt', 'Nut',
-						'Washer', 'Pipe', 'Flange', 'Coupling', 'Seal',
-					], datasets: [{
-						data: [
-							70, 20, 10, 15, 12,
-							18, 25, 8, 14, 9,
-						], backgroundColor: ['#6366f1', '#a855f7', '#ec4899']
-					}]
-				}, options: defaultOptions
-			});
-			new Chart(ctxDoughnut, {type: 'doughnut', data: {labels: ['Total Properties Extracted', 'Total Properties Mapped'], datasets: [{data: [85, 15], backgroundColor: ['#3b82f6', '#8b5cf6']}]}, options: defaultOptions});
-			new Chart(ctxBar, {type: 'bar', data: {labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{label: 'Total Records', data: [500, 1900, 3000, 5200, 8320, 9600, 1200, 2200, 6300, 10000, 22000, 33650], backgroundColor: barGradient}]}, options: defaultOptions});
-			new Chart(ctxStacked, {type: 'bar', data: {labels: ['Record Count'], datasets: [{label: '2026', data: [50000], backgroundColor: '#6366f1'}]}, options: {...defaultOptions, scales: {x: {stacked: true}, y: {stacked: true}}}});
-			new Chart(ctxLine, {type: 'line', data: {labels: ['Q1', 'Q2', 'Q3', 'Q4'], datasets: [{label: 'Trend', data: [10, 25, 20, 40], borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: lineGradient}]}, options: defaultOptions});
-			new Chart(ctxPolar, {type: 'polarArea', data: {labels: ['D1', 'D2', 'D3'], datasets: [{data: [15, 25, 35], backgroundColor: ['#6366f1', '#a855f7', '#ec4899']}]}, options: defaultOptions});
-			new Chart(ctxRadar, {type: 'radar', data: {labels: ['Speed', 'Rel', 'Cost', 'Scale'], datasets: [{label: 'Metrics', data: [80, 90, 70, 85], backgroundColor: 'rgba(99, 102, 241, 0.3)', borderColor: '#6366f1'}]}, options: defaultOptions});
+				new Chart(ctxDoughnut, {
+					type: 'doughnut',
+					data: {
+						labels: ['Total Properties Extracted', 'Total Properties Mapped'],
+						datasets: [{
+							data: [85, 15],
+							backgroundColor: ['#3b82f6', '#8b5cf6']
+						}]
+					},
+					options: defaultOptions
+				}),
+
+				new Chart(ctxBar, {
+					type: 'bar',
+					data: {
+						labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+							'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+						datasets: [{
+							label: 'Total Records',
+							data: [500, 1900, 3000, 5200, 8320, 9600, 1200, 2200, 6300, 10000, 22000, 33650],
+							backgroundColor: barGradient
+						}]
+					},
+					options: defaultOptions
+				}),
+
+				new Chart(ctxStacked, {
+					type: 'bar',
+					data: {
+						labels: ['Record Count'],
+						datasets: [{
+							label: '2026',
+							data: [50000],
+							backgroundColor: '#6366f1'
+						}]
+					},
+					options: {
+						...defaultOptions,
+						scales: {
+							x: {stacked: true},
+							y: {stacked: true}
+						}
+					}
+				}),
+
+				new Chart(ctxLine, {
+					type: 'line',
+					data: {
+						labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+						datasets: [{
+							label: 'Trend',
+							data: [10, 25, 20, 40],
+							borderColor: '#6366f1',
+							tension: 0.4,
+							fill: true,
+							backgroundColor: lineGradient
+						}]
+					},
+					options: defaultOptions
+				}),
+
+				new Chart(ctxPolar, {
+					type: 'polarArea',
+					data: {
+						labels: ['D1', 'D2', 'D3'],
+						datasets: [{
+							data: [15, 25, 35],
+							backgroundColor: ['#6366f1', '#a855f7', '#ec4899']
+						}]
+					},
+					options: defaultOptions
+				})
+			];
 		}
 
 		window.onload = createCharts;
@@ -539,6 +626,9 @@
 		// File browse
 		fileInput.addEventListener('change', (e) => {
 			processExcelFile(e.target.files[0]);
+		});
+		$("#toggleBtn").on("click", function () {
+			$("#sidebar").toggleClass("collapsed");
 		});
 
 		function renderMappingUI() {
@@ -809,46 +899,67 @@
 			XLSX.writeFile(wb, "Nexus_Target_Template.xlsx");
 		}
 		const notifications = [
-            { id: 1, type: 'MDRM', status: 'Assigned', title: 'Risk Assessment #402', msg: 'You have been assigned as the primary reviewer.', time: '2m ago', read: false },
-            { id: 2, type: 'MDG', status: 'Assigned', title: 'Master Data Request #998', msg: 'New data entry task assigned to your queue.', time: '1h ago', read: false },
-            { id: 3, type: 'MDRM', status: 'Review', title: 'Device Hazard Report', msg: 'Report awaiting final sign-off.', time: '3h ago', read: true },
-            { id: 4, type: 'MDG', status: 'Assigned', title: 'Vendor Update #552', msg: 'Assigned to audit vendor registration data.', time: '5h ago', read: false }
-        ];
+			{id: 1, type: 'MDRM', status: 'Assigned', title: 'Risk Assessment #402', msg: 'You have been assigned as the primary reviewer.', time: '2m ago', read: false},
+			{id: 2, type: 'MDG', status: 'Assigned', title: 'Master Data Request #998', msg: 'New data entry task assigned to your queue.', time: '1h ago', read: false},
+			{id: 3, type: 'MDRM', status: 'Review', title: 'Device Hazard Report', msg: 'Report awaiting final sign-off.', time: '3h ago', read: true},
+			{id: 4, type: 'MDG', status: 'Assigned', title: 'Vendor Update #552', msg: 'Assigned to audit vendor registration data.', time: '5h ago', read: false}
+		];
 
-        const panel = document.getElementById('notification-panel');
-        const bellBtn = document.getElementById('notificationId');
+		const panel = document.getElementById('notification-panel');
+		const bellBtn = document.getElementById('notificationId');
 
-        // Toggle notification panel
-        bellBtn.addEventListener('click', () => {
-            panel.classList.toggle('hidden');
-        });
+		// Toggle notification panel
+		bellBtn.addEventListener('click', () => {
+			panel.classList.toggle('hidden');
+		});
 
-        // Close when clicking outside
-        window.addEventListener('click', (e) => {
-            if (!bellBtn.contains(e.target) && !panel.contains(e.target)) {
-                panel.classList.add('hidden');
-            }
-        });
+		// Close when clicking outside
+		window.addEventListener('click', (e) => {
+			if (!bellBtn.contains(e.target) && !panel.contains(e.target)) {
+				panel.classList.add('hidden');
+			}
+		});
 
-        function renderNotifications(filter = 'all') {
-            const container = document.getElementById('notification-container');
-            container.innerHTML = '';
+		const toggleBtn = document.getElementById('theme-toggle');
+		const iconPath = document.getElementById('icon-path');
 
-            const filtered = filter === 'all' 
-                ? notifications 
-                : notifications.filter(n => n.type === filter);
+		toggleBtn.addEventListener('click', () => {
+			$("body").toggleClass('dark-mode');
 
-            if (filtered.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-400 py-4 text-sm">No new notifications</p>';
-                return;
-            }
+			// Toggle icon path shape
+			if ($("body").hasClass('dark-mode')) {
+				charts.forEach(chart => {
+					if (chart.options && chart.options.scales) {
+						if (chart.options.scales.x) chart.options.scales.x.ticks.color = textColor;
+						if (chart.options.scales.y) chart.options.scales.y.ticks.color = textColor;
+						chart.update();
+					}
+				});
+				iconPath.setAttribute('d', 'M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z');
+			} else {
+				iconPath.setAttribute('d', 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z');
+			}
+		});
 
-            filtered.forEach(n => {
-                const card = document.createElement('div');
-                card.className = `notification-card p-3 rounded-lg border cursor-pointer ${n.read ? 'bg-gray-50 border-gray-100' : 'bg-white border-gray-200'} ${n.read ? '' : 'unread'}`;
-                card.onclick = () => markAsRead(n.id);
-                
-                card.innerHTML = `
+		function renderNotifications(filter = 'all') {
+			const container = document.getElementById('notification-container');
+			container.innerHTML = '';
+
+			const filtered = filter === 'all'
+				? notifications
+				: notifications.filter(n => n.type === filter);
+
+			if (filtered.length === 0) {
+				container.innerHTML = '<p class="text-center text-gray-400 py-4 text-sm">No new notifications</p>';
+				return;
+			}
+
+			filtered.forEach(n => {
+				const card = document.createElement('div');
+				card.className = `notification-card p-3 rounded-lg border cursor-pointer ${n.read ? 'bg-gray-50 border-gray-100' : 'bg-white border-gray-200'} ${n.read ? '' : 'unread'}`;
+				card.onclick = () => markAsRead(n.id);
+
+				card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div class="pr-2">
                             <span class="text-[10px] font-bold uppercase tracking-wider ${n.type === 'MDRM' ? 'text-purple-600' : 'text-emerald-600'}">
@@ -863,29 +974,31 @@
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
-            });
+				container.appendChild(card);
+			});
 
-            // Update badge visibility
-            const hasUnread = notifications.some(n => !n.read);
-            document.getElementById('unread-badge').classList.toggle('hidden', !hasUnread);
-        }
+			// Update badge visibility
+			const hasUnread = notifications.some(n => !n.read);
+			document.getElementById('unread-badge').classList.toggle('hidden', !hasUnread);
+		}
 
-        function filterNotifications(type) {
-            renderNotifications(type);
-        }
+		function filterNotifications(type) {
+			renderNotifications(type);
+		}
 
-        function markAsRead(id) {
-            const item = notifications.find(n => n.id === id);
-            if (item) {
-                item.read = true;
-                renderNotifications();
-            }
-        }
-        renderNotifications();
+		function markAsRead(id) {
+			const item = notifications.find(n => n.id === id);
+			if (item) {
+				item.read = true;
+				renderNotifications();
+			}
+		}
+		renderNotifications();
+		
+
 
         // Initial Load
-       
+
 
 	</script>
 </body>
