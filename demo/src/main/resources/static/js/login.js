@@ -58,14 +58,9 @@ async function userLogin(event) {
 		if (!response.ok) {
 			throw new Error(data.message || "Login failed");
 		}
-
-		// 🔐 store JWT token
-		localStorage.setItem("token", data.token);
-
-		console.log("Login Success:", data);
-
-		// 🔁 redirect after login
-		window.location.href = "/userLogin";
+		
+	    sendOtp();
+		
 
 	} catch (error) {
 		console.error("Login Error:", error);

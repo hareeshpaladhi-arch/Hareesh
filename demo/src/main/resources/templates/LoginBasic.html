@@ -10,14 +10,17 @@
 	<!-- Font Awesome for Modern Enterprise Icons -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<!-- Google Fonts: Inter & JetBrains Mono -->
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-	
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+		rel="stylesheet">
+
 	<script src="https://cdn.tailwindcss.com"></script>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<link rel="stylesheet" th:href="@{/css/Login.css}">
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 	<script th:src="@{/js/login.js}"></script>
+	<script th:src="@{/js/Workflow.js}"></script>
 	<style>
 		body {
 			font-family: 'Inter', sans-serif;
@@ -90,13 +93,16 @@
 		::-webkit-scrollbar {
 			width: 6px;
 		}
+
 		::-webkit-scrollbar-track {
 			background: rgba(250, 250, 249, 0.5);
 		}
+
 		::-webkit-scrollbar-thumb {
 			background: rgba(234, 88, 12, 0.3);
 			border-radius: 3px;
 		}
+
 		::-webkit-scrollbar-thumb:hover {
 			background: rgba(234, 88, 12, 0.6);
 		}
@@ -115,15 +121,16 @@
 </head>
 
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 relative select-none">
-	 <div id="loaderDivId" class="loaderDivClass" style="display: none;">
-            <div class="loader-bold-ring" id="loader"></div>
-            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Syncing Domain</p>
-        </div>
+	<div id="loaderDivId" class="loaderDivClass" style="display: none;">
+		<div class="loader-bold-ring" id="loader"></div>
+		<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">Syncing Domain</p>
+	</div>
 
 	<canvas id="bg-canvas"></canvas>
 
 	<!-- Global Toast Alerts -->
-	<div id="toast" class="fixed top-6 right-6 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-500 ease-out max-w-sm w-full glass-panel p-4 rounded-xl border-l-4 shadow-2xl flex items-center gap-3">
+	<div id="toast"
+		class="fixed top-6 right-6 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-500 ease-out max-w-sm w-full glass-panel p-4 rounded-xl border-l-4 shadow-2xl flex items-center gap-3">
 		<div id="toast-icon-wrapper" class="w-8 h-8 rounded-full flex items-center justify-center text-white">
 			<i id="toast-icon" class="fas"></i>
 		</div>
@@ -134,35 +141,47 @@
 	</div>
 
 	<!-- Interactive Secure Syncing Loader -->
-	<div id="loaderDiv" class="fixed inset-0 bg-white/90 backdrop-blur-md z-50 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+	<div id="loaderDiv"
+		class="fixed inset-0 bg-white/90 backdrop-blur-md z-50 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 opacity-0 pointer-events-none">
 		<div class="relative w-24 h-24">
 			<!-- Outer spin -->
-			<div class="absolute inset-0 border-4 border-orange-600/20 border-t-orange-600 rounded-full animate-spin"></div>
+			<div class="absolute inset-0 border-4 border-orange-600/20 border-t-orange-600 rounded-full animate-spin">
+			</div>
 			<!-- Inner reverse spin -->
-			<div class="absolute inset-2 border-4 border-amber-500/10 border-b-amber-500 rounded-full animate-spin [animation-direction:reverse]"></div>
+			<div
+				class="absolute inset-2 border-4 border-amber-500/10 border-b-amber-500 rounded-full animate-spin [animation-direction:reverse]">
+			</div>
 			<!-- Keyhole/Security Lock Icon -->
 			<div class="absolute inset-0 flex items-center justify-center text-orange-600">
 				<i class="fas fa-fingerprint text-2xl animate-pulse"></i>
 			</div>
 		</div>
-		<p id="loaderText" class="text-orange-600 font-mono tracking-widest text-[10px] uppercase animate-pulse font-bold">Decrypting access layer...</p>
+		<p id="loaderText"
+			class="text-orange-600 font-mono tracking-widest text-[10px] uppercase animate-pulse font-bold">Decrypting
+			access layer...</p>
 	</div>
 
-	<div class="relative z-10 w-full max-w-5xl glass-panel rounded-3xl overflow-hidden flex flex-col md:flex-row min-h-[450px] transition-all duration-500">
-		
+	<div
+		class="relative z-10 w-full max-w-5xl glass-panel rounded-3xl overflow-hidden flex flex-col md:flex-row min-h-[450px] transition-all duration-500">
+
 		<!-- Sidebar Branding (Deep Warm Amber & Crisp Orange) -->
 		<div class="md:w-[25%] brand-gradient p-8 text-white flex flex-col justify-between relative overflow-hidden">
 			<!-- Animated Radial Glow Elements -->
-			<div class="absolute -top-10 -right-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-30 animate-pulse"></div>
-			<div class="absolute -bottom-10 -left-10 w-72 h-72 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
+			<div
+				class="absolute -top-10 -right-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-30 animate-pulse">
+			</div>
+			<div
+				class="absolute -bottom-10 -left-10 w-72 h-72 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20">
+			</div>
 
 			<!-- Brand Header -->
 			<div class="relative z-10">
 				<div class="flex items-center gap-3 mb-12">
-					<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center rotate-3 shadow-orange-600/30 shadow-lg transition-transform hover:rotate-12 duration-300">
+					<div
+						class="w-10 h-10 bg-white rounded-lg flex items-center justify-center rotate-3 shadow-orange-600/30 shadow-lg transition-transform hover:rotate-12 duration-300">
 						<i class="fas fa-cubes text-lg text-orange-600"></i>
 					</div>
-					
+
 				</div>
 
 				<div class="space-y-1">
@@ -178,29 +197,35 @@
 						</div>
 						<span class="font-semibold text-sm text-white">Trust & Compliance Shield</span>
 					</div>
-					
+
 				</div>
 
 				<!-- Footer of Sidebar -->
-				<div class="flex items-center justify-between text-[10px] text-white/80 uppercase tracking-widest font-mono border-t border-white/20 pt-4">
+				<div
+					class="flex items-center justify-between text-[10px] text-white/80 uppercase tracking-widest font-mono border-t border-white/20 pt-4">
 					<div class="flex gap-4 text-xs">
-						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i class="fab fa-github"></i></a>
-						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i class="fab fa-linkedin"></i></a>
+						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i
+								class="fab fa-github"></i></a>
+						<a href="#" class="text-white hover:text-orange-950 transition-colors"><i
+								class="fab fa-linkedin"></i></a>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- Main Content Panel -->
-		<div id="main-content-panel" class="md:w-[75%] bg-white/90 p-6 md:p-10 flex flex-col justify-between relative overflow-y-auto">
-			
+		<div id="main-content-panel"
+			class="md:w-[75%] bg-white/90 p-6 md:p-10 flex flex-col justify-between relative overflow-y-auto">
+
 			<div class="w-full">
 				<!-- Header Tabs -->
 				<div class="flex gap-8 mb-10 border-b border-slate-200">
-					<button onclick="showSection('login')" id="tab-login" class="nav-tab active pb-4 text-xs font-bold uppercase tracking-wider">
+					<button onclick="showSection('login')" id="tab-login"
+						class="nav-tab active pb-4 text-xs font-bold uppercase tracking-wider">
 						<i class="fas fa-lock mr-1.5 text-[10px]"></i> Sign In
 					</button>
-					<button onclick="showSection('register')" id="tab-register" class="nav-tab pb-4 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
+					<button onclick="showSection('register')" id="tab-register"
+						class="nav-tab pb-4 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
 						<i class="fas fa-user-plus mr-1.5 text-[10px]"></i> Registration
 					</button>
 				</div>
@@ -214,17 +239,20 @@
 							<h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
 								Enterprise Login
 							</h2>
-							<p class="text-slate-500 text-xs mt-1">Connect securely to your cluster's metadata layer.</p>
+							<p class="text-slate-500 text-xs mt-1">Connect securely to your cluster's metadata layer.
+							</p>
 						</div>
 
-						<form autocomplete="off" class="space-y-4" onsubmit="userLogin(event, 'login')">
+						<form autocomplete="off" id="loginFormId" class="space-y-4" onsubmit="userLogin(event, 'login')">
 							<div class="space-y-1.5">
-								<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex justify-between">
+								<label
+									class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex justify-between">
 									<span>User Access Email</span>
 									<span class="text-slate-400 font-mono text-[9px]">Required</span>
 								</label>
 								<div class="relative">
-									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-envelope"></i></span>
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i
+											class="fas fa-envelope"></i></span>
 									<input type="text" id="username" required placeholder="corp.name@company.com"
 										class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
 								</div>
@@ -235,32 +263,68 @@
 									<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
 										Authorization Token / Key
 									</label>
-									<button type="button" onclick="showSection('forgot')" class="text-[10px] font-bold text-orange-600 hover:text-orange-700 transition-colors uppercase tracking-wider">
+									<button type="button" onclick="showSection('forgot')"
+										class="text-[10px] font-bold text-orange-600 hover:text-orange-700 transition-colors uppercase tracking-wider">
 										Bypass Key?
 									</button>
 								</div>
 								<div class="relative">
-									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-key"></i></span>
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i
+											class="fas fa-key"></i></span>
 									<input type="password" id="password" required placeholder="••••••••••••"
 										class="w-full pl-11 pr-12 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
-									<button type="button" onclick="togglePasswordVisibility('password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+									<button type="button" onclick="togglePasswordVisibility('password')"
+										class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
 										<i class="fas fa-eye" id="password-toggle-eye"></i>
 									</button>
 								</div>
 							</div>
+							
+                                
+									 
+								<div id="loginError"
+									class="text-rose-600 text-xs font-semibold min-h-[1.25rem] transition-all duration-200">
+								</div>
+								
+								
 
-							<div id="loginError" class="text-rose-600 text-xs font-semibold min-h-[1.25rem] transition-all duration-200"></div>
-
-							<button type="submit"
-								class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg shadow-orange-600/10 hover:shadow-orange-600/20 transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
-								Secure Portal Entry
-							</button>
+								<button type="submit"
+									class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg shadow-orange-600/10 hover:shadow-orange-600/20 transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
+									Secure Portal Entry
+								</button>
 						</form>
+						
 					</section>
+					<div id="verification-view" class="hidden-state">
+            <div class="text-center mb-8">
+                <h2 id="otpSendMsgId" class="text-xl font-bold text-stone-800 mb-2"></h2>
+                <p class="text-stone-500 text-sm">Enter the 4-digit token received via your registered email.</p>
+            </div>
+
+            <div id="otp-container" class="flex justify-center gap-3 mb-8">
+                <input type="text" maxlength="1" class="otp-input w-14 h-14 text-center text-xl border-2 border-stone-200 rounded-xl focus:outline-none text-stone-800 font-bold" />
+                <input type="text" maxlength="1" class="otp-input w-14 h-14 text-center text-xl border-2 border-stone-200 rounded-xl focus:outline-none text-stone-800 font-bold" />
+                <input type="text" maxlength="1" class="otp-input w-14 h-14 text-center text-xl border-2 border-stone-200 rounded-xl focus:outline-none text-stone-800 font-bold" />
+                <input type="text" maxlength="1" class="otp-input w-14 h-14 text-center text-xl border-2 border-stone-200 rounded-xl focus:outline-none text-stone-800 font-bold" />
+            </div>
+            
+            <div id="otpError"
+									class="text-rose-600 text-xs font-semibold min-h-[1.25rem] transition-all duration-200">
+								</div>
+             
+            <button id="verify-btn" onclick="verifyOtp()" class="w-full py-3.5 bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-semibold transition-all shadow-lg shadow-orange-600/20">
+                Authenticate
+            </button>
+
+            <p class="text-center mt-6 text-xs text-stone-400">
+                Waiting for token: <span id="timer" class="text-orange-600 font-bold">30s</span>
+            </p>
+        </div>
+    </div>
 
 					<!-- REGISTRATION SECTION -->
 					<section id="register-section" class="hidden space-y-6">
-						
+
 
 						<form autocomplete="off" class="space-y-4" onsubmit="handleAuth(event, 'register')">
 							<div class="space-y-1.5">
@@ -268,7 +332,8 @@
 									Work Identity Email
 								</label>
 								<div class="relative">
-									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-at"></i></span>
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i
+											class="fas fa-at"></i></span>
 									<input type="email" id="rgemail" required placeholder="authorized.user@company.com"
 										class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
 								</div>
@@ -279,7 +344,8 @@
 									Directory Username
 								</label>
 								<div class="relative">
-									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-user-tag"></i></span>
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i
+											class="fas fa-user-tag"></i></span>
 									<input type="text" id="rgusername" required placeholder="e.g., corp_admin_4"
 										class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
 								</div>
@@ -290,16 +356,21 @@
 									Generated Security Pin
 								</label>
 								<div class="relative">
-									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-shield-halved"></i></span>
-									<input type="password" id="rgpassword" required placeholder="Must exceed 8 complex characters"
+									<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i
+											class="fas fa-shield-halved"></i></span>
+									<input type="password" id="rgpassword" required
+										placeholder="Must exceed 8 complex characters"
 										class="w-full pl-11 pr-12 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect transition-all">
-									<button type="button" onclick="togglePasswordVisibility('rgpassword')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+									<button type="button" onclick="togglePasswordVisibility('rgpassword')"
+										class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
 										<i class="fas fa-eye" id="rgpassword-toggle-eye"></i>
 									</button>
 								</div>
 							</div>
 
-							<div id="loginRegisterError" class="text-rose-600 text-xs font-semibold min-h-[1.25rem] transition-all duration-200"></div>
+							<div id="loginRegisterError"
+								class="text-rose-600 text-xs font-semibold min-h-[1.25rem] transition-all duration-200">
+							</div>
 
 							<button type="submit"
 								class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
@@ -310,23 +381,27 @@
 
 					<!-- FORGOT PASSWORD SECTION -->
 					<section id="forgot-section" class="hidden space-y-6 text-center">
-						<div class="w-16 h-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-200">
+						<div
+							class="w-16 h-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-200">
 							<i class="fas fa-key text-xl animate-bounce"></i>
 						</div>
 						<div>
 							<h2 class="text-2xl font-bold text-slate-800">Bypass Key Recovery</h2>
 							<p class="text-slate-500 text-xs mt-1 leading-relaxed">
-								Provide your authenticated directory email address to dispatch a time-sensitive authorization bypass key.
+								Provide your authenticated directory email address to dispatch a time-sensitive
+								authorization bypass key.
 							</p>
 						</div>
 
 						<form onsubmit="handleAuth(event, 'forgot')" class="space-y-4">
 							<div class="relative">
-								<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-envelope-open-text"></i></span>
-								<input type="email" id="recoveryEmail" required placeholder="registered.email@company.com"
+								<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i
+										class="fas fa-envelope-open-text"></i></span>
+								<input type="email" id="recoveryEmail" required
+									placeholder="registered.email@company.com"
 									class="w-full pl-11 pr-5 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white outline-none text-slate-800 text-sm input-focus-effect text-center tracking-wide transition-all">
 							</div>
-							
+
 							<button type="submit"
 								class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg transition-all">
 								Dispatch Recovery Token
@@ -342,23 +417,27 @@
 			</div>
 
 			<!-- Decryption Key Frame Footer -->
-			
+
 
 		</div>
 
 		<!-- Simulated Integrated Dashboard Layer (Shows on successful entry) -->
-		<div id="dashboard-panel" class="hidden w-full bg-[#fdfdfd] p-6 sm:p-10 flex flex-col justify-between relative overflow-y-auto">
+		<div id="dashboard-panel"
+			class="hidden w-full bg-[#fdfdfd] p-6 sm:p-10 flex flex-col justify-between relative overflow-y-auto">
 			<div class="flex items-center justify-between border-b border-slate-100 pb-5">
 				<div class="flex items-center gap-3">
-					<div class="w-8 h-8 bg-gradient-to-tr from-orange-600 to-orange-500 rounded flex items-center justify-center shadow-lg">
+					<div
+						class="w-8 h-8 bg-gradient-to-tr from-orange-600 to-orange-500 rounded flex items-center justify-center shadow-lg">
 						<i class="fas fa-server text-white text-sm"></i>
 					</div>
 					<div>
-						<h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest" id="user-display-name">CLUSTER LEADER</h3>
+						<h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest" id="user-display-name">
+							CLUSTER LEADER</h3>
 						<p class="text-[9px] font-mono text-orange-600 font-bold">STATUS: LIVE HUB DIRECTORY</p>
 					</div>
 				</div>
-				<button onclick="logout()" class="px-4 py-2 rounded-lg border border-orange-200 text-orange-600 hover:bg-orange-50 text-xs font-bold uppercase tracking-wider transition-all">
+				<button onclick="logout()"
+					class="px-4 py-2 rounded-lg border border-orange-200 text-orange-600 hover:bg-orange-50 text-xs font-bold uppercase tracking-wider transition-all">
 					<i class="fas fa-power-off mr-1.5"></i> Exit Hub
 				</button>
 			</div>
@@ -366,22 +445,30 @@
 			<!-- Dynamic Live Metrics Grid -->
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
 				<div class="glass-card p-4 rounded-xl border border-orange-100 relative overflow-hidden">
-					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i class="fas fa-database"></i></div>
-					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Indexed Assets</h5>
+					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i
+							class="fas fa-database"></i></div>
+					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Indexed Assets
+					</h5>
 					<p class="text-3xl font-extrabold text-orange-600 mt-2">4,891,093</p>
-					<span class="text-[9px] text-emerald-600 font-bold"><i class="fas fa-arrow-trend-up mr-1"></i>+12.4% synced</span>
+					<span class="text-[9px] text-emerald-600 font-bold"><i class="fas fa-arrow-trend-up mr-1"></i>+12.4%
+						synced</span>
 				</div>
 
 				<div class="glass-card p-4 rounded-xl border border-orange-100 relative overflow-hidden">
-					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i class="fas fa-diagram-project"></i></div>
-					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Synthesized Entities</h5>
+					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i
+							class="fas fa-diagram-project"></i></div>
+					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Synthesized
+						Entities</h5>
 					<p class="text-3xl font-extrabold text-orange-600 mt-2">312,890</p>
-					<span class="text-[9px] text-orange-500 font-bold"><i class="fas fa-circle-check mr-1"></i>99.98% Integrity</span>
+					<span class="text-[9px] text-orange-500 font-bold"><i class="fas fa-circle-check mr-1"></i>99.98%
+						Integrity</span>
 				</div>
 
 				<div class="glass-card p-4 rounded-xl border border-orange-100 relative overflow-hidden">
-					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i class="fas fa-shield-halved"></i></div>
-					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Active Policy Rules</h5>
+					<div class="absolute -right-2 -bottom-2 text-slate-100 text-5xl font-extrabold"><i
+							class="fas fa-shield-halved"></i></div>
+					<h5 class="text-[10px] text-slate-400 font-mono uppercase tracking-wider font-bold">Active Policy
+						Rules</h5>
 					<p class="text-3xl font-extrabold text-slate-700 mt-2">1,204</p>
 					<span class="text-[9px] text-slate-500">GDPR & ISO Enforcement</span>
 				</div>
@@ -389,14 +476,18 @@
 
 			<!-- Active Realtime Logging Consolidation -->
 			<div class="glass-card p-5 rounded-xl border border-slate-200 flex-grow mb-8 min-h-[160px]">
-				<h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-widest mb-3 flex items-center justify-between">
+				<h4
+					class="text-xs font-extrabold text-slate-700 uppercase tracking-widest mb-3 flex items-center justify-between">
 					<span>Real-Time MDM Sync Log</span>
 					<span class="inline-flex w-2 h-2 rounded-full bg-orange-600 animate-ping"></span>
 				</h4>
 				<div class="space-y-2 font-mono text-[11px] text-slate-600" id="live-syslogs">
-					<div>[14:03:12] <span class="text-orange-600 font-bold">SYS_INIT:</span> Master record synchronization triggered across enterprise clusters.</div>
-					<div>[14:03:18] <span class="text-orange-500 font-bold">MERGE_PROG:</span> Identified 23 duplicated profiles. Initiating active synthesis heuristics.</div>
-					<div>[14:03:22] <span class="text-slate-700">SECURE:</span> Vault keys verified successfully. Directory compliance check passed.</div>
+					<div>[14:03:12] <span class="text-orange-600 font-bold">SYS_INIT:</span> Master record
+						synchronization triggered across enterprise clusters.</div>
+					<div>[14:03:18] <span class="text-orange-500 font-bold">MERGE_PROG:</span> Identified 23 duplicated
+						profiles. Initiating active synthesis heuristics.</div>
+					<div>[14:03:22] <span class="text-slate-700">SECURE:</span> Vault keys verified successfully.
+						Directory compliance check passed.</div>
 				</div>
 			</div>
 
@@ -448,7 +539,7 @@
 
 		function animateParticles() {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			
+
 			// Draw Connecting nodes
 			for (let i = 0; i < particles.length; i++) {
 				for (let j = i + 1; j < particles.length; j++) {
@@ -471,8 +562,8 @@
 
 			requestAnimationFrame(animateParticles);
 		}
-		
-		window.onload = function() {
+
+		window.onload = function () {
 			animateParticles();
 		};
 
@@ -591,7 +682,7 @@
 				}
 
 				errorField.innerText = "";
-				
+
 				// Open Loader with phase messages
 				loader.style.opacity = '1';
 				loader.style.pointerEvents = 'all';
@@ -608,11 +699,11 @@
 				setTimeout(() => {
 					loader.style.opacity = '0';
 					loader.style.pointerEvents = 'none';
-					
+
 					// Swap views
 					document.getElementById('main-content-panel').classList.add('hidden');
 					document.getElementById('dashboard-panel').classList.remove('hidden');
-					
+
 					// Update display name
 					const namePart = usernameVal.split('@')[0];
 					document.getElementById('user-display-name').innerText = namePart.toUpperCase() + " // HUB";
@@ -641,7 +732,7 @@
 				loader.style.opacity = '1';
 				loader.style.pointerEvents = 'all';
 				loaderText.innerText = "Submitting Directory Addition Request...";
-                register();
+				register();
 
 			} else if (type === 'forgot') {
 				const email = document.getElementById('recoveryEmail').value;
@@ -665,7 +756,7 @@
 			const cleanUser = username.replace(/[^a-zA-Z0-9]/g, '');
 			const now = new Date();
 			const timeStr = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
-			
+
 			const newLog = document.createElement('div');
 			newLog.innerHTML = `${timeStr} <span class="text-orange-600 font-bold">SESSION_START:</span> Operator <span class="text-slate-800 font-bold">${cleanUser}</span> established secure gateway connection. Sync protocols unlocked.`;
 			syslogDiv.prepend(newLog);
@@ -683,14 +774,14 @@
 			setTimeout(() => {
 				loader.style.opacity = '0';
 				loader.style.pointerEvents = 'none';
-				
+
 				document.getElementById('dashboard-panel').classList.add('hidden');
 				document.getElementById('main-content-panel').classList.remove('hidden');
-				
+
 				// Clear login inputs
 				document.getElementById('username').value = "";
 				document.getElementById('password').value = "";
-				
+
 				triggerToast('info', 'Session Closed', "Your cluster session has been successfully closed.");
 			}, 1500);
 		}

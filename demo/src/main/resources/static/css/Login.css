@@ -63,9 +63,9 @@ body {
 	animation: fadeIn 0.4s ease-out forwards;
 }
 
-body input {
+/*body input {
 	height: 30px !important;
-}
+}*/
 
 .loaderDivClass {
 	position: fixed;
@@ -78,7 +78,7 @@ body input {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	
+
 }
 
 @keyframes bold-spin {
@@ -131,3 +131,15 @@ body input {
 	height: 95px;
 	animation: bold-spin 1s linear infinite;
 }
+
+.otp-input {
+	transition: all 0.3s ease;
+	background: #f8fafc;
+}
+
+.otp-input:focus {
+	border-color: #ea580c;
+	box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.1);
+}
+
+.hidden-state { display: none; }
