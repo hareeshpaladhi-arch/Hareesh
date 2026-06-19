@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.ai.hub.dto.ClassificationMaster;
 import com.ai.hub.repository.BatchTemplate;
+import com.ai.hub.repository.CharacteristicDataRepository;
 import com.ai.hub.repository.ClassificationMasterRepository;
+import com.ai.hub.repository.DocumentDataRepository;
+import com.ai.hub.repository.ReferenceDataRepository;
 import com.ai.hub.repository.UserFileImportRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +43,15 @@ public class apiHubService {
 
 	@Autowired
 	private UserFileImportRepository fileRepo;
+	
+	@Autowired
+	private CharacteristicDataRepository charRepo;
+
+	@Autowired
+	private ReferenceDataRepository refRepo;
+
+	@Autowired
+	private DocumentDataRepository docRepo;
 
 	public Map<String, Object> classifyDescription(String longDescription) {
 
@@ -263,19 +276,42 @@ public class apiHubService {
 
 	public Page<BatchTemplate> getByBatchId(String batchId, Pageable pageable) {
 
-	    if (batchId != null && "NULL".equalsIgnoreCase(batchId)) {
-	        return fileRepo.findAll(pageable);
-	    }
-	    return fileRepo.findByBatchId(batchId, pageable);
+		if (batchId != null && "NULL".equalsIgnoreCase(batchId)) {
+			return fileRepo.findAll(pageable);
+		}
+		return fileRepo.findByBatchId(batchId, pageable);
 	}
 
 	public Page<BatchTemplate> searchByBatchId(String batchId, String search, Pageable pageable) {
 		return fileRepo.searchByBatchId(batchId, search, pageable);
 	}
-	
-	public int deleteRecords(List<String> ids) {
-		fileRepo.deleteAllById(ids);
-        return ids.size();
-    }
+
+	public int deleteRecords(String ids, String tableId) {
+		List<Long> longIds = Arrays.stream(ids.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+
+	    if (tableId.toLowerCase().contains("char")) {
+	        charRepo.deleteAllById(longIds);
+	        return longIds.size();
+	    } else if (tableId.toLowerCase().contains("ref")) {
+	        refRepo.deleteAllById(longIds);
+	        return longIds.size();
+	    } else if (tableId.toLowerCase().contains("doc")) {
+	        docRepo.deleteAllById(longIds);
+	        return longIds.size();
+	    } else {
+	    	List<String> stringIds = Arrays.stream(ids.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+	        fileRepo.deleteAllById(stringIds);
+	        return stringIds.size();
+	    }
+
+	    
+	}
 
 }

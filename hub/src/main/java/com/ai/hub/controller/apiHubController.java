@@ -460,10 +460,14 @@ public class apiHubController {
 	}	
 
 	@PostMapping("/deleteRecords")
-	public ResponseEntity<String> deleteRecords(@RequestBody List<String> ids) {
+	public ResponseEntity<String> deleteRecords(@RequestBody Map<String, Object> request) {
 
-		int deletedCount = apiService.deleteRecords(ids);
-		return ResponseEntity.ok(deletedCount + " record(s) deleted successfully.");
+	    String tableId = (String) request.get("tableId");
+	    String ids =  (String) request.get("selectedIds");
+
+	    int deletedCount = apiService.deleteRecords(tableId, ids);
+
+	    return ResponseEntity.ok(deletedCount + " record(s) deleted successfully.");
 	}
 
 }
