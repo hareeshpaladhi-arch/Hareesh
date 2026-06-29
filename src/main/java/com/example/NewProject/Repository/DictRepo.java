@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface DictRepo extends JpaRepository<DictModel, String> {
+
     Optional<DictModel> findByNounmodifier(String nounmodifier);
 
     List<DictModel> findBynoun(String noun);
@@ -29,4 +30,5 @@ public interface DictRepo extends JpaRepository<DictModel, String> {
         AND UPPER(d.modifier) = UPPER(:modifier)
         """)
     String findNounModifier(String noun, String modifier);
+
 }

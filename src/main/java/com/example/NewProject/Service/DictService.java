@@ -1,5 +1,6 @@
 package com.example.NewProject.Service;
 
+import com.example.NewProject.Entity.DictItemResponse;
 import com.example.NewProject.Entity.DictModel;
 import com.example.NewProject.Entity.DictResponse;
 import com.example.NewProject.Entity.DictResponseBatch;
@@ -58,23 +59,37 @@ public class DictService {
     }
 
     private List<String> tokenize(String description) {
-
         if (description == null || description.isBlank()) {
             return Collections.emptyList();
         }
 
-        return Arrays.stream(description.split(","))
-                .map(String::trim)
-                .map(String::toUpperCase)
-                .toList();
+        return Arrays.stream(description
+                        .replace(",", " ")
+                        .trim()
+                        .toUpperCase()
+                        .split("\\s+"))
+                .filter(s -> !s.isBlank())
+                .collect(Collectors.toList());
     }
 
-    private String findNoun(List<String> tokens) {
+    private List<String> findNoun(List<String> tokens) {
 
-        return tokens.stream()
-                .filter(nounSet::contains)
-                .findFirst()
-                .orElse(null);
+        //for single word noun
+//       Set<String> tokenSet = new HashSet<>(tokens);
+//
+//        return nounSet.stream()
+//                .filter(tokenSet::contains)
+//                .sorted(Comparator.comparingInt(String::length).reversed())
+//                .collect(Collectors.toList());
+
+        //for double word noun  (ex:  turbo charger)
+        String text = String.join(" ", tokens).toLowerCase();
+
+        return nounSet.stream()
+                .filter(noun -> text.contains(noun.toLowerCase()))
+                .sorted(Comparator.comparingInt(String::length).reversed())
+                .collect(Collectors.toList());
+
     }
 
     private String findModifier(String noun, List<String> tokens) {
@@ -82,68 +97,89 @@ public class DictService {
         Set<String> modifiers =
                 nounToModifiers.getOrDefault(noun, Collections.emptySet());
 
-        return tokens.stream()
-                .filter(modifiers::contains)
-                .findFirst()
+        String text = String.join(" ", tokens).toUpperCase();
+
+        return modifiers.stream()
+                .filter(text::contains)
+                .max(Comparator.comparingInt(String::length)) // Optional: longest match
                 .orElse(NO_MODIFIER);
     }
 
     public DictResponse findAllFromDescription(String description) {
 
         if (description == null || description.isBlank()) {
-            return new DictResponse(EMPTY, "", "", "");
+            return new DictResponse(EMPTY, Collections.emptyList());
         }
 
         List<String> tokens = tokenize(description);
 
-        String noun = findNoun(tokens);
+        List<String> nouns = findNoun(tokens);
 
-        if (noun == null) {
-            return new DictResponse(description, NOT_FOUND, "", "");
+        if (nouns == null) {
+            return new DictResponse(description, Collections.emptyList());
         }
 
-        String modifier = findModifier(noun, tokens);
+        List<DictItemResponse> result = new ArrayList<>();
 
-        String nounModifier = dictRepo.findNounModifier(noun, modifier);
+        for (String noun : nouns) {
 
-        if (nounModifier == null || nounModifier.isBlank()) {
-            nounModifier = NOT_FOUND;
+            String modifier = findModifier(noun, tokens);
+
+            String key = buildKey(noun, modifier);
+
+            String nounModifier = nounModifierCache.computeIfAbsent(key,
+                    k -> dictRepo.findNounModifier(noun, modifier));
+
+            if (nounModifier == null || nounModifier.isBlank()) {
+                nounModifier = NOT_FOUND;
+            }
+
+            result.add(new DictItemResponse(
+                    noun,
+                    modifier,
+                    nounModifier
+            ));
         }
-
-        return new DictResponse(
-                description,
-                noun,
-                modifier,
-                nounModifier
-        );
+        return new DictResponse(description, result);
     }
 
     public DictResponse processDescription(String description) {
 
         if (description == null || description.isBlank()) {
-            return new DictResponse(EMPTY, "", "", "");
+            return new DictResponse(description, Collections.emptyList());
         }
 
         List<String> tokens = tokenize(description);
-        String noun = findNoun(tokens);
 
-        if (noun == null) {
-            return new DictResponse(description, NOT_FOUND, "", "");
+        List<String> nouns = findNoun(tokens);
+
+        if (nouns.isEmpty()) {
+            return new DictResponse(description, Collections.emptyList());
         }
 
-        String modifier = findModifier(noun, tokens);
+        List<DictItemResponse> result = new ArrayList<>();
 
-        String key = buildKey(noun, modifier);
+        for (String noun : nouns) {
 
-        String nounModifier = nounModifierCache.computeIfAbsent(key, k ->
-                dictRepo.findNounModifier(noun, modifier)
-        );
+            String modifier = findModifier(noun, tokens);
 
-        if (nounModifier == null || nounModifier.isBlank()) {
-            nounModifier = NOT_FOUND;
+            String key = buildKey(noun, modifier);
+
+            String nounModifier = nounModifierCache.computeIfAbsent(key,
+                    k -> dictRepo.findNounModifier(noun, modifier));
+
+            if (nounModifier == null || nounModifier.isBlank()) {
+                nounModifier = NOT_FOUND;
+            }
+
+            result.add(new DictItemResponse(
+                    noun,
+                    modifier,
+                    nounModifier
+            ));
         }
 
-        return new DictResponse(description, noun, modifier, nounModifier);
+        return new DictResponse(description, result);
     }
 
     public DictResponseBatch findAllFromDescriptionList(List<String> descriptions) {

@@ -26,6 +26,7 @@ public class DictController {
         return dictService.findAllFromDescription(description);
     }
 
+
     @PostMapping(value = "/Noun-Modifier-File", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DictResponseBatch getDictionaryFile(@RequestParam("file") MultipartFile file) {
         return findAllFromExcel(file);
@@ -33,19 +34,27 @@ public class DictController {
 
     public DictResponseBatch findAllFromExcel(MultipartFile file) {
         List<String> descriptions = new ArrayList<>();
+        DataFormatter formatter = new DataFormatter();
 
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             boolean firstRow = true;
 
             for (Row row : sheet) {
+
                 if (firstRow) {
                     firstRow = false;
                     continue;
                 }
-                Cell cell = row.getCell(0); // assuming "Description" is column A
+
+                Cell cell = row.getCell(0);
+
                 if (cell != null) {
-                    descriptions.add(cell.getStringCellValue());
+                    String value = formatter.formatCellValue(cell).trim();
+
+                    if (!value.isEmpty()) {
+                        descriptions.add(value);
+                    }
                 }
             }
 
